@@ -89,8 +89,11 @@ namespace HeartGame
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
 
+            frameEvents = new List<Event>();
+
             InputManager inputManager = new InputManager();
             InputManager.KeyPressedCallback += pressKey;
+            InputManager.KeyReleasedCallback += releaseKey;
 
 
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
@@ -168,6 +171,33 @@ namespace HeartGame
                 case Keys.D:
                     frameEvents.Add(Event.D_PRESS);
                     break;
+                case Keys.Space:
+                    frameEvents.Add(Event.SPACE_PRESS);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void releaseKey(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.W:
+                    frameEvents.Add(Event.W_RELEASE);
+                    break;
+                case Keys.A:
+                    frameEvents.Add(Event.A_RELEASE);
+                    break;
+                case Keys.S:
+                    frameEvents.Add(Event.S_RELEASE);
+                    break;
+                case Keys.D:
+                    frameEvents.Add(Event.D_RELEASE);
+                    break;
+                case Keys.Space:
+                    frameEvents.Add(Event.SPACE_RELEASE);
+                    break;
                 default:
                     break;
             }
@@ -222,12 +252,14 @@ namespace HeartGame
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            InputManager.KeysUpdate(keyboardState);
+
             if (!Game.IsActive)
             {
                 return;
             }
-
-            KeyboardState keyboardState = Keyboard.GetState();
 
             Vector3 TargetVelocity = Vector3.Zero;
 
@@ -247,25 +279,8 @@ namespace HeartGame
                 }
             }
 
-            if (keyboardState.IsKeyDown(Keys.D))
-            {
-                TargetVelocity += new Vector3(0, 0, -1);
-            }
-            else if (keyboardState.IsKeyDown(Keys.A))
-            {
-                TargetVelocity += new Vector3(0, 0, 1);
-            }
-
-            if (keyboardState.IsKeyDown(Keys.S))
-            {
-                TargetVelocity += new Vector3(1, 0, 0);
-            }
-            else if (keyboardState.IsKeyDown(Keys.W))
-            {
-                TargetVelocity += new Vector3(-1, 0, 0);
-            }
-
-            player.MoveInDirection(TargetVelocity);
+            player.PerformActions(frameEvents);
+            //player.MoveInDirection(TargetVelocity);
 
 
             if (keyboardState.IsKeyDown(Keys.Escape))
@@ -299,6 +314,8 @@ namespace HeartGame
             Camera.Position *= 1.0f - alpha;
             Camera.Position += alpha * (player.GlobalTransform.Translation + new Vector3(10, 10, 0));
             Camera.Target = player.GlobalTransform.Translation;
+
+            frameEvents = new List<Event>();
 
             Camera.Update(gameTime);
             base.Update(gameTime);

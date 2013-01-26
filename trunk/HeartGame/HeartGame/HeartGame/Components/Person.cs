@@ -151,46 +151,50 @@ namespace HeartGame
 
         public void PerformActions(List<Event> events)
         {
+            Console.Out.WriteLine("Events:");
             foreach (Event e in events)
             {
+                Console.Out.WriteLine("Event = {0}", e);
                 switch (e)
                 {
                     case Event.W_PRESS:
-                        velocityController.targetVelocity.X = -1;
+                        velocityController.targetVelocity.X += -1;
                         break;
                     case Event.W_RELEASE:
-                        if (velocityController.targetVelocity.X < 0)
-                            velocityController.targetVelocity.X = 0;
+                        velocityController.targetVelocity.X -= -1;
                         break;
 
                     case Event.A_PRESS:
-                        velocityController.targetVelocity.Z = 1;
+                        velocityController.targetVelocity.Z += 1;
                         break;
                     case Event.A_RELEASE:
-                        if (velocityController.targetVelocity.Z > 0)
-                            velocityController.targetVelocity.Z = 0;
+                        velocityController.targetVelocity.Z -= 1;
                         break;
                     
                     case Event.S_PRESS:
-                        velocityController.targetVelocity.X = 1;
+                        velocityController.targetVelocity.X += 1;
                         break;
                     case Event.S_RELEASE:
-                        if (velocityController.targetVelocity.X > 0)
-                            velocityController.targetVelocity.X = 0;
+                        velocityController.targetVelocity.X -= 1;
                         break;
 
                     case Event.D_PRESS:
-                        velocityController.targetVelocity.Z = -1;
+                        velocityController.targetVelocity.Z += -1;
                         break;
                     case Event.D_RELEASE:
-                        if (velocityController.targetVelocity.Z < 0)
-                            velocityController.targetVelocity.Z = 0;
+                        velocityController.targetVelocity.Z -= -1;
                         break;
-
 
                     default: break;
                 }
             }
+
+            if (velocityController.targetVelocity.X != 0.0f || velocityController.targetVelocity.Y != 0.0f || velocityController.targetVelocity.Z != 0.0f)
+            {
+                velocityController.targetVelocity.Normalize();
+                velocityController.targetVelocity *= velocityController.MaxSpeed;
+            }
         }
+
     }
 }
