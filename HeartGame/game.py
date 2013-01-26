@@ -1,11 +1,13 @@
 import pygame
 import client
+import random
 from util import *
 
 WIDTH, HEIGHT = 640, 480
+ONLINE = True
 
 def encodePlayer(player, vel):
-    info = [player.X(), player.Y(), vel[0], vel[1]]
+    info = ["position", player.name, player.X(), player.Y(), vel[0], vel[1]]
     info = [str(v) for v in info]
     msg = ",".join(info) + '\r\n'
     return msg
@@ -24,13 +26,20 @@ class Game():
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.restart = True
-        self.client = client.Client()
-        name = self.client.connect()
-        name = name.rstrip()
+        if ONLINE:
+            self.client = client.Client()
+            name = self.client.connect()
+            name = name.rstrip()
+        else:
+            self.msgQueue = []
+            name = "0"
         print "logging in as player " + name
 
         self.persons = pygame.sprite.Group()
         self.player = Person(name, 100, 100)
+        if name == "0":
+            for i in range(1000,1010):
+                self.persons.add(Person(str(i), random.randint(0, WIDTH), random.randint(0, HEIGHT)))
         self.persons.add(self.player)
         while self.restart:
             self.restart = False
@@ -47,33 +56,47 @@ class Game():
             elapsed = clock.get_time() / 1000.0
 
             self.networkUpdate(elapsed)
+            for p in self.persons:
+                p.updatePosition(elapsed)
+            self.updateAI()
+
             self.controls.update()
             self.updatePlayer()
 
             self.draw()
             pygame.display.flip()
 
-    def networkUpdate(self, elapsed):
-        moves = self.client.read()
-        for m in moves:
-            m = m.rstrip()
-            toks = m.split(',')
-            command = toks[0]
-            if command == "position":
-                found = False
-                for p in self.persons:
-                    if str(p.name) == str(toks[1]):
-                        p.position = [float(toks[2]), float(toks[3])]
-                        p.velocity = [float(toks[4]), float(toks[5])]
-                        found = True
-                if not found:
-                    self.persons.add(Person(toks[1], float(toks[2]), float(toks[3])))
-                    self.persons.velocity = [float(toks[4]), float(toks[5])]
-            elif command == "sendpos":
-                self.client.write((encodePlayer(self.player, self.player.velocity)))
-
+    def updateAI(self):
+        if name != "0":
+            return
         for p in self.persons:
-            p.updatePosition(elapsed)
+            if int(p.name) < 1000:
+                continue
+            if random.randint(0, 100) == 0:
+                self.write((encodePlayer(p, (random.randint(-100,100), random.randint(-100,100)))))
+
+
+    def networkUpdate(self, elapsed):
+        entries = self.read()
+        for e in entries:
+            lines = e.split('\n')
+            for m in lines:
+                print m
+                m = m.rstrip()
+                toks = m.split(',')
+                command = toks[0]
+                if command == "position":
+                    found = False
+                    for p in self.persons:
+                        if str(p.name) == str(toks[1]):
+                            p.position = [float(toks[2]), float(toks[3])]
+                            p.velocity = [float(toks[4]), float(toks[5])]
+                            found = True
+                    if not found:
+                        self.persons.add(Person(toks[1], float(toks[2]), float(toks[3])))
+                        self.persons.velocity = [float(toks[4]), float(toks[5])]
+                elif command == "sendpos":
+                    self.write((encodePlayer(self.player, self.player.velocity)))
 
     def updatePlayer(self):
         oldVel = (self.player.velocity[0], self.player.velocity[1])
@@ -88,7 +111,21 @@ class Game():
             newVel[1] = 100
 
         if newVel[0] != oldVel[0] or newVel[1] != oldVel[1]:
-            self.client.write((encodePlayer(self.player, newVel)))
+            self.write(encodePlayer(self.player, newVel))
+
+    def write(self, msg):
+        if ONLINE:
+            self.client.write(msg)
+        else:
+            self.msgQueue.append(msg)
+
+    def read(self):
+        if ONLINE:
+            entries = self.client.read()
+        else:
+            entries = self.msgQueue
+            self.msgQueue = []
+        return entries
 
     def draw(self):
         self.screen.fill((0,0,0))
