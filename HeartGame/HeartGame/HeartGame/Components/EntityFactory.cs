@@ -25,10 +25,12 @@ namespace HeartGame
 
 
             Texture2D tex = content.Load<Texture2D>(texture);
-            BoxPrimitive.BoxTextureCoords uvs = new BoxPrimitive.BoxTextureCoords(tex.Width, tex.Height, tex.Width, tex.Height, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero, Point.Zero);
+            BoxPrimitive.BoxTextureCoords uvs = new BoxPrimitive.BoxTextureCoords(tex.Width, tex.Height, tex.Width, tex.Height, Point.Zero, Point.Zero, Point.Zero,
+                Point.Zero, Point.Zero, Point.Zero);
             BoxPrimitive primitive = new BoxPrimitive(graphics, extents.X, extents.Y, extents.Z, uvs);
 
-            TexturedBoxObject graphicalBox = new TexturedBoxObject(componentManager, "texturedbox", boxComponent, Matrix.CreateTranslation(-extents * 0.5f) , extents, Vector3.Zero, primitive, content.Load<Texture2D>(texture));
+            TexturedBoxObject graphicalBox = new TexturedBoxObject(componentManager, "texturedbox", boxComponent, Matrix.CreateTranslation(-extents * 0.5f) ,
+                extents, Vector3.Zero, primitive, content.Load<Texture2D>(texture));
             boxComponent.FrustrumCull = false;
             graphicalBox.FrustrumCull = false;
 
@@ -48,7 +50,8 @@ namespace HeartGame
 
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
-            testDwarf = new PhysicsComponent(componentManager, "walker", componentManager.RootComponent, matrix,  new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            testDwarf = new PhysicsComponent(componentManager, "walker", componentManager.RootComponent, matrix, 
+                new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f);
             testDwarf.OrientWithVelocity = true;
 
             Texture2D dwarfSprites = content.Load<Texture2D>(spritesheet);
@@ -61,8 +64,8 @@ namespace HeartGame
 
             List<Point> forwardFrames = new List<Point>();
             forwardFrames.Add(new Point(0 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(1 + offset.X, 0+ offset.Y));
-            forwardFrames.Add(new Point(2 + offset.X, 0+ offset.Y));
+            forwardFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
+            forwardFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
             forwardFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
             forwardFrames.Add(new Point(0 + offset.X, 0 + offset.Y));
             forwardFrames.Add(new Point(1 + offset.X, 0 + offset.Y));

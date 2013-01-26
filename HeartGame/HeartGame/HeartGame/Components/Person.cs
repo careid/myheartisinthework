@@ -14,12 +14,15 @@ namespace HeartGame
 {
     public class Person : PhysicsComponent
     {
+        public VelocityController velocityController;
+        public static float maxSpeed = 3.0f;
         public Person(string name, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
                       GraphicsDevice graphics,
                       string spritesheet) :
-            base(componentManager, name, componentManager.RootComponent, Matrix.CreateTranslation(position),  new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0))
+            base(componentManager, name, componentManager.RootComponent, Matrix.CreateTranslation(position),  new Vector3(0.5f, 1.0f, 0.5f),
+            new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f)
         {
             OrientWithVelocity = true;
             Texture2D dwarfSprites = content.Load<Texture2D>(spritesheet);
@@ -131,8 +134,19 @@ namespace HeartGame
             shadow.SetCurrentAnimation("sh");
 
             Tags.Add("Walker");
+
+            velocityController = new VelocityController(this);
+            velocityController.IsTracking = true;
         }
 
-
+        public void MoveInDirection(Vector3 _TargetVelocity)
+        {
+            if (_TargetVelocity.LengthSquared() >= 1)
+            {
+                _TargetVelocity.Normalize();
+                _TargetVelocity *= velocityController.MaxSpeed;
+            }
+            velocityController.TargetVelocity = _TargetVelocity;
+        }
     }
 }

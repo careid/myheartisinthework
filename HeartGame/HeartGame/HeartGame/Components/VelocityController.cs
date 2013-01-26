@@ -14,7 +14,6 @@ namespace HeartGame
         public PIDController Controller { get; set;}
         public Vector3 TargetVelocity { get; set; }
         public bool IsTracking { get; set; }
-        public bool WASDControl { get; set; }
         public float MaxSpeed { get; set; }
 
         public VelocityController(PhysicsComponent component) :
@@ -24,8 +23,7 @@ namespace HeartGame
             Controller = new PIDController(3.0f, 0.5f, 0.01f);
             TargetVelocity = Vector3.Zero;
             IsTracking = false;
-            WASDControl = false;
-            MaxSpeed = 10;
+            MaxSpeed = 15;
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime, Camera camera)
@@ -33,41 +31,13 @@ namespace HeartGame
             if (IsTracking)
             {
                 float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-                Component.ApplyForce(Controller.GetOutput(dt, TargetVelocity, Component.Velocity), dt);
-            }
-
-            if (WASDControl)
-            {
-                KeyboardState keyboardState = Keyboard.GetState();
-
-                TargetVelocity = Vector3.Zero;
-
-                if (keyboardState.IsKeyDown(Keys.D))
-                {
-                    TargetVelocity += new Vector3(0, 0, -1);
-                }
-                else if (keyboardState.IsKeyDown(Keys.A))
-                {
-                    TargetVelocity += new Vector3(0, 0, 1);
-                }
-                
-                if (keyboardState.IsKeyDown(Keys.S))
-                {
-                    TargetVelocity += new Vector3(1, 0, 0);
-                }
-                else if (keyboardState.IsKeyDown(Keys.W))
-                {
-                    TargetVelocity += new Vector3(-1, 0, 0);
-                }
-
-                if (TargetVelocity.LengthSquared() >= 1)
-                {
-                    TargetVelocity.Normalize();
-                    TargetVelocity *= MaxSpeed;
-                }
+                Vector3 force = Controller.GetOutput(dt, TargetVelocity, Component.Velocity);
+                force.Y = 0;
+                Component.ApplyForce(force, dt);
             }
 
             base.Update(gameTime, camera);
         }
+
     }
 }
