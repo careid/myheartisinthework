@@ -1,5 +1,5 @@
 from socket import *
-import thread
+import _thread as thread
 import threading
  
 BUFF = 1024
@@ -26,12 +26,12 @@ def clientHandler(cc, comm):
     try:
         while True:
             data = cc.read()
-            print 'data:' + repr(data)
+            print ('data:' + repr(data))
             if not data: break
             comm.broadcast("okay\r\n")
         cc.close()
     except Exception as e:
-        print e
+        print (e)
 
 class Communicator:
     def __init__(self):
@@ -58,9 +58,9 @@ if __name__=='__main__':
     serversock.listen(5)
     comm = Communicator()
     while True:
-        print 'waiting for connection...'
+        print ('waiting for connection...')
         clientsock, addr = serversock.accept()
-        print '...connected from:', addr
+        print ('...connected from:', addr)
         cc = ClientConn(clientsock)
         comm.addClient(cc)
     serversock.close()
