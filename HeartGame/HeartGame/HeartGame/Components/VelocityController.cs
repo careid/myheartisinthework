@@ -60,7 +60,7 @@ namespace HeartGame
                     TargetVelocity += new Vector3(-1, 0, 0);
                 }
 
-                if (TargetVelocity.LengthSquared() > 0)
+                if (TargetVelocity.LengthSquared() >= 1)
                 {
                     TargetVelocity.Normalize();
                     TargetVelocity *= MaxSpeed;
