@@ -118,7 +118,7 @@ namespace HeartGame
             dwarfIdleRight.Play();
 
             Matrix spriteMatrix = Matrix.Identity;
-            spriteMatrix.Translation = new Vector3(0, 0.1f, 0);
+           // spriteMatrix.Translation = new Vector3(0, 0.1f, 0);
             OrientedAnimation testSprite = new OrientedAnimation(componentManager, "testsprite", this, spriteMatrix, dwarfSprites, dwarfWalkRight, dwarfWalkLeft, dwarfWalkForward, dwarfWalkBack,
                 dwarfIdleRight, dwarfIdleLeft, dwarfIdleForward, dwarfIdleBack);
 

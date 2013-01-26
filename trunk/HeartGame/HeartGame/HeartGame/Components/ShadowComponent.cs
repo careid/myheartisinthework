@@ -36,7 +36,7 @@ namespace HeartGame
 
                     
                 Matrix newTrans = LocalTransform;
-                newTrans.Translation = (pos - p.GlobalTransform.Translation) + new Vector3(0, -2.15f, 0);
+                newTrans.Translation = (pos - p.GlobalTransform.Translation); // new Vector3(0, -2.15f, 0);
                 LocalTransform = newTrans;
                     
                     
