@@ -82,6 +82,7 @@
     <Compile Include="Components\EntityFactory.cs" />
     <Compile Include="Components\NPC.cs" />
     <Compile Include="Components\Person.cs" />
+    <Compile Include="Components\ShadowComponent.cs" />
     <Compile Include="Components\VelocityController.cs" />
     <Compile Include="DeathComponentSpawner.cs" />
     <Compile Include="Components\EmitterComponent.cs" />
