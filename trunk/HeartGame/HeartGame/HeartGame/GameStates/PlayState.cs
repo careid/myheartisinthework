@@ -319,6 +319,21 @@ namespace HeartGame
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
 
+            foreach (PhysicsComponent d in dorfs)
+            {
+                if (d != player && !d.IsDead)
+                {
+                    foreach (LocatableComponent h in hospitals)
+                    {
+                        if (d.GetBoundingBox().Intersects(h.GetBoundingBox()))
+                        {
+                            player.Score += 100;
+                            d.Die();
+                        }  
+                    }
+                }
+            }
+
             float alpha = 0.05f;
             Camera.Position *= 1.0f - alpha;
             Camera.Position += alpha * (player.GlobalTransform.Translation + new Vector3(10, 10, 0));
