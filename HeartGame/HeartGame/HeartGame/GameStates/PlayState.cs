@@ -11,7 +11,22 @@ using Microsoft.Xna.Framework.Input;
 
 namespace HeartGame
 {
+    public enum Event
+    {
+        // Keypress events
+        W_PRESS = 0,
+        A_PRESS = 1,
+        S_PRESS = 2,
+        D_PRESS = 3,
+        SPACE_PRESS = 4,
 
+        // Key release events
+        W_RELEASE = 5,
+        A_RELEASE = 6,
+        S_RELEASE = 7,
+        D_RELEASE = 8,
+        SPACE_RELEASE = 9,
+    };
     public class CommandQueue
     {
         Queue<string> commands;
@@ -58,8 +73,9 @@ namespace HeartGame
         public LocatableComponent ground;
         public List<PhysicsComponent> dorfs = new List<PhysicsComponent>();
         public List<LocatableComponent> hospitals = new List<LocatableComponent>();
-        public Person player;
+        public Player player;
         public Drawer2D drawer2D;
+        public List<Event> frameEvents;
 
         private float rand()
         {
@@ -72,6 +88,10 @@ namespace HeartGame
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 0, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
+
+            InputManager inputManager = new InputManager();
+            InputManager.KeyPressedCallback += pressKey;
+
 
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
@@ -99,7 +119,7 @@ namespace HeartGame
             }
 
             // Player!
-            player = new Person("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
+            player = new Player("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
                 ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
             player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
             player.HasMoved = true;
@@ -130,6 +150,27 @@ namespace HeartGame
             SunMap = Game.Content.Load<Texture2D>("sungradient");
             AmbientMap = Game.Content.Load<Texture2D>("ambientgradient");
             TorchMap = Game.Content.Load<Texture2D>("torchgradient");
+        }
+
+        public void pressKey(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.W:
+                    frameEvents.Add(Event.W_PRESS);
+                    break;
+                case Keys.A:
+                    frameEvents.Add(Event.A_PRESS);
+                    break;
+                case Keys.S:
+                    frameEvents.Add(Event.S_PRESS);
+                    break;
+                case Keys.D:
+                    frameEvents.Add(Event.D_PRESS);
+                    break;
+                default:
+                    break;
+            }
         }
 
         static void runListener(object Obj)
@@ -199,8 +240,8 @@ namespace HeartGame
                     {
                         Vector3 offset = d.GlobalTransform.Translation - player.GlobalTransform.Translation;
                         offset.Normalize();
-                        offset *= 40;
-                        offset.Y = 100;
+                        offset *= 75;
+                        offset.Y = 50;
                         d.ApplyForce(offset, dt);
                     }
                 }
@@ -233,24 +274,6 @@ namespace HeartGame
                 Game.Exit();
             }
 
-            /*
-            // add dwarfs for kicks and gigs
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-            {
-                SW.WriteLine("add dwarf");
-                SW.Flush();
-            }
-
-            string command = CQ.Read();
-            if (command.Length > 0)
-            {
-                if (command == "okay")
-                {
-                    dorf = EntityFactory.GenerateWalker(new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5), ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
-                }
-            }
-             */
-            
             ComponentManager.Update(gameTime, Camera);
             List<BoundingBox> collideBox = new List<BoundingBox>();
             collideBox.Add(ground.GetBoundingBox());

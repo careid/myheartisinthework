@@ -146,7 +146,51 @@ namespace HeartGame
                 _TargetVelocity.Normalize();
                 _TargetVelocity *= velocityController.MaxSpeed;
             }
-            velocityController.TargetVelocity = _TargetVelocity;
+            velocityController.targetVelocity = _TargetVelocity;
+        }
+
+        public void PerformActions(List<Event> events)
+        {
+            foreach (Event e in events)
+            {
+                switch (e)
+                {
+                    case Event.W_PRESS:
+                        velocityController.targetVelocity.X = -1;
+                        break;
+                    case Event.W_RELEASE:
+                        if (velocityController.targetVelocity.X < 0)
+                            velocityController.targetVelocity.X = 0;
+                        break;
+
+                    case Event.A_PRESS:
+                        velocityController.targetVelocity.Z = 1;
+                        break;
+                    case Event.A_RELEASE:
+                        if (velocityController.targetVelocity.Z > 0)
+                            velocityController.targetVelocity.Z = 0;
+                        break;
+                    
+                    case Event.S_PRESS:
+                        velocityController.targetVelocity.X = 1;
+                        break;
+                    case Event.S_RELEASE:
+                        if (velocityController.targetVelocity.X > 0)
+                            velocityController.targetVelocity.X = 0;
+                        break;
+
+                    case Event.D_PRESS:
+                        velocityController.targetVelocity.Z = -1;
+                        break;
+                    case Event.D_RELEASE:
+                        if (velocityController.targetVelocity.Z < 0)
+                            velocityController.targetVelocity.Z = 0;
+                        break;
+
+
+                    default: break;
+                }
+            }
         }
     }
 }
