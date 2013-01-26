@@ -263,8 +263,8 @@ namespace HeartGame
                         LocatableComponent loc = (LocatableComponent)component;
 
                         
-                        if ((loc.GlobalTransform.Translation - camera.Position).LengthSquared() < DrawDistanceSquared &&
-                            (visibleComponents.Contains(component) || visibleComponents.Contains(component.Parent as LocatableComponent) || !(loc.FrustrumCull)))
+                        if (((loc.GlobalTransform.Translation - camera.Position).LengthSquared() < DrawDistanceSquared &&
+                            (visibleComponents.Contains(component) || visibleComponents.Contains(component.Parent as LocatableComponent)) || !(loc.FrustrumCull)))
 
                         {
                             if (loc != null && loc.DepthSort)

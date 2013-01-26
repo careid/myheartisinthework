@@ -43,6 +43,7 @@ namespace HeartGame
 
         public override void Update(GameTime time)
         {
+            /*
             MouseState mouse = Mouse.GetState();
             KeyboardState keys = Keyboard.GetState();
 
@@ -155,9 +156,9 @@ namespace HeartGame
                 Vector3 right = Vector3.Cross(forward, UpVector);
                 Target = Target + right * CameraMoveSpeed;
             }
+            */
 
-
-
+            /*
             if (!keys.IsKeyDown(Keys.LeftShift) && !keys.IsKeyDown(Keys.RightShift))
             {
                 if (mouse.X < edgePadding || mouse.X > Graphics.Viewport.Width - edgePadding)
@@ -225,13 +226,17 @@ namespace HeartGame
                         
                 }
             }
+             */
 
+            /*
             if (mouse.ScrollWheelValue != m_lastWheel)
             {
                 Vector3 delta = new Vector3(0, mouse.ScrollWheelValue - m_lastWheel, 0);
                 Target = Target + delta * 0.01f;
                 m_lastWheel = mouse.ScrollWheelValue;
             }
+             */
+            
 
             UpdateBasisVectors();
             base.Update(time);
@@ -244,7 +249,7 @@ namespace HeartGame
             //p.Y = (float)(Radius * Math.Cos(Phi));
             //p.X = (float)(Radius * Math.Sin(Theta) * Math.Sin(Phi));
 
-            Position = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(Theta, Phi, 0)) * Radius + Target;
+            //Position = Vector3.Transform(Vector3.Backward, Matrix.CreateFromYawPitchRoll(Theta, Phi, 0)) * Radius + Target;
 
             /*
             Vector3 u = new Vector3();

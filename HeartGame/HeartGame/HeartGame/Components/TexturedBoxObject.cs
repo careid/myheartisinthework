@@ -51,9 +51,8 @@ namespace HeartGame
                 pass.Apply();
                 Primitive.Render(graphicsDevice);
             }
-            effect.Parameters["xWorld"].SetValue(oldWorld);
-            
 
+            effect.Parameters["xWorld"].SetValue(oldWorld);
 
             effect.Parameters["xTexture"].SetValue(originalText);
 

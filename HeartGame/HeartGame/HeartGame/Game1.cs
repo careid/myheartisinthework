@@ -37,6 +37,10 @@ namespace HeartGame
         {
             StateManager.States["PlayState"] = new PlayState(this, StateManager);
             StateManager.SwitchState("PlayState");
+            graphics.PreferredBackBufferWidth = 1366;
+            graphics.PreferredBackBufferHeight = 768;
+            graphics.PreferMultiSampling = true;
+            graphics.ApplyChanges();
             base.Initialize();
         }
 
