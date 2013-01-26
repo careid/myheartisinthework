@@ -29,7 +29,7 @@ def clientHandler(cc, comm):
             data = cc.read()
             print('data:' + repr(data))
             if not data: break
-            comm.broadcast("position,"+str(cc.name) +"," + data)
+            comm.broadcast(data)
         cc.close()
     except Exception as e:
         print(e)
