@@ -12,7 +12,7 @@ namespace HeartGame
     {
         public PhysicsComponent Component { get; set; }
         public PIDController Controller { get; set;}
-        public Vector3 TargetVelocity { get; set; }
+        public Vector3 targetVelocity;
         public bool IsTracking { get; set; }
         public float MaxSpeed { get; set; }
 
@@ -21,7 +21,7 @@ namespace HeartGame
         {
             Component = component;
             Controller = new PIDController(3.0f, 0.5f, 0.01f);
-            TargetVelocity = Vector3.Zero;
+            targetVelocity = Vector3.Zero;
             IsTracking = false;
             MaxSpeed = 15;
         }
@@ -31,7 +31,7 @@ namespace HeartGame
             if (IsTracking)
             {
                 float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-                Vector3 force = Controller.GetOutput(dt, TargetVelocity, Component.Velocity);
+                Vector3 force = Controller.GetOutput(dt, targetVelocity, Component.Velocity);
                 force.Y = 0;
                 Component.ApplyForce(force, dt);
             }
