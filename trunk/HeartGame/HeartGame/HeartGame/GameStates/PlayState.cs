@@ -114,8 +114,10 @@ namespace HeartGame
 
             for (int i = 0; i < 4; i++)
             {
-                Person npc = new Person("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
+                NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
                     ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
+                npc.velocityController.MaxSpeed = 1;
+                npc.Target = new Vector3(-1, -2.1f, -11);
                 npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
                 npc.HasMoved = true;
                 dorfs.Add(npc);
@@ -304,7 +306,7 @@ namespace HeartGame
 
                 if (d != player)
                 {
-                    d.ApplyForce(new Vector3(rand() - 0.5f, 0, rand() - 0.5f) * 10, dt);
+                    //d.ApplyForce(new Vector3(rand() - 0.5f, 0, rand() - 0.5f) * 10, dt);
                 }
 
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
