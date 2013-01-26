@@ -28,7 +28,7 @@ namespace HeartGame
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime, Camera camera)
         {
-            if (IsTracking)
+            if (IsTracking && Component.GlobalTransform.Translation.Y < 1.0f)
             {
                 float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 Vector3 force = Controller.GetOutput(dt, targetVelocity, Component.Velocity);

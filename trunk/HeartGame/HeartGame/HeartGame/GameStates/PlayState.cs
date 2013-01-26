@@ -86,7 +86,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
-            Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 0, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
+            Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
 
@@ -115,7 +115,7 @@ namespace HeartGame
 
             for (int i = 0; i < 4; i++)
             {
-                NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
+                NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                     ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
                 npc.velocityController.MaxSpeed = 1;
                 npc.Target = new Vector3(-1, -2.1f, -11);
@@ -125,7 +125,7 @@ namespace HeartGame
             }
 
             // Player!
-            player = new Player("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
+            player = new Player("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                 ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
             player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
             player.HasMoved = true;
@@ -134,16 +134,16 @@ namespace HeartGame
             velocityController.IsTracking = true;
 
 
-            Vector3 boundingBoxPos = Camera.Position + new Vector3(0, -15, 0);
-            Vector3 boundingBoxExtents = new Vector3(200, 5, 200);
+            Vector3 boundingBoxPos = new Vector3(0, -2, 0);
+            Vector3 boundingBoxExtents = new Vector3(200, 4, 200);
             Vector3 boundingBoxMin = boundingBoxPos - boundingBoxExtents * 0.5f;
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
             LocatableComponent hospital1 
                  = (LocatableComponent)EntityFactory
-                .GenerateBlankBox(new BoundingBox(new Vector3(-1, -2.1f, -11),
-                                                  new Vector3(2, -0.9f, -8)),                                   
+                .GenerateBlankBox(new BoundingBox(new Vector3(-1, 0, -11),
+                                                  new Vector3(3, 2.0f, -8)),
                                                   ComponentManager,
                                                   Game.Content,
                                                   Game.GraphicsDevice, 
@@ -200,6 +200,18 @@ namespace HeartGame
                     break;
                 case Keys.Space:
                     frameEvents.Add(Event.SPACE_RELEASE);
+
+                    foreach (PhysicsComponent d in dorfs)
+                    {
+                        if (d != player && (d.GlobalTransform.Translation - player.GlobalTransform.Translation).LengthSquared() < 1 * 1)
+                        {
+                            Vector3 offset = d.GlobalTransform.Translation - player.GlobalTransform.Translation;
+                            offset.Normalize();
+                            offset *= 500;
+                            offset.Y = 500;
+                            d.ApplyForce(offset, 1/60.0f);
+                        }
+                    }
                     break;
                 default:
                     break;
@@ -272,25 +284,7 @@ namespace HeartGame
 
             Vector3 TargetVelocity = Vector3.Zero;
 
-            // preliminary defibrillation:
-            if (keyboardState.IsKeyDown(Keys.Space))
-            {
-                foreach (PhysicsComponent d in dorfs)
-                {
-                    if (d != player)
-                    {
-                        Vector3 offset = d.GlobalTransform.Translation - player.GlobalTransform.Translation;
-                        offset.Normalize();
-                        offset *= 75;
-                        offset.Y = 50;
-                        d.ApplyForce(offset, dt);
-                    }
-                }
-            }
-
             player.PerformActions(frameEvents);
-            //player.MoveInDirection(TargetVelocity);
-
 
             if (keyboardState.IsKeyDown(Keys.Escape))
             {
