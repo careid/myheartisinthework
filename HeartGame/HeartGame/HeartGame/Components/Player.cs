@@ -14,6 +14,8 @@ namespace HeartGame
 {
     public class Player : Person
     {
+        public float Score { get; set; }
+
         public Player(string name, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
@@ -21,6 +23,7 @@ namespace HeartGame
                       string spritesheet) :
             base(name, position, componentManager, content, graphics, spritesheet)
         {
+            Score = 0.0f;
         }
     }
 }

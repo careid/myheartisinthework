@@ -27,6 +27,7 @@ namespace HeartGame
         D_RELEASE = 8,
         SPACE_RELEASE = 9,
     };
+
     public class CommandQueue
     {
         Queue<string> commands;
@@ -244,9 +245,12 @@ namespace HeartGame
 
             Game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
-
             ComponentManager.Render(gameTime, Camera, SpriteBatch, Game.GraphicsDevice,Shader, false);
-            
+
+            SpriteBatch.Begin();
+            Drawer2D.DrawStrokedText(SpriteBatch, "Score: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
+            SpriteBatch.End();
+
             base.Render(gameTime);
         }
 
