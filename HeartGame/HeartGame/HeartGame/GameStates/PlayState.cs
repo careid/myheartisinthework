@@ -209,6 +209,7 @@ namespace HeartGame
                             offset.Normalize();
                             offset *= 500;
                             offset.Y = 500;
+                            offset *= player.DefibCharge;
                             d.ApplyForce(offset, 1/60.0f);
                         }
                     }
@@ -260,11 +261,13 @@ namespace HeartGame
             ComponentManager.Render(gameTime, Camera, SpriteBatch, Game.GraphicsDevice,Shader, false);
 
             SpriteBatch.Begin();
+            Drawer2D.FillRect(SpriteBatch, new Rectangle(0, 0, (int)(500 * player.DefibCharge), 100), new Color(255, 0, 0));
             Drawer2D.DrawStrokedText(SpriteBatch, "Score: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
             SpriteBatch.End();
 
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Game.GraphicsDevice.BlendState = BlendState.Opaque;
+
 
             base.Render(gameTime);
         }
