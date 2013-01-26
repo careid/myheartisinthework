@@ -1,13 +1,14 @@
 from socket import *
-import _thread as thread
+import thread
 import threading
- 
+
 BUFF = 1024
-HOST = '127.0.0.1'
-PORT = 1020
+HOST = '172.24.8.194'
+PORT = 3000
 
 class ClientConn:
-    def __init__(self, clientsock):
+    def __init__(self, name, clientsock):
+        self.name = name
         self.sock = clientsock
         self.lock = threading.Lock()
 
@@ -26,30 +27,33 @@ def clientHandler(cc, comm):
     try:
         while True:
             data = cc.read()
-            print ('data:' + repr(data))
+            print('data:' + repr(data))
             if not data: break
-            comm.broadcast("okay\r\n")
+            comm.broadcast("position,"+str(cc.name) +"," + data)
         cc.close()
     except Exception as e:
-        print (e)
+        print(e)
 
 class Communicator:
     def __init__(self):
         self.lock = threading.Lock()
         self.clients = []
 
-    def addClient(self, client):
+    def addClient(self, clientsock):
+        self.broadcast("sendpos\r\n")
         self.lock.acquire()
+        client = ClientConn(len(self.clients), clientsock)
+        client.write(str(client.name) + "\r\n")
         self.clients.append(client)
         self.lock.release()
-        thread.start_new_thread(clientHandler, (cc, self))
+        thread.start_new_thread(clientHandler, (client, self))
 
     def broadcast(self, msg):
         self.lock.acquire()
         for c in self.clients:
             c.write(msg)
         self.lock.release()
-    
+
 if __name__=='__main__':
     ADDR = (HOST, PORT)
     serversock = socket(AF_INET, SOCK_STREAM)
@@ -58,9 +62,8 @@ if __name__=='__main__':
     serversock.listen(5)
     comm = Communicator()
     while True:
-        print ('waiting for connection...')
+        print('waiting for connection...')
         clientsock, addr = serversock.accept()
-        print ('...connected from:', addr)
-        cc = ClientConn(clientsock)
-        comm.addClient(cc)
+        print('...connected from:', addr)
+        comm.addClient(clientsock)
     serversock.close()
