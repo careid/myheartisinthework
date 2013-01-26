@@ -58,6 +58,7 @@ namespace HeartGame
         protected CommandQueue CQ;
         public LocatableComponent ground;
         public List<PhysicsComponent> dorfs = new List<PhysicsComponent>();
+        public List<LocatableComponent> hospitals = new List<LocatableComponent>();
 
         private float rand()
         {
@@ -98,8 +99,11 @@ namespace HeartGame
                     velocityController.IsTracking = true;
                     velocityController.WASDControl = true;
                 }
+
             }
 
+
+            
 
             Vector3 boundingBoxPos = Camera.Position + new Vector3(0, -15, 0);
             Vector3 boundingBoxExtents = new Vector3(200, 5, 200);
@@ -107,6 +111,10 @@ namespace HeartGame
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
+            LocatableComponent hospital1 = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(new Vector3(-1, -2.1f, -11), new Vector3(2, -0.9f, -8)),
+                                                                                             ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
+            hospitals.Add(hospital1);
+
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
 
@@ -190,13 +198,15 @@ namespace HeartGame
                 }
             }
              */
-
-
-
             
             ComponentManager.Update(gameTime, Camera);
             List<BoundingBox> collideBox = new List<BoundingBox>();
             collideBox.Add(ground.GetBoundingBox());
+
+            foreach (LocatableComponent h in hospitals)
+            {
+                collideBox.Add(h.GetBoundingBox());
+            }
 
             int i = 0;
 

@@ -34,9 +34,9 @@ namespace HeartGame
             effect.Parameters["xTexture"].SetValue(Texture);
 
 
-            DepthStencilState origDepthStencil = graphicsDevice.DepthStencilState;
-            DepthStencilState newDepthStencil = DepthStencilState.DepthRead;
-            graphicsDevice.DepthStencilState = newDepthStencil;
+           // DepthStencilState origDepthStencil = graphicsDevice.DepthStencilState;
+           // DepthStencilState newDepthStencil = DepthStencilState.DepthRead;
+           // graphicsDevice.DepthStencilState = newDepthStencil;
 
 
 
@@ -56,7 +56,7 @@ namespace HeartGame
 
             effect.Parameters["xTexture"].SetValue(originalText);
 
-            graphicsDevice.DepthStencilState = origDepthStencil;
+           // graphicsDevice.DepthStencilState = origDepthStencil;
             graphicsDevice.RasterizerState = r;
 
 

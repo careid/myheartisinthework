@@ -48,7 +48,7 @@ namespace HeartGame
 
             Matrix matrix = Matrix.Identity;
             matrix.Translation = position;
-            testDwarf = new PhysicsComponent(componentManager, "walker", componentManager.RootComponent, matrix,  new Vector3(0.5f, 0.15f, 0.5f), new Vector3(0.0f, -0.25f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
+            testDwarf = new PhysicsComponent(componentManager, "walker", componentManager.RootComponent, matrix,  new Vector3(0.5f, 1.0f, 0.5f), new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f, new Vector3(0, -10, 0));
             testDwarf.OrientWithVelocity = true;
 
             Texture2D dwarfSprites = content.Load<Texture2D>(spritesheet);
@@ -149,7 +149,7 @@ namespace HeartGame
                 dwarfIdleRight, dwarfIdleLeft, dwarfIdleForward, dwarfIdleBack);
 
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.5f, 0.0f);
+            shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);
             BillboardSpriteComponent shadow = new BillboardSpriteComponent(componentManager, "shadow", testDwarf, shadowTransform, content.Load<Texture2D>("shadowcircle"), false);
             shadow.OrientsToCamera = false;
             List<Point> shP = new List<Point>();
