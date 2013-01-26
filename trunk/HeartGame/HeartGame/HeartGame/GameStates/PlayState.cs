@@ -251,6 +251,9 @@ namespace HeartGame
             Drawer2D.DrawStrokedText(SpriteBatch, "Score: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
             SpriteBatch.End();
 
+            Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
+            Game.GraphicsDevice.BlendState = BlendState.Opaque;
+
             base.Render(gameTime);
         }
 
