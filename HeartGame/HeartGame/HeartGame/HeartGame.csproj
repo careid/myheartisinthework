@@ -80,6 +80,7 @@
     <Compile Include="Components\Player.cs" />
     <Compile Include="Components\ComponentManager.cs" />
     <Compile Include="Components\EntityFactory.cs" />
+    <Compile Include="Components\NPC.cs" />
     <Compile Include="Components\Person.cs" />
     <Compile Include="Components\VelocityController.cs" />
     <Compile Include="DeathComponentSpawner.cs" />
