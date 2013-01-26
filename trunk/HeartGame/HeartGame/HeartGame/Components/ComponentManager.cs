@@ -18,7 +18,7 @@ namespace HeartGame
         private static Camera m_camera { get; set; }
         public Mutex AdditionMutex { get; set; }
         public Mutex RemovalMutex { get; set; }
-        public double DrawDistanceSquared = 100;
+        public double DrawDistanceSquared = 1000;
 
         public ComponentManager()
         {
