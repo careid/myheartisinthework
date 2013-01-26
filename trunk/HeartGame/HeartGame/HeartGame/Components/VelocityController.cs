@@ -40,25 +40,30 @@ namespace HeartGame
             {
                 KeyboardState keyboardState = Keyboard.GetState();
 
+                TargetVelocity = Vector3.Zero;
+
                 if (keyboardState.IsKeyDown(Keys.D))
                 {
-                    TargetVelocity = new Vector3(0, 0, -MaxSpeed);
-                }
-                else if (keyboardState.IsKeyDown(Keys.S))
-                {
-                    TargetVelocity = new Vector3(MaxSpeed, 0, 0);
+                    TargetVelocity += new Vector3(0, 0, -1);
                 }
                 else if (keyboardState.IsKeyDown(Keys.A))
                 {
-                    TargetVelocity = new Vector3(0, 0, MaxSpeed);
+                    TargetVelocity += new Vector3(0, 0, 1);
+                }
+                
+                if (keyboardState.IsKeyDown(Keys.S))
+                {
+                    TargetVelocity += new Vector3(1, 0, 0);
                 }
                 else if (keyboardState.IsKeyDown(Keys.W))
                 {
-                    TargetVelocity = new Vector3(-MaxSpeed, 0, 0);
+                    TargetVelocity += new Vector3(-1, 0, 0);
                 }
-                else
+
+                if (TargetVelocity.LengthSquared() > 0)
                 {
-                    TargetVelocity = Vector3.Zero;
+                    TargetVelocity.Normalize();
+                    TargetVelocity *= MaxSpeed;
                 }
             }
 
