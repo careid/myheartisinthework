@@ -24,7 +24,8 @@ namespace HeartGame
         public bool IsSleeping { get; set; }
         private bool m_overrideSleepThisFrame = true;
 
-        public PhysicsComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform, Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping, Vector3 gravity) :
+        public PhysicsComponent(ComponentManager manager, string name, GameComponent parent, Matrix localTransform,
+            Vector3 boundingBoxExtents, Vector3 boundingBoxPos, float mass, float i, float linearDamping, float angularDamping) :
             base(manager, name, parent, localTransform, boundingBoxExtents, boundingBoxPos) 
         {
             Mass = mass;
@@ -33,7 +34,7 @@ namespace HeartGame
             I = i;
             LinearDamping = linearDamping;
             AngularDamping = angularDamping;
-            Gravity = gravity;
+            Gravity = new Vector3(0, -20, 0);
             Restitution = 0.99f;
             Friction = 0.99f;
             OrientWithVelocity = false;

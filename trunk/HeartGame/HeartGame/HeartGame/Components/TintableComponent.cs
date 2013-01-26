@@ -9,7 +9,6 @@ namespace HeartGame
 {
     public class TintableComponent : LocatableComponent
     {
-        private bool firstIteration = true;
         public Color Tint { get; set; }
         public Color TargetTint { get; set; }
         public float TintChangeRate { get; set; }

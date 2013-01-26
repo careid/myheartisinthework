@@ -49,7 +49,6 @@ namespace HeartGame
         public ComponentManager ComponentManager { get; set; }
         public SpriteBatch SpriteBatch { get; set; }
         public Effect Shader { get; set; }
-        public GameComponent dorf;
         public Texture2D SunMap { get; set; }
         public Texture2D AmbientMap { get; set; }
         public Texture2D TorchMap { get; set; }
@@ -59,6 +58,8 @@ namespace HeartGame
         public LocatableComponent ground;
         public List<PhysicsComponent> dorfs = new List<PhysicsComponent>();
         public List<LocatableComponent> hospitals = new List<LocatableComponent>();
+        public Person player;
+        public Drawer2D drawer2D;
 
         private float rand()
         {
@@ -71,6 +72,8 @@ namespace HeartGame
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 0, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
+
+            drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
             /*
             // Networking shit
@@ -88,23 +91,22 @@ namespace HeartGame
 
             for (int i = 0; i < 4; i++)
             {
-                dorf = new Person("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5), ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
-                //EntityFactory.GenerateWalker(new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5), ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
-                ((PhysicsComponent)dorf).Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
-                ((PhysicsComponent)dorf).HasMoved = true;
-                dorfs.Add((PhysicsComponent)dorf);
-
-                if (i == 0)
-                {
-                    VelocityController velocityController = new VelocityController((PhysicsComponent)dorf);
-                    velocityController.IsTracking = true;
-                    velocityController.WASDControl = true;
-                }
-
+                Person npc = new Person("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
+                    ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
+                npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
+                npc.HasMoved = true;
+                dorfs.Add(npc);
             }
 
+            // Player!
+            player = new Person("person", new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5),
+                ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
+            player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
+            player.HasMoved = true;
+            dorfs.Add(player);
+            VelocityController velocityController = new VelocityController(player);
+            velocityController.IsTracking = true;
 
-            
 
             Vector3 boundingBoxPos = Camera.Position + new Vector3(0, -15, 0);
             Vector3 boundingBoxExtents = new Vector3(200, 5, 200);
@@ -177,12 +179,55 @@ namespace HeartGame
 
         public override void Update(GameTime gameTime)
         {
+            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
             if (!Game.IsActive)
             {
                 return;
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            KeyboardState keyboardState = Keyboard.GetState();
+
+            Vector3 TargetVelocity = Vector3.Zero;
+
+            // preliminary defibrillation:
+            if (keyboardState.IsKeyDown(Keys.Space))
+            {
+                foreach (PhysicsComponent d in dorfs)
+                {
+                    if (d != player)
+                    {
+                        Vector3 offset = d.GlobalTransform.Translation - player.GlobalTransform.Translation;
+                        offset.Normalize();
+                        offset *= 40;
+                        offset.Y = 100;
+                        d.ApplyForce(offset, dt);
+                    }
+                }
+            }
+
+            if (keyboardState.IsKeyDown(Keys.D))
+            {
+                TargetVelocity += new Vector3(0, 0, -1);
+            }
+            else if (keyboardState.IsKeyDown(Keys.A))
+            {
+                TargetVelocity += new Vector3(0, 0, 1);
+            }
+
+            if (keyboardState.IsKeyDown(Keys.S))
+            {
+                TargetVelocity += new Vector3(1, 0, 0);
+            }
+            else if (keyboardState.IsKeyDown(Keys.W))
+            {
+                TargetVelocity += new Vector3(-1, 0, 0);
+            }
+
+            player.MoveInDirection(TargetVelocity);
+
+
+            if (keyboardState.IsKeyDown(Keys.Escape))
             {
                 GeometricPrimitive.ExitGame = true;
                 Game.Exit();
@@ -215,28 +260,23 @@ namespace HeartGame
                 collideBox.Add(h.GetBoundingBox());
             }
 
-            int i = 0;
-
             foreach (PhysicsComponent d in dorfs)
             {
                 d.HasMoved = true;
 
-               
-                if(i != 0)
+                if (d != player)
                 {
-                    d.ApplyForce(new Vector3(rand() - 0.5f, 0, rand() - 0.5f) * 10, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                    d.ApplyForce(new Vector3(rand() - 0.5f, 0, rand() - 0.5f) * 10, dt);
                 }
-                    
+
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
-
-                if(i == 0)
-                {
-                    Camera.Position = d.GlobalTransform.Translation + new Vector3(10, 10,  0);
-                    Camera.Target = d.GlobalTransform.Translation;
-                }
-
-                i++;
             }
+
+            float alpha = 0.05f;
+            Camera.Position *= 1.0f - alpha;
+            Camera.Position += alpha * (player.GlobalTransform.Translation + new Vector3(10, 10, 0));
+            Camera.Target = player.GlobalTransform.Translation;
+
             Camera.Update(gameTime);
             base.Update(gameTime);
         }

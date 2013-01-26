@@ -15,15 +15,7 @@ namespace HeartGame
         public float Radius { get; set; }
         public float CameraMoveSpeed { get; set; }
 
-        private float m_thetaOnClick = 0.0f;
-        private float m_phiOnClick = 0.0f;
-        private float m_radiusOnClick = 0.0f;
         private Vector3 m_targetOnClick = Vector3.Zero;
-        private bool m_isLeftPressed = false;
-        private bool m_isRightPressed = false;
-        private Point m_mouseCoordsOnClick;
-        private bool m_hasMoved = false;
-        private bool m_hasZoomed = false;
         public GraphicsDevice Graphics { get; set; }
 
         private int m_lastWheel = 1;

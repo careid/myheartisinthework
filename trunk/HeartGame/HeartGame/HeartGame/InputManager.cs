@@ -34,7 +34,6 @@ namespace HeartGame
         public static event OnMousePressed MousePressedCallback;
         public static event OnMouseReleased MouseReleasedCallback;
         public static event OnMouseClicked MouseClickedCallback;
-        public static event OnMouseScrolled MouseScrolledCallback;
         public static event OnKeyPressed KeyPressedCallback;
         public static event OnKeyReleased KeyReleasedCallback;
 
@@ -47,16 +46,10 @@ namespace HeartGame
             MousePressedCallback += dummymousepressed;
             MouseReleasedCallback += dummymousereleased;
             MouseClickedCallback += dummymouseclicked;
-            MouseScrolledCallback += dummymousescroll;
             KeyPressedCallback += dummykeypressed;
             KeyReleasedCallback += dummykeypressed;
         }
 
-
-        void dummymousescroll(int amount)
-        {
-
-        }
 
         void dummykeypressed(Keys k)
         {
