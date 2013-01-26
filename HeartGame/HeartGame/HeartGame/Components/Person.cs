@@ -123,8 +123,8 @@ namespace HeartGame
                 dwarfIdleRight, dwarfIdleLeft, dwarfIdleForward, dwarfIdleBack);
 
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
-            shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);
-            BillboardSpriteComponent shadow = new BillboardSpriteComponent(componentManager, "shadow", this, shadowTransform, content.Load<Texture2D>("shadowcircle"), false);
+            //shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);
+            ShadowComponent shadow = new ShadowComponent(componentManager, "shadow", this, shadowTransform, content.Load<Texture2D>("shadowcircle"));
             shadow.OrientsToCamera = false;
             List<Point> shP = new List<Point>();
             shP.Add(new Point(0, 0));
