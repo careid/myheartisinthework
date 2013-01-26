@@ -56,6 +56,8 @@ namespace HeartGame
         static System.Net.Sockets.TcpClient TC;
         protected StreamWriter SW;
         protected CommandQueue CQ;
+        public LocatableComponent ground;
+        public List<PhysicsComponent> dorfs = new List<PhysicsComponent>();
 
         private float rand()
         {
@@ -65,13 +67,15 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
-            Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 0, 0), new Vector3(-10, 0, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
+            Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 0, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
 
+            /*
             // Networking shit
             TC = new System.Net.Sockets.TcpClient();
-            TC.Connect("127.0.0.1", 1020);
+            TC.Connect("172.24.8.194", 3001);
+
             SW = new StreamWriter(TC.GetStream());
             //request dwarf count from server
             SW.WriteLine("add dwarf");
@@ -79,12 +83,30 @@ namespace HeartGame
             CQ = new CommandQueue();
             Thread t = new Thread(new ParameterizedThreadStart(runListener));
             t.Start(CQ);
+            */
 
-
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 4; i++)
             {
                 dorf = EntityFactory.GenerateWalker(new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5), ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
+                ((PhysicsComponent)dorf).Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
+                ((PhysicsComponent)dorf).HasMoved = true;
+                dorfs.Add((PhysicsComponent)dorf);
+
+                if (i == 0)
+                {
+                    VelocityController velocityController = new VelocityController((PhysicsComponent)dorf);
+                    velocityController.IsTracking = true;
+                    velocityController.WASDControl = true;
+                }
             }
+
+
+            Vector3 boundingBoxPos = Camera.Position + new Vector3(0, -15, 0);
+            Vector3 boundingBoxExtents = new Vector3(200, 5, 200);
+            Vector3 boundingBoxMin = boundingBoxPos - boundingBoxExtents * 0.5f;
+            Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
+
+            ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
 
@@ -115,8 +137,8 @@ namespace HeartGame
 
             Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-
-            Shader.Parameters["xFogColor"].SetValue(new Vector3(0.32f , 0.58f , 0.9f));
+   
+            Shader.Parameters["xFogColor"].SetValue(new Vector3(0, 0, 0));
             Shader.Parameters["Clipping"].SetValue(false);
             Shader.Parameters["xView"].SetValue(Camera.ViewMatrix);
 
@@ -151,6 +173,7 @@ namespace HeartGame
                 Game.Exit();
             }
 
+            /*
             // add dwarfs for kicks and gigs
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {
@@ -166,13 +189,38 @@ namespace HeartGame
                     dorf = EntityFactory.GenerateWalker(new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5), ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
                 }
             }
+             */
 
-            Camera.Update(gameTime);
+
+
+            
             ComponentManager.Update(gameTime, Camera);
+            List<BoundingBox> collideBox = new List<BoundingBox>();
+            collideBox.Add(ground.GetBoundingBox());
 
-            PhysicsComponent p = (PhysicsComponent)dorf;
+            int i = 0;
 
+            foreach (PhysicsComponent d in dorfs)
+            {
+                d.HasMoved = true;
 
+               
+                if(i != 0)
+                {
+                    d.ApplyForce(new Vector3(rand() - 0.5f, 0, rand() - 0.5f) * 10, (float)gameTime.ElapsedGameTime.TotalSeconds);
+                }
+                    
+                d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                if(i == 0)
+                {
+                    Camera.Position = d.GlobalTransform.Translation + new Vector3(10, 10,  0);
+                    Camera.Target = d.GlobalTransform.Translation;
+                }
+
+                i++;
+            }
+            Camera.Update(gameTime);
             base.Update(gameTime);
         }
     }

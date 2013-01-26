@@ -29,8 +29,8 @@ float xWindForce;
 float3 xWindDirection;
 float xTimeOfDay;
 
-float xFogStart = 50;
-float xFogEnd = 80;
+float xFogStart = 100;
+float xFogEnd = 200;
 float3 xFogColor = float3(0.5f, 0.5f, 0.5f);
 float3 xLightPos = float3(0, 0, 0);
 float4 xLightColor = float4(0, 0, 0, 0);
