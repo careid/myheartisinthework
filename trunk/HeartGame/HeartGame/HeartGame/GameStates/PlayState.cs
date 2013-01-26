@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using System.IO;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -18,6 +20,9 @@ namespace HeartGame
         public Texture2D SunMap { get; set; }
         public Texture2D AmbientMap { get; set; }
         public Texture2D TorchMap { get; set; }
+        static System.Net.Sockets.TcpClient TC;
+        protected StreamReader SR;
+        protected StreamWriter SW;
 
         private float rand()
         {
@@ -31,7 +36,25 @@ namespace HeartGame
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
 
-            for (int i = 0; i < 100; i++)
+            // Networking shit
+            TC = new System.Net.Sockets.TcpClient();
+            TC.Connect("127.0.0.1", 1007);
+            SR = new StreamReader(TC.GetStream());
+            SW = new StreamWriter(TC.GetStream());
+            //request dwarf count from server
+            SW.WriteLine("how many dwarfs?");
+            SW.Flush();
+            //receive reply
+            string line = SR.ReadLine();
+            int dwarfCount;
+            if (!int.TryParse(line, out dwarfCount))
+            {
+                Console.WriteLine("we failed to parse server response");
+                dwarfCount = 100;
+            }
+
+
+            for (int i = 0; i < dwarfCount; i++)
             {
                 dorf = EntityFactory.GenerateWalker(new Vector3(rand() * 10 - 5, rand() * 10 - 5, rand() * 10 - 5), ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
             }
@@ -42,8 +65,6 @@ namespace HeartGame
             SunMap = Game.Content.Load<Texture2D>("sungradient");
             AmbientMap = Game.Content.Load<Texture2D>("ambientgradient");
             TorchMap = Game.Content.Load<Texture2D>("torchgradient");
- 
-
         }
 
         public override void OnEnter()
