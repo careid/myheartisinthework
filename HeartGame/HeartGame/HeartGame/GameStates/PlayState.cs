@@ -68,7 +68,7 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = true; // DO NOT CHANGE, offline mode is now detected when server connection is refused
+            online = false; // DO NOT CHANGE, offline mode is now detected when server connection is refused
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -284,6 +284,9 @@ namespace HeartGame
                     offset.Y = 10;
                     offset *= 1.2f*owner.DefibCharge;
                     //d.Velocity = offset;
+                    
+                    Vector3 oldTranslation = d.LocalTransform.Translation;
+                    d.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y + 0.25f, oldTranslation.Z));
 
                     if (d is NPC)
                     {
@@ -292,7 +295,7 @@ namespace HeartGame
 
                         if (npc.State == "dead")
                         {
-                            Vector3 oldTranslation = npc.image.LocalTransform.Translation;
+                            oldTranslation = npc.image.LocalTransform.Translation;
                             npc.image.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y + 0.25f, oldTranslation.Z));
                         }
                         npc.State = "walk";
