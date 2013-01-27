@@ -266,7 +266,7 @@ namespace HeartGame
                     {
                         NPC npc = (NPC)d;
                         npc.WalkTimer.Reset(owner.DefibCharge * npc.MaxWalkTime);
-                        npc.State = NPC.NPCState.Walking;
+                        npc.State = "walk";
                     }
 
                     //client.Write(encodePerson(d, Event.NOP.ToString()));

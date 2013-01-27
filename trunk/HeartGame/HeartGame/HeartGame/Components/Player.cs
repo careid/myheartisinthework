@@ -48,8 +48,10 @@ namespace HeartGame
             lowIdle.Add(new Point(2, 1));
             lowIdle.Add(new Point(3, 1));
 
-            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_low_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
-                        new Animation(graphics, sprites, tag + "_low_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            OrientedAnimation idleLow = new OrientedAnimation(new Animation(graphics, sprites, tag + "_idle_low_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
+                        new Animation(graphics, sprites, tag + "_idle_low_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            image.AddOrientedAnimation(idleLow);
+            AnimationState["idle_low"] = idleLow.Name;
 
             List<Point> lowWalk = new List<Point>();
             lowWalk.Add(new Point(0, 2));
@@ -57,8 +59,10 @@ namespace HeartGame
             lowWalk.Add(new Point(2, 2));
             lowWalk.Add(new Point(3, 2));
 
-            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_low_left", 32, 32, lowWalk, true, Color.White, 10.0f, 0.8f, 1, false),
-                        new Animation(graphics, sprites, tag + "_low_right", 32, 32, lowWalk, true, Color.White, 10.0f, 0.8f, 1, true));
+            OrientedAnimation walkLow = new OrientedAnimation(new Animation(graphics, sprites, tag + "_walk_low_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
+                        new Animation(graphics, sprites, tag + "_walk_low_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            image.AddOrientedAnimation(walkLow);
+            AnimationState["walk_low"] = walkLow.Name;
 
             List<Point> highIdle = new List<Point>();
             highIdle.Add(new Point(0, 3));
@@ -66,8 +70,10 @@ namespace HeartGame
             highIdle.Add(new Point(2, 3));
             highIdle.Add(new Point(3, 3));
 
-            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_high_left", 32, 32, highIdle, true, Color.White, 10.0f, 0.8f, 1, false),
-                        new Animation(graphics, sprites, tag + "_high_right", 32, 32, highIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            OrientedAnimation idleHigh = new OrientedAnimation(new Animation(graphics, sprites, tag + "_idle_high_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
+                        new Animation(graphics, sprites, tag + "_idle_high_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            image.AddOrientedAnimation(idleHigh);
+            AnimationState["idle_high"] = idleHigh.Name;
 
             List<Point> highWalk = new List<Point>();
             highWalk.Add(new Point(0, 4));
@@ -75,9 +81,10 @@ namespace HeartGame
             highWalk.Add(new Point(2, 4));
             highWalk.Add(new Point(3, 4));
 
-            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_high_left", 32, 32, highWalk, true, Color.White, 10.0f, 0.8f, 1, false),
-                        new Animation(graphics, sprites, tag + "_high_right", 32, 32, highWalk, true, Color.White, 10.0f, 0.8f, 1, true));
-
+            OrientedAnimation walkHigh = new OrientedAnimation(new Animation(graphics, sprites, tag + "_walk_high_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
+                        new Animation(graphics, sprites, tag + "_walk_high_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            image.AddOrientedAnimation(walkHigh);
+            AnimationState["walk_high"] = walkHigh.Name;
         }
 
         public override void  Update(GameTime gameTime, Camera camera)

@@ -119,6 +119,7 @@ namespace HeartGame
             if (anim != null)
             {
                 CurrentOrientedAnimation = anim;
+                CurrentAnimation = anim.GetAnimation();
             }
         }
 
