@@ -275,7 +275,8 @@ namespace HeartGame
                         npc.State = "walk";
                     }
 
-                    //client.Write(encodePerson(d, Event.NOP.ToString()));
+                    if (owner == player)
+                        client.Write(encodePerson(d, Event.NOP.ToString()));
                 }
             }
         }
