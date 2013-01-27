@@ -95,13 +95,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="hospital.png">
-      <Name>hospital</Name>
-      <Importer>TextureImporter</Importer>
-      <Processor>TextureProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="Default.spritefont">
       <Name>Default</Name>
       <Importer>FontDescriptionImporter</Importer>
@@ -180,8 +173,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="hospitalblue.png">
-      <Name>hospitalblue</Name>
+    <Compile Include="sparkthing.png">
+      <Name>sparkthing</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="hospital.png">
+      <Name>hospital</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
