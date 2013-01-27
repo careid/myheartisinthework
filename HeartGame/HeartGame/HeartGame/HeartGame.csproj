@@ -61,10 +61,10 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>587D21DCDE72577DCCE19D076DA79C797055147A</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>5797AA7276C007B505E4B1F97BFB10D60ACF47FF</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>HeartGame_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>HeartGame_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -190,6 +190,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="HeartGame_1_TemporaryKey.pfx" />
     <None Include="HeartGame_TemporaryKey.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

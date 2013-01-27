@@ -131,7 +131,7 @@ namespace HeartGame
                 {
                     State = "dead";
                     string[] deathSounds = { "manDying1", "manDying2"};
-                    SoundManager.PlaySound(deathSounds[RandomHelper.random.Next(0, 1)], GlobalTransform.Translation);
+                    SoundManager.PlaySound(deathSounds[RandomHelper.random.Next(0, 2)], GlobalTransform.Translation);
                 }
             }
             else if (State.Equals("walk"))
