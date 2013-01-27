@@ -14,16 +14,16 @@ namespace HeartGame
 {
     public class Hospital
     {
-        public Player Owner { get; set; }
         public LocatableComponent Component { get; set; }
+        public float Score { get; set; }
 
-        public Hospital(Player owner,  Vector3 position, Vector3 size, ComponentManager componentManager,
+        public Hospital(Vector3 position, Vector3 size, ComponentManager componentManager,
                                                   ContentManager content,
                                                   GraphicsDevice graphics,
                                                   string name)
         {
-            Owner = owner;
-            Component = EntityFactory.GenerateBuilding(position, size, componentManager, content, graphics, name);
+            Score = 0.0f;
+           Component = EntityFactory.GenerateBuilding(position, size, componentManager, content, graphics, name);
         }
     }
 }
