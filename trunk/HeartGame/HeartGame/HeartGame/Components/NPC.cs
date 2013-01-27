@@ -38,46 +38,6 @@ namespace HeartGame
             Target = Vector3.Zero;
             OrientWithVelocity = true;
             Texture2D sprites = content.Load<Texture2D>(spritesheet);
-
-            List<Point> offsets = new List<Point>();
-            offsets.Add(new Point(0, 0));
-
-            Point offset = offsets[RandomHelper.random.Next(0, offsets.Count)];
-
-            List<Point> rightFrames = new List<Point>();
-            rightFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
-            rightFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
-            rightFrames.Add(new Point(3 + offset.X, 0 + offset.Y));
-            rightFrames.Add(new Point(4 + offset.X, 0 + offset.Y));
-
-            Animation walkRight = new Animation(graphics, sprites, name + "_walk_right", 32, 32, rightFrames, true, Color.White, 10.0f, 0.8f, 1, true);
-
-            List<Point> leftFrames = new List<Point>();
-            leftFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
-            leftFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
-            leftFrames.Add(new Point(3 + offset.X, 0 + offset.Y));
-            leftFrames.Add(new Point(4 + offset.X, 0 + offset.Y));
-
-            Animation walkLeft = new Animation(graphics, sprites, name + "_walk_left", 32, 32, leftFrames, true, Color.White, 10.0f, 0.8f, 1, false);
-
-            List<Point> rightFramesIdle = new List<Point>();
-            rightFramesIdle.Add(new Point(0 + offset.X, 0 + offset.Y));
-
-            Animation idleRight = new Animation(graphics, sprites, name + "_idle_right", 32, 32, rightFramesIdle, true, Color.White, 2.0f, 0.8f, 1, true);
-
-            List<Point> leftFramesIdle = new List<Point>();
-            leftFramesIdle.Add(new Point(0 + offset.X, 0 + offset.Y));
-
-            Animation idleLeft = new Animation(graphics, sprites, name + "_idle_left", 32, 32, leftFramesIdle, true, Color.White, 2.0f, 0.8f, 1, false);
-
-            walkLeft.Play();
-            walkRight.Play();
-            idleLeft.Play();
-            idleRight.Play();
-
-            Matrix spriteMatrix = Matrix.Identity;
-            // spriteMatrix.Translation = new Vector3(0, 0.1f, 0);
-            OrientedAnimation testSprite = new OrientedAnimation(componentManager, "testsprite", this, spriteMatrix, sprites, walkRight, walkLeft, idleRight, idleLeft);
         }
 
         public override void Update(GameTime gameTime, Camera camera)

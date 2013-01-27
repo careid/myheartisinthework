@@ -77,8 +77,10 @@
     <Compile Include="Components\BatchBillboard.cs" />
     <Compile Include="Components\BillboardList.cs" />
     <Compile Include="Components\BillboardSpriteComponent.cs" />
-    <Compile Include="Components\Hospital.cs" />    <Compile Include="Components\Fatter.cs" />
-    <Compile Include="Components\Older.cs" />    <Compile Include="Components\Player.cs" />
+    <Compile Include="Components\Hospital.cs" />
+    <Compile Include="Components\Fatter.cs" />
+    <Compile Include="Components\Older.cs" />
+    <Compile Include="Components\Player.cs" />
     <Compile Include="Components\ComponentManager.cs" />
     <Compile Include="Components\EntityFactory.cs" />
     <Compile Include="Components\NPC.cs" />
