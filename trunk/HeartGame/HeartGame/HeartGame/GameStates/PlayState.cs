@@ -388,12 +388,14 @@ namespace HeartGame
                 float vx = (float)Convert.ToDouble(toks[6]);
                 float vy = (float)Convert.ToDouble(toks[7]);
                 float vz = (float)Convert.ToDouble(toks[8]);
+                int allegiance = (int)Convert.ToInt32(toks[9]);
                 foreach (Person p in ComponentManager.FilterComponentsWithTag(toks[1], dorfs))
                 {
                     p.PerformAction((Event)Enum.Parse(typeof(Event), action, true));
                     p.LocalTransform =
                         Matrix.CreateTranslation(new Vector3(x, y, z));
                     p.Velocity = new Vector3(vx, vy, vz);
+                    p.allegiance = hospitals[allegiance];
                     found = true;
                 }
                 if (!found)
@@ -424,6 +426,15 @@ namespace HeartGame
 
         protected string encodePerson(Person p, string action)
         {
+            int allegiance = 0;
+            if (hospitals[0] == p.allegiance)
+            {
+                allegiance = 0;
+            }
+            else
+            {
+                allegiance = 1;
+            }
             string[] info =
             {"general", 
                 p.tag, 
@@ -433,7 +444,8 @@ namespace HeartGame
                 p.LocalTransform.Translation.Z.ToString(),
                 p.Velocity.X.ToString(),
                 p.Velocity.Y.ToString(),
-                p.Velocity.Z.ToString()};
+                p.Velocity.Z.ToString(),
+                allegiance.ToString()};
             string msg = String.Join(",", info);
             return msg;
         }
