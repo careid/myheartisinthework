@@ -300,9 +300,13 @@ namespace HeartGame
                     {
                         offset = new Vector3(0);
                     }
+
                     offset.Y = 10;
                     offset *= 1.2f*owner.DefibCharge;
                     //d.Velocity = offset;
+
+                    Vector3 oldTranslation = d.LocalTransform.Translation;
+                    d.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y + 0.25f, oldTranslation.Z));
 
                     if (d is NPC)
                     {
