@@ -159,6 +159,7 @@ float2 TextureCoords: TEXCOORD1;
 float4 clipDistances     : TEXCOORD5;
 float Fog : TEXCOORD7;	
 float4 TextureBounds: TEXCOORD6;
+float3 Position3D    : TEXCOORD2;
 
 };
 
@@ -175,50 +176,17 @@ TVertexToPixel TexturedVS( float4 inPos : POSITION,  float2 inTexCoords: TEXCOOR
 
 
     Output.Position = mul(inPos, preWorldViewProjection);
+	Output.Position3D = mul(inPos, xWorld);
     Output.TextureCoords = inTexCoords;
-    Output.clipDistances = dot(mul(inPos, xWorld), ClipPlane0); //MSS - Water Refactor added
+    Output.clipDistances = dot(mul(inPos, xWorld), ClipPlane0); 
 	Output.Color = inColor * xTint;
-	
-	
-	if(xEnableLighting)
-	{
-		float4 pos = mul(inPos, xWorld);
-		float dist = (pow(pos.x - xLightPos.x, 2) + pow(pos.y - xLightPos.y, 2) + pow(pos.z - xLightPos.z, 2) + 0.001);
-		Output.Color = saturate(Output.Color + xLightColor / dist);
-	}
-	
+
 
 	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
 	Output.TextureBounds = inTexSource;
     return Output;
 }
 
-
-TVertexToPixel TexturedVSRamp( float4 inPos : POSITION,  float2 inTexCoords: TEXCOORD0, float4 inColor : COLOR0, float4 inTexSource : TEXCOORD1)
-{
-    TVertexToPixel Output = (TVertexToPixel)0;
-    float4x4 preViewProjection = mul (xView, xProjection);
-    float4x4 preWorldViewProjection = mul (xWorld, preViewProjection);
-
-
-    Output.Position = mul(inPos, preWorldViewProjection);
-    Output.TextureCoords = inTexCoords;
-    Output.clipDistances = dot(mul(inPos, xWorld), ClipPlane0); //MSS - Water Refactor added
-	Output.Color = inColor * xTint;
-	
-	
-	if(xEnableLighting)
-	{
-		float4 pos = mul(inPos, xWorld);
-		float dist = (pow(pos.x - xLightPos.x, 2) + pow(pos.y - xLightPos.y, 2) + pow(pos.z - xLightPos.z, 2) + 0.001);
-		Output.Color = saturate(Output.Color + xLightColor / dist);
-	}
-	
-
-	Output.Fog = saturate((Output.Position.z - xFogStart) / (xFogEnd - xFogStart));
-	Output.TextureBounds = inTexSource;
-    return Output;
-}
 
 float2 ClampTexture(float2 uv, float4 bounds)
 {	
@@ -230,7 +198,8 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 {
     TPixelToFrame Output = (TPixelToFrame)0;
 	
-	Output.Color = PSIn.Color;
+    Output.Color = PSIn.Color;
+
     //Output.Color =  tex2D(SunSampler, float2(PSIn.Color.r * (1.0f - xTimeOfDay), 0.5f));
 	//Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b + (sin(xTime * 10.0f) + 1.0f) * 0.01f * PSIn.Color.b, 0.5f));
 	//saturate(Output.Color.rgb);
@@ -240,37 +209,18 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
 
-	Output.Color.rgba *= texColor;
 
-	
-	if(SelfIllumination)
-		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
-	
-
-	Output.Color.rgba = float4(lerp(Output.Color.rgb, xFogColor, PSIn.Fog) * Output.Color.a, Output.Color.a);
-
-    if (Clipping)  clip(PSIn.clipDistances);  //MSS - Water Refactor added
-
-
-    return Output;
-}
-
-TPixelToFrame TexturedPSRamp(TVertexToPixel PSIn)
-{
-    TPixelToFrame Output = (TPixelToFrame)0;
-	
-    Output.Color =  tex2D(SunSampler, float2(PSIn.Color.r * (1.0f - xTimeOfDay), 0.5f));
-	Output.Color.rgb += tex2D(TorchSampler, float2(PSIn.Color.b + (sin(xTime * 10.0f) + 1.0f) * 0.01f * PSIn.Color.b, 0.5f));
-	saturate(Output.Color.rgb);
-
-	Output.Color.rgb *=  tex2D(AmbientSampler, float2(PSIn.Color.g, 0.5f));
-    
-	float4 texColor = tex2D(TextureSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
-	float4 illumColor = tex2D(IllumSampler, ClampTexture(PSIn.TextureCoords, PSIn.TextureBounds));
+	if(xEnableLighting)
+	{
+		float3 pos = PSIn.Position3D;
+		float dist = (pow(pos.x - xLightPos.x, 2) + pow(pos.y - xLightPos.y, 2) + pow(pos.z - xLightPos.z, 2) + 0.001);
+		Output.Color.rgb = saturate(Output.Color * (1.0f - xLightColor.b * 0.8f) + xLightColor/ dist);
+	}
 
 	Output.Color.rgba *= texColor;
 
-	
+
+
 	if(SelfIllumination)
 		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
 	
