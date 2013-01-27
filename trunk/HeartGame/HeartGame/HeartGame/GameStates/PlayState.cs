@@ -435,6 +435,11 @@ namespace HeartGame
 
         protected string encodePerson(Person p, string action)
         {
+            return encodePerson(p, action, p.Velocity);
+        }
+
+        protected string encodePerson(Person p, string action, Vector3 vel)
+        {
             int allegiance = 0;
             if (hospitals[0] == p.allegiance)
             {
@@ -451,9 +456,9 @@ namespace HeartGame
                 p.LocalTransform.Translation.X.ToString(),
                 p.LocalTransform.Translation.Y.ToString(),
                 p.LocalTransform.Translation.Z.ToString(),
-                p.Velocity.X.ToString(),
-                p.Velocity.Y.ToString(),
-                p.Velocity.Z.ToString(),
+                vel.X.ToString(),
+                vel.Y.ToString(),
+                vel.Z.ToString(),
                 allegiance.ToString()};
             string msg = String.Join(",", info);
             return msg;
