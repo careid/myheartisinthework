@@ -140,11 +140,11 @@ namespace HeartGame
 
             float angle = (float)Math.Atan2(yComponent, xComponent);
 
-            if (angle > -MathHelper.PiOver2 && angle < MathHelper.PiOver2)
+            if (angle > -MathHelper.PiOver2 + 0.01f && angle < MathHelper.PiOver2 - 0.01f)
             {
                 CurrentOrientedAnimation.SetLeft();
             }
-            else
+            else if (angle < -MathHelper.PiOver2 - 0.01f || angle > MathHelper.PiOver2 + 0.01f)
             {
                 CurrentOrientedAnimation.SetRight();
             }
