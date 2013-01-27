@@ -41,6 +41,7 @@ namespace HeartGame
             this.team = null;
             Score = 0.0f;
             AnimationState = new Dictionary<string,string>();
+            IsSleeping = false;
 
             List<Point> offsets = new List<Point>();
             offsets.Add(new Point(0, 0));

@@ -151,7 +151,6 @@ namespace HeartGame
                 npc.Team = hospitals[al];
                 npc.Velocity = new Vector3(0f, 0f, 0f);
                 npc.HasMoved = true;
-                npc.IsSleeping = false;
                 dorfs.Add(npc);
             }
 
