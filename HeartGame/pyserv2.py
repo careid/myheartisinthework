@@ -17,7 +17,7 @@ PORT = 3000
 
 class ClientConn(threading.Thread):
     def __init__(self, name, clientsock):
-        super(self, type(self)).__init__(name="Client-{}".format(name))
+        super(type(self), self).__init__(name="Client-{}".format(name))
         self.name = name
         self.sock = clientsock
 
