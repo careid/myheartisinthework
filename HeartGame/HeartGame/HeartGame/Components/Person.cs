@@ -24,10 +24,8 @@ namespace HeartGame
         public float Score { get; set; }
         public VelocityController velocityController;
         public static float maxSpeed = 3.0f;
-        public AnimationPair idle;
-        public AnimationPair walk;
         public string tag;
-        public OrientedAnimation orienter;
+        public OrientableBillboardSpriteComponent image;
         public Person(string _tag, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
@@ -82,9 +80,9 @@ namespace HeartGame
             idleRight.Play();
 
             Matrix spriteMatrix = Matrix.Identity;
-            idle = new AnimationPair(idleLeft, idleRight);
-            walk = new AnimationPair(walkLeft, walkRight);
-            orienter = new OrientedAnimation(componentManager, "idlesprite", this, spriteMatrix, sprites, walkRight, walkLeft);
+            image = new OrientableBillboardSpriteComponent(componentManager, "idlesprite", this, spriteMatrix, sprites);
+            image.AddOrientedAnimation(idleLeft, idleRight);
+            image.AddOrientedAnimation(walkLeft, walkRight);
             
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             //shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);

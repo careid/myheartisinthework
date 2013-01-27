@@ -23,12 +23,6 @@ namespace HeartGame
         }
         public delegate void defibCallbackType(Player owner);
         public static defibCallbackType defib;
-        public AnimationPair walkLow;
-        public AnimationPair walkHigh;
-        public AnimationPair idleLow;
-        public AnimationPair idleHigh;
-        public Dictionary<ChargeState, AnimationPair> IdleDictionary;
-        public Dictionary<ChargeState, AnimationPair> WalkDictionary;
         public const float MAX_DEFIB_CHARGE = 1.0f;
         public const float HIGH_DEFIB_CHARGE = 0.4f;
         public float DefibCharge { get; set; }
@@ -47,11 +41,6 @@ namespace HeartGame
             DefibChargeRate = 0.5f;
 
             Texture2D sprites = content.Load<Texture2D>(spritesheet);
-
-            IdleDictionary = new Dictionary<ChargeState, AnimationPair>();
-            IdleDictionary[ChargeState.NO_CHARGE] = idle;
-            WalkDictionary = new Dictionary<ChargeState, AnimationPair>();
-            WalkDictionary[ChargeState.NO_CHARGE] = walk;
             
             List<Point> lowIdle = new List<Point>();
             lowIdle.Add(new Point(0, 1));
@@ -59,9 +48,8 @@ namespace HeartGame
             lowIdle.Add(new Point(2, 1));
             lowIdle.Add(new Point(3, 1));
 
-            idleLow = new AnimationPair(new Animation(graphics, sprites, tag + "_low_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
+            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_low_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
                         new Animation(graphics, sprites, tag + "_low_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
-            IdleDictionary[ChargeState.LOW_CHARGE] = idleLow;
 
             List<Point> lowWalk = new List<Point>();
             lowWalk.Add(new Point(0, 2));
@@ -69,9 +57,8 @@ namespace HeartGame
             lowWalk.Add(new Point(2, 2));
             lowWalk.Add(new Point(3, 2));
 
-            walkLow = new AnimationPair(new Animation(graphics, sprites, tag + "_low_left", 32, 32, lowWalk, true, Color.White, 10.0f, 0.8f, 1, false),
+            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_low_left", 32, 32, lowWalk, true, Color.White, 10.0f, 0.8f, 1, false),
                         new Animation(graphics, sprites, tag + "_low_right", 32, 32, lowWalk, true, Color.White, 10.0f, 0.8f, 1, true));
-            WalkDictionary[ChargeState.LOW_CHARGE] = walkLow;
 
             List<Point> highIdle = new List<Point>();
             highIdle.Add(new Point(0, 3));
@@ -79,10 +66,8 @@ namespace HeartGame
             highIdle.Add(new Point(2, 3));
             highIdle.Add(new Point(3, 3));
 
-            idleHigh = new AnimationPair(new Animation(graphics, sprites, tag + "_high_left", 32, 32, highIdle, true, Color.White, 10.0f, 0.8f, 1, false),
+            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_high_left", 32, 32, highIdle, true, Color.White, 10.0f, 0.8f, 1, false),
                         new Animation(graphics, sprites, tag + "_high_right", 32, 32, highIdle, true, Color.White, 10.0f, 0.8f, 1, true));
-            IdleDictionary[ChargeState.HIGH_CHARGE] = idleHigh;
-            IdleDictionary[ChargeState.MAX_CHARGE] = idleHigh;
 
             List<Point> highWalk = new List<Point>();
             highWalk.Add(new Point(0, 4));
@@ -90,10 +75,8 @@ namespace HeartGame
             highWalk.Add(new Point(2, 4));
             highWalk.Add(new Point(3, 4));
 
-            walkHigh = new AnimationPair(new Animation(graphics, sprites, tag + "_high_left", 32, 32, highWalk, true, Color.White, 10.0f, 0.8f, 1, false),
+            image.AddOrientedAnimation(new Animation(graphics, sprites, tag + "_high_left", 32, 32, highWalk, true, Color.White, 10.0f, 0.8f, 1, false),
                         new Animation(graphics, sprites, tag + "_high_right", 32, 32, highWalk, true, Color.White, 10.0f, 0.8f, 1, true));
-            WalkDictionary[ChargeState.HIGH_CHARGE] = walkHigh;
-            WalkDictionary[ChargeState.MAX_CHARGE] = walkHigh;
 
         }
 
@@ -124,14 +107,6 @@ namespace HeartGame
             {
                 DefibCharge = MAX_DEFIB_CHARGE;
                 currentCharge = ChargeState.MAX_CHARGE;
-            }
-            if (Velocity.Length() < 1.0f)
-            {
-                orienter.Transform(IdleDictionary[currentCharge]);
-            }
-            else
-            {
-                orienter.Transform(WalkDictionary[currentCharge]);
             }
         }
 
