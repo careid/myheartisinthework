@@ -330,7 +330,7 @@ namespace HeartGame
 
         public override void Render(GameTime gameTime)
         {
-
+            Game.GraphicsDevice.Clear(Color.CornflowerBlue);
             Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
             if (player.DefibCharge > 0.01f)
@@ -607,12 +607,14 @@ namespace HeartGame
                 d.HasMoved = true;
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                if (d.GlobalTransform.Translation.X > MapWidth / 2 || d.GlobalTransform.Translation.X < -MapWidth / 2 || d.GlobalTransform.Translation.Z > MapHeight /2 || d.GlobalTransform.Translation.Z < -MapWidth/2)
+                if (d.GlobalTransform.Translation.X > MapWidth / 2 || d.GlobalTransform.Translation.X < -MapWidth / 2 || d.GlobalTransform.Translation.Z > MapHeight /2 || d.GlobalTransform.Translation.Z < -MapWidth/2 || d.GlobalTransform.Translation.Y < 0)
                 {
                     float x = Math.Max(Math.Min(d.GlobalTransform.Translation.X, MapWidth / 2), -MapWidth / 2);
                     float z = Math.Max(Math.Min(d.GlobalTransform.Translation.Z, MapHeight / 2), -MapHeight / 2);
+                    float y = Math.Max(d.GlobalTransform.Translation.Y, 0);
                     d.LocalTransform 
                         = Matrix.CreateTranslation(new Vector3(x, d.GlobalTransform.Translation.Y, z));
+                    d.Velocity *= -0.1f;
                 }
             }
 
