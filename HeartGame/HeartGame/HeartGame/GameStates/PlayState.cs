@@ -148,7 +148,7 @@ namespace HeartGame
             for (int i = 0; i < 4; i++)
             {
                 NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                    ComponentManager, Game.Content, Game.GraphicsDevice, "fatwalk");
+                    ComponentManager, Game.Content, Game.GraphicsDevice, "oldwalk");
                 npc.velocityController.MaxSpeed = 1;
                 npc.Target = new Vector3(-1, -2.1f, -11);
                 npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
@@ -172,15 +172,10 @@ namespace HeartGame
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
-            LocatableComponent hospital1 
-                 = (LocatableComponent)EntityFactory
-                .GenerateBlankBox(new BoundingBox(new Vector3(-1, 0, -11),
-                                                  new Vector3(3, 2.0f, -8)),
-                                                  ComponentManager,
-                                                  Game.Content,
-                                                  Game.GraphicsDevice, 
-                                                  "hospital");
+            LocatableComponent hospital1 = EntityFactory.GenerateBuilding(new Vector3(-1, 0, -11), new Vector3(4,2,3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
+            LocatableComponent hospital2 = EntityFactory.GenerateBuilding(new Vector3(5, 0, 5), new Vector3(2,7,2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
             hospitals.Add(hospital1);
+            hospitals.Add(hospital2);
 
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
