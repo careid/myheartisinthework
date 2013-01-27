@@ -87,6 +87,8 @@ namespace HeartGame
             Animation monitorAnimation = new Animation(graphics, heartsprite, "mon", 32, 10, monP, false, Color.White, 1, 0.7f, 0.2f, false);
             monitor.AddAnimation(monitorAnimation);
             monitorAnimation.Play();
+
+            image.LocalTransform = Matrix.CreateTranslation(new Vector3(0, -0.25f, 0));
         }
 
         public void SetTag(string tag)
@@ -133,9 +135,6 @@ namespace HeartGame
                     State = "dying";
                     DieTimer.Reset(MaxDieTime);
                     image.GetOrientedAnimation(AnimationState["dying"]).Reset();
-
-                    Vector3 oldTranslation = image.LocalTransform.Translation;
-                    image.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y-0.25f, oldTranslation.Z));
                 }
             }
             SetAnimation();
