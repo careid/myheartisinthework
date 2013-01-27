@@ -21,11 +21,11 @@ namespace HeartGame
         public Hospital(Vector3 position, Vector3 size, ComponentManager componentManager,
                                                   ContentManager content,
                                                   GraphicsDevice graphics,
-                                                  string name, Color color)
+                                                  string name, Color color, Point side)
         {
             Color = color;
             Score = 0.0f;
-            Component = EntityFactory.GenerateBuilding(position, size, componentManager, content, graphics, name);
+            Component = EntityFactory.GenerateBuilding(position, size, componentManager, content, graphics, name, side);
         }
     }
 }
