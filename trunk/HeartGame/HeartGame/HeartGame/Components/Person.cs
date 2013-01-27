@@ -14,12 +14,6 @@ namespace HeartGame
 {
     public class Person : PhysicsComponent
     {
-        public enum Movement
-        {
-            Walking,
-            Idle
-        }
-
         public Hospital team;
         public float Score { get; set; }
         public VelocityController velocityController;
