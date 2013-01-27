@@ -273,7 +273,7 @@ namespace HeartGame
             notification = new Notification(text, time);
             if (wordsDict.ContainsKey(text))
             {
-                SoundManager.PlaySound(wordsDict[text], team.Component.LocalTransform.Translation);
+                SoundManager.Play2DSound(wordsDict[text]);
             }
         }
 
