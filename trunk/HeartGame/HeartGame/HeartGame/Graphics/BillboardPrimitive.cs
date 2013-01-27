@@ -46,9 +46,12 @@ namespace HeartGame
 
                 List<Vector2> baseCoords = new List<Vector2>();
 
+                //upper left triangle
                 baseCoords.Add(textureTopLeft);
                 baseCoords.Add(textureBottomLeft);
                 baseCoords.Add(textureTopRight);
+
+                //lower right triangle
                 baseCoords.Add(textureBottomLeft);
                 baseCoords.Add(textureBottomRight);
                 baseCoords.Add(textureTopRight);

@@ -53,7 +53,7 @@ namespace HeartGame
         {
             foreach (Point frame in Frames)
             {
-                string key = Name + ": " + FrameWidth + "," + FrameHeight + frame.ToString() + "," + Flipped;
+                string key = Name + ": " + FrameWidth + "," + FrameHeight + frame.ToString() + "," + Flipped + "," + SpriteSheet.GetHashCode();
                 if (!PrimitiveLibrary.BillboardPrimitives.ContainsKey(key))
                 {
                     PrimitiveLibrary.BillboardPrimitives[key] = new BillboardPrimitive(device, SpriteSheet, FrameWidth, FrameHeight, frame, WorldWidth, WorldHeight, Flipped);

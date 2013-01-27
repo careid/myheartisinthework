@@ -127,8 +127,8 @@ namespace HeartGame
             }
 
             // Player!
-            player = new Player("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                ComponentManager, Game.Content, Game.GraphicsDevice, "fatwalk");
+            player = new Player("dorf", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
+                ComponentManager, Game.Content, Game.GraphicsDevice, "smokewalk");
             player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
             player.HasMoved = true;
             dorfs.Add(player);
