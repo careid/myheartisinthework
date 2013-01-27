@@ -20,7 +20,7 @@ namespace HeartGame
             base(component.Manager, "VelocityController", component)
         {
             Component = component;
-            Controller = new PIDController(20.0f, 0.5f, 0.01f);
+            Controller = new PIDController(20.0f, 0.5f, 0.0f);
             targetVelocity = Vector3.Zero;
             IsTracking = false;
             MaxSpeed = 10;
