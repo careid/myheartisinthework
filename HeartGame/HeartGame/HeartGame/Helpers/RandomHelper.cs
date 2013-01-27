@@ -7,6 +7,6 @@ namespace HeartGame
 {
     public class RandomHelper
     {
-        public static Random random = new Random();
+        public static Random random = new Random(1);
     }
 }

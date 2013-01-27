@@ -54,6 +54,11 @@ namespace HeartGame
             return (float)RandomHelper.random.NextDouble();
         }
 
+        private float detRand(Random r)
+        {
+            return (float)r.NextDouble();
+        }
+
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
@@ -106,39 +111,37 @@ namespace HeartGame
             client = new Client(online);
             string name = client.Connect();
 
-            if (name == "0")
+            Random r = new Random(1);
+            for (int i = 0; i < 20; i++) // fnord
             {
-                for (int i = 0; i < 20; i++) // fnord
+                NPC npc;
+                switch ((int)(detRand(r) * 3))
                 {
-                    NPC npc;
-                    switch ((int)(rand() * 3))
-                    {
-                        case (0):
-                            npc = new Smoker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
-                                            Game.Content, Game.GraphicsDevice);
-                            break;
-                        case (1):
-                            npc = new Fatter(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
-                                            Game.Content, Game.GraphicsDevice);
-                            break;
-                        case (2):
-                            npc = new Older(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
-                                            Game.Content, Game.GraphicsDevice);
-                            break;
-                        default:
-                            /* graphics don't exist yet, never reached */
-                            npc = new Worker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
-                                            Game.Content, Game.GraphicsDevice);
-                            break;
-                    }
-                    npc.velocityController.MaxSpeed = 1;
-                    npc.Tags.Add("10" + i.ToString());
-                    npc.Target = new Vector3(-1, -2.1f, -11);
-                    npc.Velocity = new Vector3(0f, 0f, 0f);
-                    npc.HasMoved = true;
-                    npc.IsSleeping = false;
-                    dorfs.Add(npc);
+                    case (0):
+                        npc = new Smoker(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                                        Game.Content, Game.GraphicsDevice);
+                        break;
+                    case (1):
+                        npc = new Fatter(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                                        Game.Content, Game.GraphicsDevice);
+                        break;
+                    case (2):
+                        npc = new Older(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                                        Game.Content, Game.GraphicsDevice);
+                        break;
+                    default:
+                        /* graphics don't exist yet, never reached */
+                        npc = new Worker(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                                        Game.Content, Game.GraphicsDevice);
+                        break;
                 }
+                npc.velocityController.MaxSpeed = 1;
+                npc.Tags.Add("10" + i.ToString());
+                npc.Target = new Vector3(-1, -2.1f, -11);
+                npc.Velocity = new Vector3(0f, 0f, 0f);
+                npc.HasMoved = true;
+                npc.IsSleeping = false;
+                dorfs.Add(npc);
             }
 
             // Player!
@@ -174,7 +177,10 @@ namespace HeartGame
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
 
-            player.allegiance = hospital1;
+            if (Convert.ToInt32(name) % 2 == 0)
+            { player.allegiance = hospital1; }
+            else
+            { player.allegiance = hospital2; }
 
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
