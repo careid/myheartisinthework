@@ -277,8 +277,8 @@ namespace HeartGame
                     {
                         offset = new Vector3(0);
                     }
-                    offset.Y = 5;
-                    offset *= owner.DefibCharge;
+                    offset.Y = 10;
+                    offset *= 1.2f*owner.DefibCharge;
                     //d.Velocity = offset;
 
                     if (d is NPC)
