@@ -17,6 +17,7 @@ namespace HeartGame
         public SoundEffectInstance EffectInstance;
         public Vector3 Position;
         public bool HasStarted;
+        public string Name;
     }
 
     public class SoundManager
@@ -26,6 +27,16 @@ namespace HeartGame
         public static AudioEmitter Emitter = new AudioEmitter();
         public static ContentManager Content { get; set; }
 
+        public static void StopSounds(string name)
+        {
+            foreach (Sound3D activeSound in ActiveSounds)
+            {
+                if (activeSound.Name == name)
+                {
+                    activeSound.EffectInstance.Stop();
+                }
+            }
+        }
 
         public static void PlaySound(string name, Vector3 location)
         {
@@ -40,6 +51,7 @@ namespace HeartGame
             sound.EffectInstance = effect.CreateInstance();
             sound.EffectInstance.IsLooped = false;
             sound.HasStarted = false;
+            sound.Name = name;
 
             ActiveSounds.Add(sound);
         }

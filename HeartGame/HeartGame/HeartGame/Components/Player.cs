@@ -52,9 +52,16 @@ namespace HeartGame
                 switch (e)
                 {
                     case Event.SPACE_PRESS:
+                        if (!Charging)
+                        {
+                            SoundManager.PlaySound("defibCharge", GlobalTransform.Translation);
+                        }
                         Charging = !Charging;
                         break;
                     case Event.SPACE_RELEASE:
+
+                        SoundManager.StopSounds("defibCharge");
+
                         Charging = !Charging;
                         DefibCharge = 0.0f;
                         break;
