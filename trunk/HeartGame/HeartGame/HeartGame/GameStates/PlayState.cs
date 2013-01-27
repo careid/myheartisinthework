@@ -146,11 +146,29 @@ namespace HeartGame
             */
 
 
-            string[] sheets = { "oldwalk", "fatwalk", "smokewalk" };
             for (int i = 0; i < 80; i++)
             {
-                NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                    ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
+                NPC npc;
+                switch ((int)(rand() * 3))
+                {
+                    case (0):
+                        npc = new Smoker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager, 
+                                      Game.Content, Game.GraphicsDevice);
+                        break;
+                    case (1):
+                        npc = new Fatter(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
+                                      Game.Content, Game.GraphicsDevice);
+                        break;
+                    case (2):
+                        npc = new Older(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
+                                      Game.Content, Game.GraphicsDevice);
+                        break;
+                    default:
+                        /* graphics don't exist yet, never reached */
+                        npc = new Worker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
+                                      Game.Content, Game.GraphicsDevice);
+                        break;
+                }
                 npc.velocityController.MaxSpeed = 1;
                 npc.Target = new Vector3(-1, -2.1f, -11);
                 npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 2f, rand() * 2f - 1f);
