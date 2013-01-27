@@ -76,7 +76,7 @@ namespace HeartGame
             backFrames.Add(new Point(2 + offset.X, 3 + offset.Y));
             backFrames.Add(new Point(1 + offset.X, 3 + offset.Y));
 
-            Animation dwarfWalkBack = new Animation(graphics, dwarfSprites, "dwarf_walk_back", 32, 32, backFrames, true, Color.White, 10.0f, 0.8f, 1, false);
+            Animation dwarfWalkBack = new Animation(graphics, dwarfSprites, "dwarf_walk_back", 32, 32, backFrames, true, Color.White, 2.0f, 0.8f, 1, false);
 
 
 
@@ -128,7 +128,7 @@ namespace HeartGame
             shadow.OrientsToCamera = false;
             List<Point> shP = new List<Point>();
             shP.Add(new Point(0, 0));
-            Animation shadowAnimation = new Animation(graphics, content.Load<Texture2D>("shadowcircle"), "sh", 32, 32, shP, false, Color.Black, 1, 0.7f, 0.7f, false);
+            Animation shadowAnimation = new Animation(graphics, content.Load<Texture2D>("shadowcircle"), "sh", 32, 32, shP, false, Color.White, 1, 0.7f, 0.7f, false);
             shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             shadow.SetCurrentAnimation("sh");
