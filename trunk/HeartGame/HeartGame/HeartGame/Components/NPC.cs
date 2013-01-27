@@ -19,6 +19,7 @@ namespace HeartGame
         public float MaxWalkTime { get; set; }
         public float MaxDieTime { get; set; }
         protected Vector3 Target;
+        
 
         public Hospital Team
         {
@@ -27,6 +28,11 @@ namespace HeartGame
                 this.Target = value.Component.LocalTransform.Translation;
                 this.team = value;
             }
+        }
+
+        private float rand()
+        {
+            return (float)RandomHelper.random.NextDouble();
         }
 
         public NPC(string name, Vector3 position,
@@ -38,7 +44,7 @@ namespace HeartGame
         {
             MaxWalkTime = 5.0f;
             MaxDieTime = 1.0f;
-            WalkTimer = new Timer(MaxWalkTime, true);
+            WalkTimer = new Timer(7*rand(), true);
             DieTimer = new Timer(MaxDieTime, false);
             Target = Vector3.Zero;
             OrientWithVelocity = true;

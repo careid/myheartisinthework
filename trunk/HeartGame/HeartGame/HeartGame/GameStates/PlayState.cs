@@ -71,7 +71,7 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = true; // DO NOT CHANGE, offline mode is now detected when server connection is refused
+            online = false; // DO NOT CHANGE, offline mode is now detected when server connection is refused
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -130,32 +130,32 @@ namespace HeartGame
                 online = false;
             }
             
-            Hospital hospital1 = new Hospital(new Vector3(-15, 0, -15), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
-            Hospital hospital2 = new Hospital(new Vector3(15, 0, 15), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Blue, new Point(1, 0));
+            Hospital hospital1 = new Hospital(new Vector3(-10, 0, -10), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
+            Hospital hospital2 = new Hospital(new Vector3(12, 0, 12), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Blue, new Point(1, 0));
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
 
             Random r = new Random(1);
-            for (int i = 0; i < 1; i++) // fnord
+            for (int i = 0; i < 20; i++) // fnord
             {
                 NPC npc;
-                switch ((int)(detRand(r) * 3))
+                switch ((int)(detRand(r) * 2))
                 {
                     case (0):
-                        npc = new Smoker(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                        npc = new Smoker(new Vector3(detRand(r) * 9, 5, detRand(r) * 10), ComponentManager,
                                         Game.Content, Game.GraphicsDevice);
                         break;
                     case (1):
-                        npc = new Fatter(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                        npc = new Fatter(new Vector3(detRand(r) * 9, 5, detRand(r) * 10), ComponentManager,
                                         Game.Content, Game.GraphicsDevice);
                         break;
                     case (2):
-                        npc = new Older(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                        npc = new Older(new Vector3(detRand(r) * 9, 5, detRand(r) * 10), ComponentManager,
                                         Game.Content, Game.GraphicsDevice);
                         break;
                     default:
                         /* graphics don't exist yet, never reached */
-                        npc = new Worker(new Vector3(detRand(r) * 10 - 5, 5, detRand(r) * 10 - 5), ComponentManager,
+                        npc = new Worker(new Vector3(detRand(r) * 9, 5, detRand(r) * 10 - 0), ComponentManager,
                                         Game.Content, Game.GraphicsDevice);
                         break;
                 }
