@@ -20,7 +20,7 @@ namespace HeartGame
             Idle
         }
 
-        public Hospital allegiance { get; set; }
+        public Hospital team;
         public float Score { get; set; }
         public VelocityController velocityController;
         public static float maxSpeed = 3.0f;
@@ -44,7 +44,7 @@ namespace HeartGame
             Tags.Add(tag);
             string name = "person";
             OrientWithVelocity = true;
-            allegiance = null;
+            this.team = null;
             Score = 0.0f;
             AnimationState = new Dictionary<string,string>();
 

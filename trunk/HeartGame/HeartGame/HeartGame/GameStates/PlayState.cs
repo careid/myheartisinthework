@@ -145,7 +145,7 @@ namespace HeartGame
                 npc.velocityController.MaxSpeed = 1;
                 npc.SetTag((i+1000).ToString());
                 int al = (int)(detRand(r) * 2);
-                npc.Allegiance = hospitals[al];
+                npc.Team = hospitals[al];
                 npc.Velocity = new Vector3(0f, 0f, 0f);
                 npc.HasMoved = true;
                 npc.IsSleeping = false;
@@ -187,9 +187,9 @@ namespace HeartGame
              */
 
             if (Convert.ToInt32(name) % 2 == 0)
-            { player.allegiance = hospital1; }
+            { player.team = hospital1; }
             else
-            { player.allegiance = hospital2; }
+            { player.team = hospital2; }
 
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
@@ -263,7 +263,7 @@ namespace HeartGame
                 {
                     if (d.GetType() != typeof(Player))
                     {
-                        ((NPC)d).Allegiance = owner.allegiance;
+                        ((NPC)d).Team = owner.team;
                     }
                     Vector3 offset = d.GlobalTransform.Translation - owner.GlobalTransform.Translation;
                     offset.Y = 0;
@@ -360,7 +360,7 @@ namespace HeartGame
             string blueName = "THEM";
             int redX = 5;
             int blueX = 1000;
-            if (player.allegiance == hospitals[1])
+            if (player.team == hospitals[1])
             {
                 redName = "THEM";
                 blueName = "US";
@@ -397,14 +397,14 @@ namespace HeartGame
                 float vx = (float)Convert.ToDouble(toks[6]);
                 float vy = (float)Convert.ToDouble(toks[7]);
                 float vz = (float)Convert.ToDouble(toks[8]);
-                int allegiance = (int)Convert.ToInt32(toks[9]);
+                int team = (int)Convert.ToInt32(toks[9]);
                 foreach (Person p in ComponentManager.FilterComponentsWithTag(toks[1], dorfs))
                 {
                     p.PerformAction((Event)Enum.Parse(typeof(Event), action, true));
                     p.LocalTransform =
                         Matrix.CreateTranslation(new Vector3(x, y, z));
                     p.Velocity = new Vector3(vx, vy, vz);
-                    p.allegiance = hospitals[allegiance];
+                    p.team = hospitals[team];
                     found = true;
                 }
                 if (!found)
@@ -418,9 +418,9 @@ namespace HeartGame
                         velocityController.IsTracking = true;
 
                         if (id % 2 == 0)
-                        { p.allegiance = hospitals[0]; }
+                        { p.team = hospitals[0]; }
                         else
-                        { p.allegiance = hospitals[1]; }
+                        { p.team = hospitals[1]; }
                         p.Velocity = new Vector3(0, 0, 0);
                         p.HasMoved = true;
                         dorfs.Add(p);
@@ -440,14 +440,14 @@ namespace HeartGame
 
         protected string encodePerson(Person p, string action, Vector3 vel)
         {
-            int allegiance = 0;
-            if (hospitals[0] == p.allegiance)
+            int team = 0;
+            if (hospitals[0] == p.team)
             {
-                allegiance = 0;
+                team = 0;
             }
             else
             {
-                allegiance = 1;
+                team = 1;
             }
             string[] info =
             {"general", 
@@ -459,7 +459,7 @@ namespace HeartGame
                 vel.X.ToString(),
                 vel.Y.ToString(),
                 vel.Z.ToString(),
-                allegiance.ToString()};
+                team.ToString()};
             string msg = String.Join(",", info);
             return msg;
         }
@@ -513,10 +513,10 @@ namespace HeartGame
 
             foreach (Person d in dorfs)
             {
-                if (d.allegiance != null)
+                if (d.team != null)
                 {
                     d.teamCircle.IsVisible = true;
-                    d.teamCircle.Tint = d.allegiance.Color;
+                    d.teamCircle.Tint = d.team.Color;
                 }
                 else
                 {

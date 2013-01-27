@@ -18,12 +18,12 @@ namespace HeartGame
         public float MaxWalkTime { get; set; }
         protected Vector3 Target;
 
-        public Hospital Allegiance
+        public Hospital Team
         {
             set 
             { 
                 this.Target = value.Component.LocalTransform.Translation;
-                this.allegiance = value;
+                this.team = value;
             }
         }
 

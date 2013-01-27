@@ -95,8 +95,8 @@ namespace HeartGame
         {
             base.Update(gameTime, camera);
             
-            if (allegiance != null)
-            { Score = allegiance.Score; }
+            if (team != null)
+            { Score = team.Score; }
 
             if (Charging)
             {
