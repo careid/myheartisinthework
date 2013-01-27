@@ -469,7 +469,7 @@ namespace HeartGame
                     Event e = (Event)Enum.Parse(typeof(Event), action, true);
                     if (e == Event.SCORE)
                     {
-                        p.team.Score += 100;
+                        p.team.Score += 70000;
                         p.team.NumPatients++;
                         SoundManager.PlaySound("kaChing", p.GlobalTransform.Translation);
                         p.Die();
@@ -592,7 +592,7 @@ namespace HeartGame
             foreach (Hospital h in hospitals)
             {
                 collideBox.Add(h.Component.GetBoundingBox());
-                collideBox.Add(h.InvisibleBox.GetBoundingBox());
+                //collideBox.Add(h.InvisibleBox.GetBoundingBox());
             }
 
             foreach (Person d in dorfs)
