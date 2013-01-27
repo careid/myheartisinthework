@@ -595,7 +595,7 @@ namespace HeartGame
             {
                 if (d.team != null)
                 {
-                    d.teamCircle.IsVisible = true;
+                    d.teamCircle.IsVisible = (d is Player)? true : false;
                     d.teamCircle.Tint = d.team.Color;
                 }
                 else
