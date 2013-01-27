@@ -61,8 +61,7 @@ namespace HeartGame
                 try
                 {
                     TC = new System.Net.Sockets.TcpClient();
-                    //TC.Connect("172.24.8.157", 3000);
-                    
+                    //TC.Connect("169.254.19.75", 3000);
                     IAsyncResult result = TC.BeginConnect("169.254.67.42", 3000, null, null);
 
                     if (!result.AsyncWaitHandle.WaitOne(8000, true)) // 4 sec timout
