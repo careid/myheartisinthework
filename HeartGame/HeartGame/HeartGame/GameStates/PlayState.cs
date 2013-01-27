@@ -150,26 +150,14 @@ namespace HeartGame
             velocityController.IsTracking = true;
              */
             
-                Player p2 = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                                    ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
-                p2.Velocity = new Vector3(0f, 0f, 0f);
-                p2.HasMoved = true;
-                dorfs.Add(p2);
-                VelocityController velocityController3 = new VelocityController(p2);
-                velocityController3.IsTracking = true;
-                player = p2;
-            /*
-            
-            {
-                Player p = new Player("0", new Vector3(0, 0, 0),
+            Player p2 = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
-                VelocityController velocityController2 = new VelocityController(p);
-                velocityController2.IsTracking = true;
-                p.Velocity = new Vector3(0f, 0f, 0f);
-                p.HasMoved = true;
-                dorfs.Add(p);
-            }
-             */
+            p2.Velocity = new Vector3(0f, 0f, 0f);
+            p2.HasMoved = true;
+            dorfs.Add(p2);
+            VelocityController velocityController3 = new VelocityController(p2);
+            velocityController3.IsTracking = true;
+            player = p2;
 
             Vector3 boundingBoxPos = new Vector3(0, -2, 0);
             Vector3 boundingBoxExtents = new Vector3(100, 4, 100);

@@ -40,17 +40,16 @@ class Communicator:
         self.clients = []
 
     def addClient(self, clientsock):
-        self.broadcast("sendpos\r\n")
         self.lock.acquire()
         client = ClientConn(len(self.clients), clientsock)
         client.write(str(client.name) + "\r\n")
         self.clients.append(client)
         self.lock.release()
+        self.broadcast("sendpos\r\n")
         thread.start_new_thread(clientHandler, (client, self))
 
     def broadcast(self, msg):
         self.lock.acquire()
-        print msg
         for c in self.clients:
             c.write(msg)
         self.lock.release()
