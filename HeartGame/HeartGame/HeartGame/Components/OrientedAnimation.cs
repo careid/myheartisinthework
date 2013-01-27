@@ -7,6 +7,17 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace HeartGame
 {
+    public class AnimationPair
+    {
+        public Animation RightAnimation { get; set; }
+        public Animation LeftAnimation { get; set; }
+
+        public AnimationPair(Animation rightAnimation, Animation leftAnimation)
+        {
+            RightAnimation = rightAnimation;
+            LeftAnimation = leftAnimation;
+        }
+    }
     public class OrientedAnimation : BillboardSpriteComponent
     {
         public enum Orientation
@@ -14,10 +25,8 @@ namespace HeartGame
             Right,
             Left
         }
-
         public Dictionary<Orientation, Animation> OrientationMap { get; set; }
         public Dictionary<Orientation, Animation> IdleMap { get; set; }
-
         public Orientation CurrentOrientation { get; set; }
 
         public OrientedAnimation(ComponentManager manager, string name,
@@ -28,7 +37,7 @@ namespace HeartGame
             OrientationMap = new Dictionary<Orientation, Animation>();
             OrientationMap[Orientation.Right] = rightAnimation;
             OrientationMap[Orientation.Left] = leftAnimation;
-            
+
             AddAnimation(rightAnimation);
             AddAnimation(leftAnimation);
 
@@ -36,6 +45,7 @@ namespace HeartGame
             {
                 a.Play();
             }
+            CurrentOrientation = Orientation.Right;
         }
 
         public override void Update(GameTime gameTime,  Camera camera)
@@ -66,8 +76,10 @@ namespace HeartGame
             }
         }
 
-        public void Transform(Animation rightAnimation, Animation leftAnimation)
+        public void Transform(AnimationPair animation)
         {
+            Animation rightAnimation = animation.RightAnimation;
+            Animation leftAnimation = animation.LeftAnimation;
             OrientationMap = new Dictionary<Orientation, Animation>();
             OrientationMap[Orientation.Right] = rightAnimation;
             OrientationMap[Orientation.Left] = leftAnimation;
