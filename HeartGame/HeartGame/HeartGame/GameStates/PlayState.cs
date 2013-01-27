@@ -58,6 +58,7 @@ namespace HeartGame
         protected string[] wordsArray;
         protected int MapWidth { get; set; }
         protected int MapHeight { get; set; }
+        protected float posTimer;
 
         private float rand()
         {
@@ -83,6 +84,8 @@ namespace HeartGame
 
             notification = null;
             particles = new ParticleManager(ComponentManager);
+
+            posTimer = 0.0f;
 
             EmitterData testData = new EmitterData();
             testData.AngularDamping = 1.0f;
@@ -628,6 +631,13 @@ namespace HeartGame
                         client.Write(encodePerson(d, Event.SCORE.ToString()));
                     }
                 }
+            }
+
+            posTimer += dt;
+            if (posTimer > 0.1)
+            {
+                posTimer = 0.0f;
+                client.Write(encodePerson(player, Event.NOP.ToString()));
             }
 
             if (notification != null)
