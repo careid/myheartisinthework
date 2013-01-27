@@ -77,11 +77,11 @@
     <Compile Include="Components\BatchBillboard.cs" />
     <Compile Include="Components\BillboardList.cs" />
     <Compile Include="Components\BillboardSpriteComponent.cs" />
-    <Compile Include="Entities\Player.cs" />
+    <Compile Include="Components\Player.cs" />
     <Compile Include="Components\ComponentManager.cs" />
     <Compile Include="Components\EntityFactory.cs" />
-    <Compile Include="Entities\NPC.cs" />
-    <Compile Include="Entities\Person.cs" />
+    <Compile Include="Components\NPC.cs" />
+    <Compile Include="Components\Person.cs" />
     <Compile Include="Components\ShadowComponent.cs" />
     <Compile Include="Components\VelocityController.cs" />
     <Compile Include="DeathComponentSpawner.cs" />
