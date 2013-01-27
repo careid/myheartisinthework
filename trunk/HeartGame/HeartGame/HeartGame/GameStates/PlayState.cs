@@ -57,7 +57,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
-            online = true;
+            online = false;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -149,15 +149,14 @@ namespace HeartGame
             VelocityController velocityController = new VelocityController(player);
             velocityController.IsTracking = true;
              */
-            
-            Player p2 = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
+
+            player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
-            p2.Velocity = new Vector3(0f, 0f, 0f);
-            p2.HasMoved = true;
-            dorfs.Add(p2);
-            VelocityController velocityController3 = new VelocityController(p2);
+            player.Velocity = new Vector3(0f, 0f, 0f);
+            player.HasMoved = true;
+            dorfs.Add(player);
+            VelocityController velocityController3 = new VelocityController(player);
             velocityController3.IsTracking = true;
-            player = p2;
 
             Vector3 boundingBoxPos = new Vector3(0, -2, 0);
             Vector3 boundingBoxExtents = new Vector3(100, 4, 100);
@@ -167,10 +166,12 @@ namespace HeartGame
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
 
 
-            Hospital hospital1 = new Hospital(player, new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
-            Hospital hospital2 = new Hospital(null, new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
+            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
+            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
+
+            player.allegiance = hospital1;
 
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
@@ -334,7 +335,7 @@ namespace HeartGame
                 Drawer2D.FillRect(SpriteBatch, new Rectangle((int)(0.25 * Game.GraphicsDevice.Viewport.Width), 20,
                     (int)(0.5 * player.DefibCharge * Game.GraphicsDevice.Viewport.Width), 50), new Color((int)(100 + 150 * player.DefibCharge), (int)(100 + 150 * player.DefibCharge), 255, 100));
             }
-            Drawer2D.DrawStrokedText(SpriteBatch, "Score: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
+            Drawer2D.DrawStrokedText(SpriteBatch, "Money: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
             SpriteBatch.End();
 
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
@@ -380,6 +381,12 @@ namespace HeartGame
                             ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
                         VelocityController velocityController = new VelocityController(p);
                         velocityController.IsTracking = true;
+
+                        if (id % 2 == 0)
+                        { p.allegiance = hospitals[0]; }
+                        else
+                        { p.allegiance = hospitals[1]; }
+                        
                     }
                     else
                     {
@@ -465,11 +472,8 @@ namespace HeartGame
                     {
                         if (d.GetBoundingBox().Intersects(h.Component.GetBoundingBox()))
                         {
-                            if (h.Owner != null)
-                            {
-                                h.Owner.Score += 100;
+                                h.Score += 100;
                                 d.Die();
-                            }
                         }  
                     }
                 }

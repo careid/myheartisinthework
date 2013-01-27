@@ -30,7 +30,6 @@ namespace HeartGame
         public Dictionary<ChargeState, AnimationPair> WalkDictionary;
         public const float MAX_DEFIB_CHARGE = 1.0f;
         public const float HIGH_DEFIB_CHARGE = 0.4f;
-        public float Score { get; set; }
         public float DefibCharge { get; set; }
         public float DefibChargeRate { get; set; }
         public bool Charging { get; set; }
@@ -43,7 +42,6 @@ namespace HeartGame
                       string spritesheet) :
             base(tag, position, componentManager, content, graphics, "surgeonwalk")
         {
-            Score = 0.0f;
             DefibCharge = 0;
             DefibChargeRate = 0.5f;
 
@@ -101,6 +99,10 @@ namespace HeartGame
         public override void  Update(GameTime gameTime, Camera camera)
         {
             base.Update(gameTime, camera);
+            
+            if (allegiance != null)
+            { Score = allegiance.Score; }
+
             if (Charging)
             {
                 DefibCharge += (float)gameTime.ElapsedGameTime.TotalSeconds * DefibChargeRate;

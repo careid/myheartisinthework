@@ -20,6 +20,8 @@ namespace HeartGame
             Idle
         }
 
+        public Hospital allegiance { get; set; }
+        public float Score { get; set; }
         public VelocityController velocityController;
         public static float maxSpeed = 3.0f;
         public AnimationPair idle;
@@ -40,6 +42,8 @@ namespace HeartGame
             Tags.Add(tag);
             string name = "person";
             OrientWithVelocity = true;
+            allegiance = null;
+            Score = 0.0f;
 
             List<Point> offsets = new List<Point>();
             offsets.Add(new Point(0, 0));
