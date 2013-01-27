@@ -76,9 +76,9 @@ namespace HeartGame
                 if (WalkTimer.HasTriggered)
                 {
                     State = "dead";
-                    SetAnimation();
                 }
             }
+            SetAnimation();
             base.Update(gameTime, camera);
         }
     }
