@@ -130,6 +130,8 @@ namespace HeartGame
                 if (DieTimer.HasTriggered)
                 {
                     State = "dead";
+                    string[] deathSounds = { "manDying1", "manDying2", "womanDying1", "sharpBreath" };
+                    SoundManager.PlaySound(deathSounds[RandomHelper.random.Next(0, 4)], GlobalTransform.Translation);
                 }
             }
             else if (State.Equals("walk"))
