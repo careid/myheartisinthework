@@ -503,7 +503,9 @@ namespace HeartGame
                         if (d.GetBoundingBox().Intersects(h.Component.GetBoundingBox()))
                         {
                                 h.Score += 100;
+                                SoundManager.PlaySound("kaChing", d.GlobalTransform.Translation);
                                 d.Die();
+
                         }  
                     }
                 }
