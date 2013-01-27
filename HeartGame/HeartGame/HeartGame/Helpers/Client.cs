@@ -44,28 +44,36 @@ namespace HeartGame
         static System.Net.Sockets.TcpClient TC;
         protected StreamWriter SW;
         protected CommandQueue CQ;
+        public bool online;
 
-        public Client()
+        public Client(bool online)
         {
-            
+            this.online = online;
         }
 
         public string Connect()
         {
-            // Networking shit
-            TC = new System.Net.Sockets.TcpClient();
-            TC.Connect("172.24.8.194", 3000);
-
-            SW = new StreamWriter(TC.GetStream());
-            //request dwarf count from server
-            //SW.WriteLine("add dwarf");
-            //SW.Flush();
-            StreamReader SR = new StreamReader(TC.GetStream());
-            string name = SR.ReadLine();
             CQ = new CommandQueue();
-            Thread t = new Thread(new ParameterizedThreadStart(runListener));
-            t.Start(CQ);
-            return name;
+            if (this.online)
+            {
+                // Networking shit
+                TC = new System.Net.Sockets.TcpClient();
+                TC.Connect("172.24.8.194", 3000);
+
+                SW = new StreamWriter(TC.GetStream());
+                //request dwarf count from server
+                //SW.WriteLine("add dwarf");
+                //SW.Flush();
+                StreamReader SR = new StreamReader(TC.GetStream());
+                string name = SR.ReadLine();
+                Thread t = new Thread(new ParameterizedThreadStart(runListener));
+                t.Start(CQ);
+                return name;
+            }
+            else
+            {
+                return "0";
+            }
         }
 
         static void runListener(object Obj)
@@ -86,7 +94,15 @@ namespace HeartGame
 
         public void Write(string msg)
         {
-            CQ.Write(msg);
+            if (online)
+            {
+                SW.WriteLine(msg);
+                SW.Flush();
+            }
+            else
+            {
+                CQ.Write(msg);
+            }
         }
     }
 
