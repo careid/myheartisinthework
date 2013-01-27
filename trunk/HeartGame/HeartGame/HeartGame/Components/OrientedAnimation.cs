@@ -36,6 +36,13 @@ namespace HeartGame
             Name = leftAnimation.Name;
         }
 
+        public void Play()
+        {
+            LeftAnimation.Play();
+            if (RightAnimation == null)
+                RightAnimation.Play();
+        }
+
         public bool Oriented()
         {
             return RightAnimation == null;
@@ -92,6 +99,7 @@ namespace HeartGame
             }
             OrientedAnimations[animation.Name] = animation;
         }
+
         public void AddOrientedAnimation(Animation animation)
         {
             AddOrientedAnimation(new OrientedAnimation(animation));

@@ -26,6 +26,7 @@ namespace HeartGame
         public static float maxSpeed = 3.0f;
         public string tag;
         public Dictionary<String, String> AnimationState;
+        public String State { get; set; }
         public OrientableBillboardSpriteComponent image;
         public ShadowComponent teamCircle;
 
@@ -120,6 +121,11 @@ namespace HeartGame
 
             velocityController = new VelocityController(this);
             velocityController.IsTracking = true;
+        }
+
+        public void SetAnimation()
+        {
+            image.SetCurrentOrientedAnimation(AnimationState[State]);
         }
 
         public void MoveInDirection(Vector3 _TargetVelocity)

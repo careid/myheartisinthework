@@ -14,7 +14,6 @@ namespace HeartGame
 {
     public class NPC : Person
     {
-        public String State { get; set; }
         public Timer WalkTimer { get; set; }
         public float MaxWalkTime { get; set; }
         public Vector3 Target { get; set; }
@@ -40,7 +39,7 @@ namespace HeartGame
             image.AddOrientedAnimation(dead);
             AnimationState["dead"] = dead.Name;
             State = "walk";
-            image.SetCurrentOrientedAnimation(AnimationState[State]);
+            SetAnimation();
         }
 
         public override void Update(GameTime gameTime, Camera camera)
@@ -62,7 +61,7 @@ namespace HeartGame
                 if (WalkTimer.HasTriggered)
                 {
                     State = "dead";
-                    image.SetCurrentOrientedAnimation(AnimationState[State]);
+                    SetAnimation();
                 }
             }
             base.Update(gameTime, camera);

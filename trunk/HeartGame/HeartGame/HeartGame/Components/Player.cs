@@ -50,6 +50,7 @@ namespace HeartGame
 
             OrientedAnimation idleLow = new OrientedAnimation(new Animation(graphics, sprites, tag + "_idle_low_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
                         new Animation(graphics, sprites, tag + "_idle_low_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            idleLow.Play();
             image.AddOrientedAnimation(idleLow);
             AnimationState["idle_low"] = idleLow.Name;
 
@@ -59,8 +60,9 @@ namespace HeartGame
             lowWalk.Add(new Point(2, 2));
             lowWalk.Add(new Point(3, 2));
 
-            OrientedAnimation walkLow = new OrientedAnimation(new Animation(graphics, sprites, tag + "_walk_low_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
-                        new Animation(graphics, sprites, tag + "_walk_low_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            OrientedAnimation walkLow = new OrientedAnimation(new Animation(graphics, sprites, tag + "_walk_low_left", 32, 32, lowWalk, true, Color.White, 10.0f, 0.8f, 1, false),
+                        new Animation(graphics, sprites, tag + "_walk_low_right", 32, 32, lowWalk, true, Color.White, 10.0f, 0.8f, 1, true));
+            walkLow.Play();
             image.AddOrientedAnimation(walkLow);
             AnimationState["walk_low"] = walkLow.Name;
 
@@ -70,8 +72,9 @@ namespace HeartGame
             highIdle.Add(new Point(2, 3));
             highIdle.Add(new Point(3, 3));
 
-            OrientedAnimation idleHigh = new OrientedAnimation(new Animation(graphics, sprites, tag + "_idle_high_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
-                        new Animation(graphics, sprites, tag + "_idle_high_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            OrientedAnimation idleHigh = new OrientedAnimation(new Animation(graphics, sprites, tag + "_idle_high_left", 32, 32, highIdle, true, Color.White, 10.0f, 0.8f, 1, false),
+                        new Animation(graphics, sprites, tag + "_idle_high_right", 32, 32, highIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            idleHigh.Play();
             image.AddOrientedAnimation(idleHigh);
             AnimationState["idle_high"] = idleHigh.Name;
 
@@ -81,8 +84,9 @@ namespace HeartGame
             highWalk.Add(new Point(2, 4));
             highWalk.Add(new Point(3, 4));
 
-            OrientedAnimation walkHigh = new OrientedAnimation(new Animation(graphics, sprites, tag + "_walk_high_left", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, false),
-                        new Animation(graphics, sprites, tag + "_walk_high_right", 32, 32, lowIdle, true, Color.White, 10.0f, 0.8f, 1, true));
+            OrientedAnimation walkHigh = new OrientedAnimation(new Animation(graphics, sprites, tag + "_walk_high_left", 32, 32, highWalk, true, Color.White, 10.0f, 0.8f, 1, false),
+                        new Animation(graphics, sprites, tag + "_walk_high_right", 32, 32, highWalk, true, Color.White, 10.0f, 0.8f, 1, true));
+            walkHigh.Play();
             image.AddOrientedAnimation(walkHigh);
             AnimationState["walk_high"] = walkHigh.Name;
         }
@@ -115,6 +119,31 @@ namespace HeartGame
                 DefibCharge = MAX_DEFIB_CHARGE;
                 currentCharge = ChargeState.MAX_CHARGE;
             }
+            String prefix;
+            if (Velocity.Length() < 1.0f)
+            {
+                prefix = "idle";
+            }
+            else
+            {
+                prefix = "walk";
+            }
+            switch (currentCharge)
+            {
+                case ChargeState.NO_CHARGE:
+                    State = prefix;
+                    break;
+                case ChargeState.LOW_CHARGE:
+                    State = prefix + "_low";
+                    break;
+                case ChargeState.HIGH_CHARGE:
+                case ChargeState.MAX_CHARGE:
+                    State = prefix + "_high";
+                    Console.Out.WriteLine(State);
+                    break;
+            }
+            Console.Out.WriteLine(State);
+            SetAnimation();
         }
 
         public override void PerformAction(Event e)
