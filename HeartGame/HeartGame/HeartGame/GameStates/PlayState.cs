@@ -375,14 +375,45 @@ namespace HeartGame
                 redX = 1000;
                 blueX = 5;
             }
+
+
+
             Drawer2D.DrawStrokedText(SpriteBatch, redName + " $" + hospitals[0].Score, Drawer2D.DefaultFont, new Vector2(redX, 5), Color.White, Color.Red);
             Drawer2D.DrawStrokedText(SpriteBatch, blueName + " $" + hospitals[1].Score, Drawer2D.DefaultFont, new Vector2(blueX, 5), Color.White, Color.Blue);
+
+            drawer2D.Render(SpriteBatch, Camera, Game.GraphicsDevice.Viewport);
+            
             SpriteBatch.End();
 
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Game.GraphicsDevice.BlendState = BlendState.Opaque;
 
             base.Render(gameTime);
+        }
+
+        public NPC GetClosestDeadNPC(Player player)
+        {
+            float closestDist = 999999;
+            NPC closestNPC = null;
+            foreach (Person p in dorfs)
+            {
+                if (p is NPC)
+                {
+                    NPC npc = (NPC)p;
+                    if (npc.State == "dead")
+                    {
+                        float dist = (npc.GlobalTransform.Translation - player.GlobalTransform.Translation).LengthSquared();
+                        if (dist < closestDist)
+                        {
+                            closestNPC = npc;
+                            closestDist = dist;
+                        }
+                    }
+                }
+            }
+
+            return closestNPC;
+
         }
 
         protected void doActions()
@@ -556,6 +587,17 @@ namespace HeartGame
             Camera.Target = alpha * player.GlobalTransform.Translation + (1.0f - alpha) * Camera.Target; 
 
             Camera.Update(gameTime);
+
+            NPC closest = GetClosestDeadNPC(player);
+
+            if (closest != null)
+            {
+                float x = (float)(Math.Sin(gameTime.TotalGameTime.TotalSeconds * 5) * 0.5f + 0.5f);
+                Color flash = new Color(1.0f, 1.0f, 1.0f, x);
+                Color back = new Color(0, 0, 0, x);
+                Drawer2D.DrawText("Revive! (Hold Space)", closest.GlobalTransform.Translation, flash, back);
+            }
+
             base.Update(gameTime);
         }
 
