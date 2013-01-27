@@ -76,6 +76,9 @@ namespace HeartGame
                 if (WalkTimer.HasTriggered)
                 {
                     State = "dead";
+
+                    Vector3 oldTranslation = image.LocalTransform.Translation;
+                    image.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y-0.25f, oldTranslation.Z));
                 }
             }
             SetAnimation();
