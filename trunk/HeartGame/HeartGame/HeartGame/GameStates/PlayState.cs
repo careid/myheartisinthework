@@ -42,6 +42,7 @@ namespace HeartGame
         public Texture2D TorchMap { get; set; }
         public LocatableComponent ground;
         public List<Person> dorfs = new List<Person>();
+        public List<Player> players = new List<Player>();
         public List<Hospital> hospitals = new List<Hospital>();
         public Player player;
         public Drawer2D drawer2D;
@@ -49,7 +50,6 @@ namespace HeartGame
         public ParticleManager particles;
         protected Client client;
         protected bool online;
-        protected bool playing;
 
         private float rand()
         {
@@ -65,8 +65,7 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = true;
-            playing = false;
+            online = true; // DO NOT CHANGE, offline mode is now detected when server connection is refused
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -113,6 +112,12 @@ namespace HeartGame
 
             client = new Client(online);
             string name = client.Connect();
+            if (name == "error")
+            {
+                Console.Out.WriteLine("connection refused");
+                name = "0";
+                online = false;
+            }
 
             
             Hospital hospital1 = new Hospital(new Vector3(-15, 0, -15), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
@@ -154,22 +159,12 @@ namespace HeartGame
                 dorfs.Add(npc);
             }
 
-            // Player!
-            /*
-            player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
-            player.Velocity = new Vector3(0f, 0f, 0f);
-            player.HasMoved = true;
-            dorfs.Add(player);
-            VelocityController velocityController = new VelocityController(player);
-            velocityController.IsTracking = true;
-             */
-
             player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
             player.Velocity = new Vector3(0f, -0.5f, 0f);
             player.HasMoved = true;
             dorfs.Add(player);
+            players.Add(player);
 
             VelocityController velocityController3 = new VelocityController(player);
             velocityController3.IsTracking = true;
@@ -463,13 +458,11 @@ namespace HeartGame
                         VelocityController velocityController = new VelocityController(p);
                         velocityController.IsTracking = true;
 
-                        if (id % 2 == 0)
-                        { p.team = hospitals[0]; }
-                        else
-                        { p.team = hospitals[1]; }
+                        p.team = hospitals[id % 2];
                         p.Velocity = new Vector3(0, -0.5f, 0);
                         p.HasMoved = true;
                         dorfs.Add(p);
+                        players.Add((Player)p);
                     }
                 }
             }
@@ -519,14 +512,15 @@ namespace HeartGame
             KeyboardState keyboardState = Keyboard.GetState();
             InputManager.KeysUpdate(keyboardState);
 
-            if (keyboardState.IsKeyDown(Keys.Space))
+            if (online)
             {
-                playing = true;
-            }
-
-            if (!playing && online)
-            {
-                return;
+                foreach (Player p in players)
+                {
+                    if (!p.isReady)
+                        return;
+                }
+                if (players.Count() >= 2)
+                    return;
             }
             
             SoundManager.Update(gameTime, Camera);
