@@ -78,6 +78,7 @@ namespace HeartGame
         public Drawer2D drawer2D;
         public List<Event> frameEvents;
         public SoundManager sounds;
+        public ParticleManager particles;
 
         private float rand()
         {
@@ -92,6 +93,35 @@ namespace HeartGame
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
 
             frameEvents = new List<Event>();
+            particles = new ParticleManager(ComponentManager);
+
+            EmitterData testData = new EmitterData();
+            testData.AngularDamping = 1.0f;
+            List<Point> frm = new List<Point>();
+            frm.Add(new Point(0, 0));
+            frm.Add(new Point(1, 0));
+            frm.Add(new Point(0, 1));
+            frm.Add(new Point(1, 1));
+            testData.Animation = new Animation(Game.GraphicsDevice, Game.Content.Load<Texture2D>("electricity"), "electricity", 32, 32, frm, true, Color.White, 20f, 1.0f, 1.0f, false);
+            testData.ConstantAccel = new Vector3(0, -1, 0);
+            testData.LinearDamping = 0.9f;
+            testData.AngularDamping = 0.9f;
+            testData.EmissionFrequency = 1.0f;
+            testData.EmissionRadius = 1.0f;
+            testData.EmissionSpeed = 20.0f;
+            testData.GrowthSpeed = -0.9f;
+            testData.MaxAngle = 3.14159f;
+            testData.MinAngle = 0.0f;
+            testData.MaxParticles = 1000;
+            testData.MaxScale = 1.0f;
+            testData.MinScale = 0.1f;
+            testData.MinAngular = -5.0f;
+            testData.MaxAngular = 5.0f;
+            testData.ParticleDecay = 0.1f;
+            testData.ParticlesPerFrame = 0;
+            testData.ReleaseOnce = true;
+            testData.Texture = Game.Content.Load<Texture2D>("electricity");
+            particles.RegisterEffect("shock", testData);
 
             InputManager inputManager = new InputManager();
             InputManager.KeyPressedCallback += pressKey;
@@ -158,6 +188,8 @@ namespace HeartGame
             SunMap = Game.Content.Load<Texture2D>("sungradient");
             AmbientMap = Game.Content.Load<Texture2D>("ambientgradient");
             TorchMap = Game.Content.Load<Texture2D>("torchgradient");
+
+            
         }
 
         public void pressKey(Keys key)
@@ -203,6 +235,7 @@ namespace HeartGame
                 case Keys.Space:
                     frameEvents.Add(Event.SPACE_RELEASE);
 
+                    particles.Trigger("shock", player.GlobalTransform.Translation, Color.White, (int)(100 * player.DefibCharge));
                     foreach (PhysicsComponent d in dorfs)
                     {
                         if (d != player && (d.GlobalTransform.Translation - player.GlobalTransform.Translation).LengthSquared() < 1 * 1)
@@ -277,6 +310,8 @@ namespace HeartGame
             Game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
             ComponentManager.Render(gameTime, Camera, SpriteBatch, Game.GraphicsDevice,Shader, false);
+            
+            
 
             SpriteBatch.Begin();
             Drawer2D.FillRect(SpriteBatch, new Rectangle(0, 0, (int)(500 * player.DefibCharge), 100), new Color(255, 0, 0));
