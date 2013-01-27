@@ -106,7 +106,7 @@ namespace HeartGame
 
             if (name == "0")
             {
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 0; i++)
                 {
                     NPC npc;
                     switch ((int)(rand() * 3))
@@ -140,6 +140,7 @@ namespace HeartGame
             }
 
             // Player!
+            /*
             player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
             player.Velocity = new Vector3(0f, 0f, 0f);
@@ -147,6 +148,18 @@ namespace HeartGame
             dorfs.Add(player);
             VelocityController velocityController = new VelocityController(player);
             velocityController.IsTracking = true;
+             */
+            
+                Player p2 = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
+                                    ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
+                p2.Velocity = new Vector3(0f, 0f, 0f);
+                p2.HasMoved = true;
+                dorfs.Add(p2);
+                VelocityController velocityController3 = new VelocityController(p2);
+                velocityController3.IsTracking = false;
+                player = p2;
+
+
 
             Vector3 boundingBoxPos = new Vector3(0, -2, 0);
             Vector3 boundingBoxExtents = new Vector3(100, 4, 100);
@@ -168,7 +181,7 @@ namespace HeartGame
             AmbientMap = Game.Content.Load<Texture2D>("ambientgradient");
             TorchMap = Game.Content.Load<Texture2D>("torchgradient");
 
-            
+
         }
 
         public void pressKey(Keys key)
@@ -373,7 +386,6 @@ namespace HeartGame
                             ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
                         p.velocityController.MaxSpeed = 1;
                         ((NPC)p).Target = new Vector3(-1, -2.1f, -11);
-                        p.HasMoved = true;
                         p.IsSleeping = false;
                     }
                     p.Velocity = new Vector3(0f, 0f, 0f);
@@ -403,10 +415,6 @@ namespace HeartGame
         public override void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            foreach (Person p in ComponentManager.FilterComponentsWithTag("0", dorfs))
-            {
-                Console.Out.WriteLine(p.Velocity);
-            }
             
             SoundManager.Update(gameTime, Camera);
 
