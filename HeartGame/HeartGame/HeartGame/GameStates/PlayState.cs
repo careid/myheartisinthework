@@ -242,6 +242,10 @@ namespace HeartGame
             {
                 if (d != owner && (d.GlobalTransform.Translation - owner.GlobalTransform.Translation).LengthSquared() < 1 * 1)
                 {
+                    if (d.GetType() != typeof(Player))
+                    {
+                        ((NPC)d).Target = owner.allegiance.Component.LocalTransform.Translation;
+                    }
                     Vector3 offset = d.GlobalTransform.Translation - owner.GlobalTransform.Translation;
                     offset.Y = 0;
                     if (offset.X != 0 || offset.Z != 0)
@@ -333,7 +337,19 @@ namespace HeartGame
                 Drawer2D.FillRect(SpriteBatch, new Rectangle((int)(0.25 * Game.GraphicsDevice.Viewport.Width), 20,
                     (int)(0.5 * player.DefibCharge * Game.GraphicsDevice.Viewport.Width), 50), new Color((int)(100 + 150 * player.DefibCharge), (int)(100 + 150 * player.DefibCharge), 255, 100));
             }
-            Drawer2D.DrawStrokedText(SpriteBatch, "Money: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
+            string redName = "US";
+            string blueName = "THEM";
+            int redX = 5;
+            int blueX = 1000;
+            if (player.allegiance == hospitals[1])
+            {
+                redName = "THEM";
+                blueName = "US";
+                redX = 1000;
+                blueX = 5;
+            }
+            Drawer2D.DrawStrokedText(SpriteBatch, redName + " $" + hospitals[0].Score, Drawer2D.DefaultFont, new Vector2(redX, 5), Color.White, Color.Red);
+            Drawer2D.DrawStrokedText(SpriteBatch, blueName + " $" + hospitals[1].Score, Drawer2D.DefaultFont, new Vector2(blueX, 5), Color.White, Color.Blue);
             SpriteBatch.End();
 
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
