@@ -63,7 +63,7 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = false;
+            online = true;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -439,6 +439,8 @@ namespace HeartGame
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            doActions();
+
             int playerCount = 0;
             foreach (Person d in dorfs)
             {
@@ -455,8 +457,6 @@ namespace HeartGame
             SoundManager.Update(gameTime, Camera);
 
             KeyboardState keyboardState = Keyboard.GetState();
-
-            doActions();
 
             InputManager.KeysUpdate(keyboardState);
 
