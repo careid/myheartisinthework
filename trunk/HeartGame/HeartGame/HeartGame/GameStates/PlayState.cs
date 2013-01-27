@@ -158,7 +158,7 @@ namespace HeartGame
                 VelocityController velocityController3 = new VelocityController(p2);
                 velocityController3.IsTracking = true;
                 player = p2;
-
+            /*
             
             {
                 Player p = new Player("0", new Vector3(0, 0, 0),
@@ -169,6 +169,7 @@ namespace HeartGame
                 p.HasMoved = true;
                 dorfs.Add(p);
             }
+             */
 
             Vector3 boundingBoxPos = new Vector3(0, -2, 0);
             Vector3 boundingBoxExtents = new Vector3(100, 4, 100);
