@@ -30,11 +30,6 @@ namespace HeartGame
             }
         }
 
-        private float rand()
-        {
-            return (float)RandomHelper.random.NextDouble();
-        }
-
         public NPC(string name, Vector3 position,
                    ComponentManager componentManager,
                    ContentManager content,
@@ -44,7 +39,7 @@ namespace HeartGame
         {
             MaxWalkTime = 5.0f;
             MaxDieTime = 1.0f;
-            WalkTimer = new Timer(7*rand(), true);
+            WalkTimer = new Timer((int)(10000*position.X) % 7, true);
             DieTimer = new Timer(MaxDieTime, false);
             Target = Vector3.Zero;
             OrientWithVelocity = true;
