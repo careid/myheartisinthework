@@ -32,8 +32,6 @@ Content\newground.xnb
 Content\sharpBreath.xnb
 Content\womanDying1.xnb
 Content\womanDying2.xnb
-Content\happyFuckingBirthday.xnb
-Content\happyFuckingBirthday.wma
 Content\mainTrack.xnb
 Content\mainTrack.wma
 Content\manDying1.xnb

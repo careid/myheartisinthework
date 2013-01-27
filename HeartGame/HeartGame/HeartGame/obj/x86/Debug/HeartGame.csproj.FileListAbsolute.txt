@@ -38,8 +38,6 @@ C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGam
 C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\sharpBreath.xnb
 C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\womanDying1.xnb
 C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\womanDying2.xnb
-C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\happyFuckingBirthday.xnb
-C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\happyFuckingBirthday.wma
 C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\mainTrack.xnb
 C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\mainTrack.wma
 C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\manDying1.xnb

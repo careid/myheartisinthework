@@ -243,13 +243,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="happyFuckingBirthday.mp3">
-      <Name>happyFuckingBirthday</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="mainTrack.mp3">
       <Name>mainTrack</Name>
       <Importer>Mp3Importer</Importer>
