@@ -278,7 +278,7 @@ namespace HeartGame
                     }
                     offset.Y = 5;
                     offset *= owner.DefibCharge;
-                    d.Velocity = offset;
+                    //d.Velocity = offset;
 
                     if (d is NPC)
                     {
@@ -288,7 +288,7 @@ namespace HeartGame
                     }
 
                     if (owner == player)
-                        client.Write(encodePerson(d, Event.NOP.ToString()));
+                        client.Write(encodePerson(d, Event.NOP.ToString(), offset));
                 }
             }
         }
