@@ -18,6 +18,7 @@ namespace HeartGame
         public Timer DieTimer { get; set; }
         public float MaxWalkTime { get; set; }
         public float MaxDieTime { get; set; }
+        BillboardSpriteComponent monitor;
         protected Vector3 Target;
         
 
@@ -80,13 +81,23 @@ namespace HeartGame
 
             Matrix translation = Matrix.CreateTranslation(new Vector3(0, 1, 0));
             Texture2D heartsprite = content.Load<Texture2D>("heartrate");
-            BillboardSpriteComponent monitor = new BillboardSpriteComponent(componentManager, "heart", this, translation, heartsprite, false);
+            monitor = new BillboardSpriteComponent(componentManager, "heart", this, translation, heartsprite, false);
             monitor.OrientsToCamera = true;
-            List<Point> monP = new List<Point>();
-            monP.Add(new Point(0, 0));
-            Animation monitorAnimation = new Animation(graphics, heartsprite, "mon", 32, 10, monP, false, Color.White, 1, 0.7f, 0.2f, false);
-            monitor.AddAnimation(monitorAnimation);
-            monitorAnimation.Play();
+            
+            List<Point> aliveP = new List<Point>();
+            aliveP.Add(new Point(0, 0));
+            aliveP.Add(new Point(1, 0));
+            aliveP.Add(new Point(2, 0));
+            aliveP.Add(new Point(3, 0));
+            
+            monitor.AddAnimation(new Animation(graphics, heartsprite, "alive", 32, 10, aliveP, true, Color.White, 5.0f, 0.7f, 0.2f, false));
+            
+            List<Point> deadP = new List<Point>();
+            deadP.Add(new Point(4, 0));
+            
+            monitor.AddAnimation(new Animation(graphics, heartsprite, "dead", 32, 10, deadP, true, Color.White, 5.0f, 0.7f, 0.2f, false));
+            foreach (Animation anim in monitor.Animations.Values)
+                anim.Play();
 
             image.LocalTransform = Matrix.CreateTranslation(new Vector3(0, -0.25f, 0));
         }
@@ -99,6 +110,7 @@ namespace HeartGame
 
         public override void Update(GameTime gameTime, Camera camera)
         {
+            monitor.SetCurrentAnimation("dead");
             if (GlobalTransform.Translation.Y >= 1)
             {
                 State = "fly";
@@ -122,6 +134,7 @@ namespace HeartGame
             }
             else if (State.Equals("walk"))
             {
+                monitor.SetCurrentAnimation("alive");
                 WalkTimer.Update(gameTime);
 
                 Vector3 normalized = (Target - GlobalTransform.Translation);
