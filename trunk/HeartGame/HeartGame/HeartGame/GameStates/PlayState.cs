@@ -244,6 +244,10 @@ namespace HeartGame
         {
 			SoundManager.PlaySound("defibThud", owner.GlobalTransform.Translation);
             particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
+
+            if (owner != player)
+                return;
+
             foreach (Person d in dorfs)
             {
                 if (d != owner && (d.GlobalTransform.Translation - owner.GlobalTransform.Translation).LengthSquared() < 1 * 1)
@@ -266,7 +270,6 @@ namespace HeartGame
                     offset.Y = 5;
                     offset *= owner.DefibCharge;
                     d.Velocity = offset;
-                    //d.ApplyForce(offset, 1 / 60.0f);
 
                     if (d is NPC)
                     {
