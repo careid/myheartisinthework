@@ -134,7 +134,6 @@ namespace HeartGame
             /*
             // Networking shit
             TC = new System.Net.Sockets.TcpClient();
-            TC.Connect("172.24.8.194", 3001);
 
             SW = new StreamWriter(TC.GetStream());
             //request dwarf count from server
