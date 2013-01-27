@@ -17,7 +17,10 @@ namespace HeartGame
 
 
 
-        public static LocatableComponent GenerateBlankBox(BoundingBox box, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, string texture)
+        public static LocatableComponent GenerateBlankBox(BoundingBox box,
+                                                         ComponentManager componentManager,
+                                                         ContentManager content, GraphicsDevice graphics, string texture,
+                                                         Point topFrame, Point sideFrame, int frameWidth, int frameHeight)
         {
             Matrix transform = Matrix.CreateTranslation((box.Max - box.Min) * 0.5f + box.Min);
             Vector3 extents = box.Max - box.Min;
@@ -25,8 +28,8 @@ namespace HeartGame
 
 
             Texture2D tex = content.Load<Texture2D>(texture);
-            BoxPrimitive.BoxTextureCoords uvs = new BoxPrimitive.BoxTextureCoords(tex.Width, tex.Height, tex.Width, tex.Height, Point.Zero, Point.Zero, Point.Zero,
-                Point.Zero, Point.Zero, Point.Zero);
+            BoxPrimitive.BoxTextureCoords uvs = new BoxPrimitive.BoxTextureCoords(tex.Width, tex.Height,frameWidth, frameHeight, sideFrame, sideFrame, topFrame,
+                topFrame, sideFrame, sideFrame);
             BoxPrimitive primitive = new BoxPrimitive(graphics, extents.X, extents.Y, extents.Z, uvs);
 
             TexturedBoxObject graphicalBox = new TexturedBoxObject(componentManager, "texturedbox", boxComponent, Matrix.CreateTranslation(-extents * 0.5f) ,
@@ -171,9 +174,9 @@ namespace HeartGame
          * */
 
 
-        public static LocatableComponent GenerateBuilding(Vector3 pos, Vector3 size, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, String name)
+        public static LocatableComponent GenerateBuilding(Vector3 pos, Vector3 size, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, String name, Point side)
         {
-            return GenerateBlankBox(new BoundingBox(pos, new Vector3(pos.X + size.X, pos.Y + size.Y, pos.Z + size.Z)), componentManager, content, graphics, name);
+            return GenerateBlankBox(new BoundingBox(pos, new Vector3(pos.X + size.X, pos.Y + size.Y, pos.Z + size.Z)), componentManager, content, graphics, name, Point.Zero, side, 128, 128);
         }
     
     }

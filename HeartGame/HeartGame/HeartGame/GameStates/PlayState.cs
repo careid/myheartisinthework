@@ -63,7 +63,7 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = true;
+            online = false;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -111,10 +111,12 @@ namespace HeartGame
             client = new Client(online);
             string name = client.Connect();
 
-            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red);
-            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green);
+            
+            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
+            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green, new Point(1, 0));
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
+             
 
             Random r = new Random(1);
             for (int i = 0; i < 20; i++) // fnord
@@ -175,7 +177,14 @@ namespace HeartGame
             Vector3 boundingBoxMin = boundingBoxPos - boundingBoxExtents * 0.5f;
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
-            ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
+            ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown", Point.Zero, Point.Zero, 128, 128);
+
+            /*
+            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
+            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green, new Point(1, 0));
+            hospitals.Add(hospital1);
+            hospitals.Add(hospital2);
+             */
 
             if (Convert.ToInt32(name) % 2 == 0)
             { player.allegiance = hospital1; }

@@ -124,6 +124,7 @@ namespace HeartGame
                         float yscale = GlobalTransform.Up.Length();
                         float zscale = GlobalTransform.Forward.Length();
                         Matrix rot = Matrix.CreateRotationZ(BillboardRotation);
+                        
                         Matrix bill = Matrix.CreateBillboard(GlobalTransform.Translation, camera.Position, camera.UpVector, null);
                         Matrix noTransBill = bill;
                         noTransBill.Translation = Vector3.Zero;
