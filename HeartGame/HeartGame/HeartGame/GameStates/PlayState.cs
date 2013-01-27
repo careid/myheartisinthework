@@ -137,7 +137,7 @@ namespace HeartGame
 
 
             Vector3 boundingBoxPos = new Vector3(0, -2, 0);
-            Vector3 boundingBoxExtents = new Vector3(200, 4, 200);
+            Vector3 boundingBoxExtents = new Vector3(100, 4, 100);
             Vector3 boundingBoxMin = boundingBoxPos - boundingBoxExtents * 0.5f;
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
@@ -250,7 +250,16 @@ namespace HeartGame
 
             Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-   
+            if (player.DefibCharge > 0.01f)
+            {
+                Shader.Parameters["xEnableLighting"].SetValue(true);
+            }
+            else
+            {
+                Shader.Parameters["xEnableLighting"].SetValue(false);
+            }
+            Shader.Parameters["xLightPos"].SetValue(player.GlobalTransform.Translation);
+            Shader.Parameters["xLightColor"].SetValue(new Vector4(0.25f * player.DefibCharge, 0.5f * player.DefibCharge,player.DefibCharge, 1.0f));
             Shader.Parameters["xFogColor"].SetValue(new Vector3(0, 0, 0));
             Shader.Parameters["Clipping"].SetValue(false);
             Shader.Parameters["xView"].SetValue(Camera.ViewMatrix);
@@ -263,7 +272,7 @@ namespace HeartGame
             Shader.Parameters["xTorchGradient"].SetValue(TorchMap);
 
             Shader.Parameters["xTint"].SetValue(new Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-            Shader.Parameters["SelfIllumination"].SetValue(true);
+            Shader.Parameters["SelfIllumination"].SetValue(false);
 
             Game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
 

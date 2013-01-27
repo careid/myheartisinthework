@@ -287,9 +287,6 @@ namespace HeartGame
             }
 
 
-            effect.Parameters["xEnableLighting"].SetValue(true);
-            effect.Parameters["xLightColor"].SetValue(new Vector4(0, 0, 1, 0));
-            effect.Parameters["xLightPos"].SetValue(Vector3.Zero);
 
             foreach (GameComponent component in zSorted)
             {
