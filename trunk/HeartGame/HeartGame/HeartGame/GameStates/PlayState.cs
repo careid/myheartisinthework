@@ -71,7 +71,7 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = false; // DO NOT CHANGE, offline mode is now detected when server connection is refused
+            online = true; // DO NOT CHANGE, offline mode is now detected when server connection is refused
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -242,9 +242,10 @@ namespace HeartGame
                 case Keys.Escape:
                     if (client.t != null)
                         client.t.Abort();
-                    StateManager.States["PlayState"] = new PlayState(Game, StateManager);
-                    //GeometricPrimitive.ExitGame = true;
-                    //Game.Exit();
+                    // EXPERIMENTAL RESTART
+                    //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+                    GeometricPrimitive.ExitGame = true;
+                    Game.Exit();
                     break;
                 default:
                     break;
