@@ -54,61 +54,52 @@ namespace HeartGame
                 IsSleeping = false;
             }
 
-            if (!IsSleeping || m_overrideSleepThisFrame)
+            float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
+
+            if (m_applyGravityThisFrame)
             {
-
-                if (m_overrideSleepThisFrame)
-                {
-                    m_overrideSleepThisFrame = false;
-                }
-
-                float dt = (float)(gameTime.ElapsedGameTime.TotalSeconds);
-
-                if (m_applyGravityThisFrame)
-                {
-                    ApplyForce(Gravity, dt);
-                }
-                else
-                {
-                    m_applyGravityThisFrame = true;
-                }
-
-                Matrix transform = LocalTransform;
-                PreviousPosition = transform.Translation;
-                transform.Translation = LocalTransform.Translation + Velocity * dt;
-
-
-                if (!OrientWithVelocity)
-                {
-                    Matrix dA = Matrix.Identity;
-                    dA *= Matrix.CreateRotationX(AngularVelocity.X * dt);
-                    dA *= Matrix.CreateRotationY(AngularVelocity.Y * dt);
-                    dA *= Matrix.CreateRotationZ(AngularVelocity.Z * dt);
-
-                    transform = dA * transform;
-                }
-                else
-                {
-                    if (Velocity.Length() > 0.4f)
-                    {
-                        Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(Velocity.X, -Velocity.Z));
-                        newTransform.Translation = transform.Translation;
-                        transform = newTransform;
-                    }
-                }
-
-                LocalTransform = transform;
-
-                if (Math.Abs(Velocity.Y) < 0.1f)
-                {
-                    Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
-                }
-
-                Velocity *= LinearDamping;
-                AngularVelocity *= AngularDamping;
-                UpdateBoundingBox();
-                //HandleCollisions(chunks, dt);
+                ApplyForce(Gravity, dt);
             }
+            else
+            {
+                m_applyGravityThisFrame = true;
+            }
+
+            Matrix transform = LocalTransform;
+            PreviousPosition = transform.Translation;
+            transform.Translation = LocalTransform.Translation + Velocity * dt;
+
+
+            if (!OrientWithVelocity)
+            {
+                Matrix dA = Matrix.Identity;
+                dA *= Matrix.CreateRotationX(AngularVelocity.X * dt);
+                dA *= Matrix.CreateRotationY(AngularVelocity.Y * dt);
+                dA *= Matrix.CreateRotationZ(AngularVelocity.Z * dt);
+
+                transform = dA * transform;
+            }
+            else
+            {
+                if (Velocity.Length() > 0.4f)
+                {
+                    Matrix newTransform = Matrix.CreateRotationY((float)Math.Atan2(Velocity.X, -Velocity.Z));
+                    newTransform.Translation = transform.Translation;
+                    transform = newTransform;
+                }
+            }
+
+            LocalTransform = transform;
+
+            if (Math.Abs(Velocity.Y) < 0.1f)
+            {
+                Velocity = new Vector3(Velocity.X * Friction, Velocity.Y, Velocity.Z * Friction);
+            }
+
+            Velocity *= LinearDamping;
+            AngularVelocity *= AngularDamping;
+            UpdateBoundingBox();
+            
             base.Update(gameTime, camera);
         }
 
