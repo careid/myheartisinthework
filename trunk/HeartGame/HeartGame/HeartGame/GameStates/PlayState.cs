@@ -168,27 +168,12 @@ namespace HeartGame
                 dorfs.Add(npc);
             }
 
-
-            Hospital playerTeam = null;
-                
-            if (Convert.ToInt32(name) % 2 == 0)
-            {
-                playerTeam = hospital1;
-            }
-            else
-            {
-                playerTeam = hospital2;
-            }
-
-            Vector3 hospitalPosition = playerTeam.Component.LocalTransform.Translation;
-
-            player = new Player(name, new Vector3(hospitalPosition.X + 5, hospitalPosition.Y, hospitalPosition.Z + rand() - 0.5f),
+            player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
             player.Velocity = new Vector3(0f, -0.5f, 0f);
             player.HasMoved = true;
             dorfs.Add(player);
             players.Add(player);
-            player.team = playerTeam;
 
             VelocityController velocityController3 = new VelocityController(player);
             velocityController3.IsTracking = true;
@@ -207,8 +192,10 @@ namespace HeartGame
             hospitals.Add(hospital2);
              */
 
-
-
+            if (Convert.ToInt32(name) % 2 == 0)
+                player.team = hospital1;
+            else
+                player.team = hospital2;
 
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
@@ -517,9 +504,8 @@ namespace HeartGame
             }
             else if (command == "exit")
             {
-                StateManager.States["PlayState"] = new PlayState(Game, StateManager);
-                //pressKey(Keys.Escape);
-                //releaseKey(Keys.Escape);
+                pressKey(Keys.Escape);
+                releaseKey(Keys.Escape);
             }
         }
 
