@@ -39,8 +39,19 @@ namespace HeartGame
         public void Play()
         {
             LeftAnimation.Play();
-            if (RightAnimation == null)
+            if (RightAnimation != null)
                 RightAnimation.Play();
+        }
+
+        public void Reset()
+        {
+            LeftAnimation.Stop();
+            LeftAnimation.Play();
+            if (RightAnimation != null)
+            {
+                RightAnimation.Stop();
+                RightAnimation.Play();
+            }
         }
 
         public bool Oriented()
