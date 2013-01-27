@@ -14,17 +14,28 @@ namespace HeartGame
 {
     public class Player : Person
     {
+        public enum ChargeState
+        {
+            NO_CHARGE,
+            LOW_CHARGE,
+            HIGH_CHARGE,
+            MAX_CHARGE
+        }
+
+        public const float MAX_DEFIB_CHARGE = 1.0f;
+        public const float HIGH_DEFIB_CHARGE = 0.6f;
         public float Score { get; set; }
         public float DefibCharge { get; set; }
         public float DefibChargeRate { get; set; }
         public bool Charging { get; set; }
+        public ChargeState currentCharge { get; set; }
 
         public Player(string name, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
                       GraphicsDevice graphics,
                       string spritesheet) :
-            base(name, position, componentManager, content, graphics, spritesheet)
+            base("player", position, componentManager, content, graphics, "surgeonwalk")
         {
             Score = 0.0f;
             DefibCharge = 0;
@@ -38,9 +49,22 @@ namespace HeartGame
             {
                 DefibCharge += (float)gameTime.ElapsedGameTime.TotalSeconds * DefibChargeRate;
             }
-            if (DefibCharge > 1.0f)
+            if (DefibCharge == 0)
             {
-                DefibCharge = 1.0f;
+                currentCharge = ChargeState.NO_CHARGE;
+            }
+            else if (DefibCharge < HIGH_DEFIB_CHARGE)
+            {
+                currentCharge = ChargeState.LOW_CHARGE;
+            }
+            else if (DefibCharge < MAX_DEFIB_CHARGE)
+            {
+                currentCharge = ChargeState.HIGH_CHARGE;
+            }
+            else
+            {
+                DefibCharge = MAX_DEFIB_CHARGE;
+                currentCharge = ChargeState.MAX_CHARGE;
             }
         }
 

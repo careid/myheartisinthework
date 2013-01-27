@@ -20,47 +20,29 @@ namespace HeartGame
 
         public Orientation CurrentOrientation { get; set; }
 
-        public bool IsIdle { get; set; }
-
         public OrientedAnimation(ComponentManager manager, string name,
             GameComponent parent, Matrix localTransform, Texture2D spriteSheet,
-            Animation rightAnimation, Animation leftAnimation,
-            Animation rightAnimationIdle, Animation leftAnimationIdle) :
+            Animation rightAnimation, Animation leftAnimation) :
             base(manager, name, parent, localTransform, spriteSheet, false)
         {
             OrientationMap = new Dictionary<Orientation, Animation>();
-            IdleMap = new Dictionary<Orientation, Animation>();
             OrientationMap[Orientation.Right] = rightAnimation;
             OrientationMap[Orientation.Left] = leftAnimation;
-            IdleMap[Orientation.Right] = rightAnimationIdle;
-            IdleMap[Orientation.Left] = leftAnimationIdle;
             
             AddAnimation(rightAnimation);
             AddAnimation(leftAnimation);
-            
-            AddAnimation(rightAnimationIdle);
-            AddAnimation(leftAnimationIdle);
 
             foreach (Animation a in Animations.Values)
             {
                 a.Play();
             }
-
-            IsIdle = false;
         }
 
         public override void Update(GameTime gameTime,  Camera camera)
         {
             CalculateCurrentOrientation(camera);
 
-            if (!IsIdle)
-            {
-                CurrentAnimation = OrientationMap[CurrentOrientation];
-            }
-            else
-            {
-                CurrentAnimation = IdleMap[CurrentOrientation];
-            }
+            CurrentAnimation = OrientationMap[CurrentOrientation];
 
             base.Update(gameTime, camera);
         }
@@ -81,6 +63,23 @@ namespace HeartGame
             else
             {
                 CurrentOrientation = Orientation.Right;
+            }
+        }
+
+        public void Transform(Animation rightAnimation, Animation leftAnimation)
+        {
+            OrientationMap = new Dictionary<Orientation, Animation>();
+            OrientationMap[Orientation.Right] = rightAnimation;
+            OrientationMap[Orientation.Left] = leftAnimation;
+
+            Animations = new Dictionary<string, Animation>();
+
+            AddAnimation(rightAnimation);
+            AddAnimation(leftAnimation);
+
+            foreach (Animation a in Animations.Values)
+            {
+                a.Play();
             }
         }
         

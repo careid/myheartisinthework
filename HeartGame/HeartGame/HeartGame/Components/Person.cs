@@ -24,6 +24,36 @@ namespace HeartGame
             base(componentManager, name, componentManager.RootComponent, Matrix.CreateTranslation(position),  new Vector3(0.5f, 1.0f, 0.5f),
             new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f)
         {
+            OrientWithVelocity = true;
+            Texture2D sprites = content.Load<Texture2D>(spritesheet);
+
+            List<Point> offsets = new List<Point>();
+            offsets.Add(new Point(0, 0));
+
+            Point offset = offsets[RandomHelper.random.Next(0, offsets.Count)];
+
+            List<Point> rightFrames = new List<Point>();
+            rightFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
+            rightFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
+            rightFrames.Add(new Point(3 + offset.X, 0 + offset.Y));
+            rightFrames.Add(new Point(4 + offset.X, 0 + offset.Y));
+
+            Animation walkRight = new Animation(graphics, sprites, name + "_walk_right", 32, 32, rightFrames, true, Color.White, 10.0f, 0.8f, 1, true);
+
+            List<Point> leftFrames = new List<Point>();
+            leftFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
+            leftFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
+            leftFrames.Add(new Point(3 + offset.X, 0 + offset.Y));
+            leftFrames.Add(new Point(4 + offset.X, 0 + offset.Y));
+
+            Animation walkLeft = new Animation(graphics, sprites, name + "_walk_left", 32, 32, leftFrames, true, Color.White, 10.0f, 0.8f, 1, false);
+
+            walkLeft.Play();
+            walkRight.Play();
+
+            Matrix spriteMatrix = Matrix.Identity;
+            new OrientedAnimation(componentManager, "testsprite", this, spriteMatrix, sprites, walkRight, walkLeft);
+
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             //shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);
             ShadowComponent shadow = new ShadowComponent(componentManager, "shadow", this, shadowTransform, content.Load<Texture2D>("shadowcircle"));
