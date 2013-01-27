@@ -38,6 +38,12 @@ namespace HeartGame
             }
         }
 
+        public static void Play2DSound(string name)
+        {
+            SoundEffect effect = Content.Load<SoundEffect>(name);
+            effect.Play();
+        }
+
         public static void PlaySound(string name, Vector3 location)
         {
             if (Content == null)

@@ -243,13 +243,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="mainTrack.mp3">
-      <Name>mainTrack</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="manDying1.wav">
       <Name>manDying1</Name>
       <Importer>WavImporter</Importer>
