@@ -16,7 +16,16 @@ namespace HeartGame
     {
         public Timer WalkTimer { get; set; }
         public float MaxWalkTime { get; set; }
-        public Vector3 Target { get; set; }
+        protected Vector3 Target;
+
+        public Hospital Allegiance
+        {
+            set 
+            { 
+                this.Target = value.Component.LocalTransform.Translation;
+                this.allegiance = value;
+            }
+        }
 
         public NPC(string name, Vector3 position,
                    ComponentManager componentManager,
@@ -40,6 +49,12 @@ namespace HeartGame
             AnimationState["dead"] = dead.Name;
             State = "walk";
             SetAnimation();
+        }
+
+        public void SetTag(string tag)
+        {
+            Tags.Add(tag);
+            this.tag = tag;
         }
 
         public override void Update(GameTime gameTime, Camera camera)
