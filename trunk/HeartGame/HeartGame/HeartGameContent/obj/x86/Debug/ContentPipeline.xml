@@ -308,16 +308,6 @@
       <Time>2013-01-27T13:21:27.4516364-05:00</Time>
     </Item>
     <Item>
-      <Source>happyFuckingBirthday.mp3</Source>
-      <Name>happyFuckingBirthday</Name>
-      <Importer>Mp3Importer</Importer>
-      <Processor>SongProcessor</Processor>
-      <Options>None</Options>
-      <Output>C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\happyFuckingBirthday.xnb</Output>
-      <Extra>C:\Users\Bruce\Desktop\code\My Heart Is in the Work\HeartGame\HeartGame\HeartGame\bin\x86\Debug\Content\happyFuckingBirthday.wma</Extra>
-      <Time>2013-01-27T14:45:11.1779771-05:00</Time>
-    </Item>
-    <Item>
       <Source>mainTrack.mp3</Source>
       <Name>mainTrack</Name>
       <Importer>Mp3Importer</Importer>
