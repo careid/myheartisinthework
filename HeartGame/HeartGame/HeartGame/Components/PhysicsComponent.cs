@@ -54,7 +54,7 @@ namespace HeartGame
                 IsSleeping = false;
             }
 
-            if (true || !IsSleeping || m_overrideSleepThisFrame)
+            if (!IsSleeping || m_overrideSleepThisFrame)
             {
 
                 if (m_overrideSleepThisFrame)
