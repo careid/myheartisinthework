@@ -57,7 +57,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
-            online = true;
+            online = false;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -106,7 +106,7 @@ namespace HeartGame
 
             if (name == "0")
             {
-                for (int i = 0; i < 0; i++)
+                for (int i = 0; i < 20; i++)
                 {
                     NPC npc;
                     switch ((int)(rand() * 3))

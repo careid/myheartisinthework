@@ -14,11 +14,17 @@ namespace HeartGame
 {
     public class Person : PhysicsComponent
     {
+        public enum Movement
+        {
+            Walking,
+            Idle
+        }
+
         public VelocityController velocityController;
         public static float maxSpeed = 3.0f;
         public AnimationPair idle;
-        public string tag;
         public AnimationPair walk;
+        public string tag;
         public OrientedAnimation orienter;
         public Person(string _tag, Vector3 position,
                       ComponentManager componentManager,
@@ -28,7 +34,7 @@ namespace HeartGame
             base(componentManager, "person", componentManager.RootComponent, Matrix.CreateTranslation(position),  new Vector3(0.5f, 1.0f, 0.5f),
             new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f)
         {
-                        OrientWithVelocity = true;
+            OrientWithVelocity = true;
             Texture2D sprites = content.Load<Texture2D>(spritesheet);
             tag = _tag;
             Tags.Add(tag);
@@ -72,8 +78,8 @@ namespace HeartGame
             idleRight.Play();
 
             Matrix spriteMatrix = Matrix.Identity;
-            idle = new AnimationPair(idleRight, idleLeft);
-            walk = new AnimationPair(walkRight, walkLeft);
+            idle = new AnimationPair(idleLeft, idleRight);
+            walk = new AnimationPair(walkLeft, walkRight);
             orienter = new OrientedAnimation(componentManager, "idlesprite", this, spriteMatrix, sprites, walkRight, walkLeft);
             
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
