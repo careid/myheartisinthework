@@ -211,6 +211,13 @@ namespace HeartGame
                             offset.Y = 500;
                             offset *= player.DefibCharge;
                             d.ApplyForce(offset, 1/60.0f);
+
+                            if (d is NPC)
+                            {
+                                NPC npc = (NPC)d;
+                                npc.WalkTimer.Reset(player.DefibCharge * npc.MaxWalkTime);
+                                npc.State = NPC.NPCState.Walking;
+                            }
                         }
                     }
                     break;
