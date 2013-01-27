@@ -16,14 +16,18 @@ namespace HeartGame
     {
         public VelocityController velocityController;
         public static float maxSpeed = 3.0f;
-        public Person(string name, Vector3 position,
+        public string tag;
+        public Person(string _tag, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
                       GraphicsDevice graphics,
                       string spritesheet) :
-            base(componentManager, name, componentManager.RootComponent, Matrix.CreateTranslation(position),  new Vector3(0.5f, 1.0f, 0.5f),
+            base(componentManager, "person", componentManager.RootComponent, Matrix.CreateTranslation(position),  new Vector3(0.5f, 1.0f, 0.5f),
             new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f)
         {
+            tag = _tag;
+            Tags.Add(tag);
+            string name = "person";
             OrientWithVelocity = true;
             Texture2D sprites = content.Load<Texture2D>(spritesheet);
 
@@ -81,46 +85,40 @@ namespace HeartGame
             velocityController.targetVelocity = _TargetVelocity;
         }
 
-        public void PerformActions(List<Event> events)
+        public virtual void PerformAction(Event e)
         {
-            foreach (Event e in events)
+            switch (e)
             {
-                Console.Out.WriteLine("Event = {0}", e);
-                switch (e)
-                {
-                    case Event.W_PRESS:
-                        velocityController.targetVelocity.X += -velocityController.MaxSpeed;
-                        break;
-                    case Event.W_RELEASE:
-                        velocityController.targetVelocity.X -= -velocityController.MaxSpeed;
-                        break;
+                case Event.W_PRESS:
+                    velocityController.targetVelocity.X += -velocityController.MaxSpeed;
+                    break;
+                case Event.W_RELEASE:
+                    velocityController.targetVelocity.X -= -velocityController.MaxSpeed;
+                    break;
 
-                    case Event.A_PRESS:
-                        velocityController.targetVelocity.Z += velocityController.MaxSpeed;
-                        break;
-                    case Event.A_RELEASE:
-                        velocityController.targetVelocity.Z -= velocityController.MaxSpeed;
-                        break;
+                case Event.A_PRESS:
+                    velocityController.targetVelocity.Z += velocityController.MaxSpeed;
+                    break;
+                case Event.A_RELEASE:
+                    velocityController.targetVelocity.Z -= velocityController.MaxSpeed;
+                    break;
                     
-                    case Event.S_PRESS:
-                        velocityController.targetVelocity.X += velocityController.MaxSpeed;
-                        break;
-                    case Event.S_RELEASE:
-                        velocityController.targetVelocity.X -= velocityController.MaxSpeed;
-                        break;
+                case Event.S_PRESS:
+                    velocityController.targetVelocity.X += velocityController.MaxSpeed;
+                    break;
+                case Event.S_RELEASE:
+                    velocityController.targetVelocity.X -= velocityController.MaxSpeed;
+                    break;
 
-                    case Event.D_PRESS:
-                        velocityController.targetVelocity.Z += -velocityController.MaxSpeed;
-                        break;
-                    case Event.D_RELEASE:
-                        velocityController.targetVelocity.Z -= -velocityController.MaxSpeed;
-                        break;
+                case Event.D_PRESS:
+                    velocityController.targetVelocity.Z += -velocityController.MaxSpeed;
+                    break;
+                case Event.D_RELEASE:
+                    velocityController.targetVelocity.Z -= -velocityController.MaxSpeed;
+                    break;
 
-                    default: break;
-                }
+                default: break;
             }
-
-            Console.Out.WriteLine("{0}", velocityController.targetVelocity);
         }
 
     }

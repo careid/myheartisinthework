@@ -30,12 +30,12 @@ namespace HeartGame
         public bool Charging { get; set; }
         public ChargeState currentCharge { get; set; }
 
-        public Player(string name, Vector3 position,
+        public Player(string tag, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
                       GraphicsDevice graphics,
                       string spritesheet) :
-            base("player", position, componentManager, content, graphics, "surgeonwalk")
+            base(tag, position, componentManager, content, graphics, "surgeonwalk")
         {
             Score = 0.0f;
             DefibCharge = 0;
@@ -68,27 +68,24 @@ namespace HeartGame
             }
         }
 
-        public void PerformActions(List<Event> events)
+        public override void PerformAction(Event e)
         {
-            base.PerformActions(events);
-            foreach (Event e in events)
+            base.PerformAction(e);
+            switch (e)
             {
-                switch (e)
-                {
-                    case Event.SPACE_PRESS:
-                        if (!Charging)
-                        {
-                            SoundManager.PlaySound("defibCharge", GlobalTransform.Translation);
-                        }
-                        Charging = !Charging;
-                        break;
-                    case Event.SPACE_RELEASE:
-                        Charging = false;
-                        SoundManager.StopSounds("defibCharge");
-                        DefibCharge = 0.0f;
-                        break;
-                    default: break;
-                }
+                case Event.SPACE_PRESS:
+                    if (!Charging)
+                    {
+                        SoundManager.PlaySound("defibCharge", GlobalTransform.Translation);
+                    }
+                    Charging = true;
+                    break;
+                case Event.SPACE_RELEASE:
+                    Charging = false;
+                    SoundManager.StopSounds("defibCharge");
+                    DefibCharge = 0.0f;
+                    break;
+                default: break;
             }
         }
     }

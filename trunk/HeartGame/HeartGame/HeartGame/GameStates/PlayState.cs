@@ -26,6 +26,8 @@ namespace HeartGame
         S_RELEASE = 7,
         D_RELEASE = 8,
         SPACE_RELEASE = 9,
+
+        NOP = 10,
     };
 
     public class PlayState : GameState
@@ -38,11 +40,10 @@ namespace HeartGame
         public Texture2D AmbientMap { get; set; }
         public Texture2D TorchMap { get; set; }
         public LocatableComponent ground;
-        public List<PhysicsComponent> dorfs = new List<PhysicsComponent>();
+        public List<Person> dorfs = new List<Person>();
         public List<Hospital> hospitals = new List<Hospital>();
         public Player player;
         public Drawer2D drawer2D;
-        public List<Event> frameEvents;
         public SoundManager sounds;
         public ParticleManager particles;
         protected Client client;
@@ -56,13 +57,12 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
-            online = false;
+            online = true;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
 
-            frameEvents = new List<Event>();
             particles = new ParticleManager(ComponentManager);
 
             EmitterData testData = new EmitterData();
@@ -101,16 +101,8 @@ namespace HeartGame
 
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
-            string name;
-            if (online)
-            {
-                client = new Client();
-                name = client.Connect();
-            }
-            else
-            {
-                name = "0";
-            }
+            client = new Client(online);
+            string name = client.Connect();
 
             if (name == "0")
             {
@@ -138,8 +130,9 @@ namespace HeartGame
                             break;
                     }
                     npc.velocityController.MaxSpeed = 1;
+                    npc.Tags.Add("10" + i.ToString());
                     npc.Target = new Vector3(-1, -2.1f, -11);
-                    npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 2f, rand() * 2f - 1f);
+                    npc.Velocity = new Vector3(0f, 0f, 0f);
                     npc.HasMoved = true;
                     npc.IsSleeping = false;
                     dorfs.Add(npc);
@@ -147,14 +140,13 @@ namespace HeartGame
             }
 
             // Player!
-            player = new Player("dorf", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
+            player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
             player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
             player.HasMoved = true;
             dorfs.Add(player);
             VelocityController velocityController = new VelocityController(player);
             velocityController.IsTracking = true;
-
 
             Vector3 boundingBoxPos = new Vector3(0, -2, 0);
             Vector3 boundingBoxExtents = new Vector3(100, 4, 100);
@@ -184,19 +176,24 @@ namespace HeartGame
             switch (key)
             {
                 case Keys.W:
-                    frameEvents.Add(Event.W_PRESS);
+                    client.Write(encodePerson(player,Event.W_PRESS.ToString()));
+                    //frameEvents.Add(Event.W_PRESS);
                     break;
                 case Keys.A:
-                    frameEvents.Add(Event.A_PRESS);
+                    client.Write(encodePerson(player,Event.A_PRESS.ToString()));
+                    //frameEvents.Add(Event.A_PRESS);
                     break;
                 case Keys.S:
-                    frameEvents.Add(Event.S_PRESS);
+                    client.Write(encodePerson(player,Event.S_PRESS.ToString()));
+                    //frameEvents.Add(Event.S_PRESS);
                     break;
                 case Keys.D:
-                    frameEvents.Add(Event.D_PRESS);
+                    client.Write(encodePerson(player,Event.D_PRESS.ToString()));
+                    //frameEvents.Add(Event.D_PRESS);
                     break;
                 case Keys.Space:
-                    frameEvents.Add(Event.SPACE_PRESS);
+                    client.Write(encodePerson(player,Event.SPACE_PRESS.ToString()));
+                    //frameEvents.Add(Event.SPACE_PRESS);
                     break;
                 default:
                     break;
@@ -208,19 +205,23 @@ namespace HeartGame
             switch (key)
             {
                 case Keys.W:
-                    frameEvents.Add(Event.W_RELEASE);
+                    client.Write(encodePerson(player,Event.W_RELEASE.ToString()));
+                    //frameEvents.Add(Event.W_RELEASE);
                     break;
                 case Keys.A:
-                    frameEvents.Add(Event.A_RELEASE);
+                    client.Write(encodePerson(player,Event.A_RELEASE.ToString()));
+                    //frameEvents.Add(Event.A_RELEASE);
                     break;
                 case Keys.S:
-                    frameEvents.Add(Event.S_RELEASE);
+                    client.Write(encodePerson(player,Event.S_RELEASE.ToString()));
+                    //frameEvents.Add(Event.S_RELEASE);
                     break;
                 case Keys.D:
-                    frameEvents.Add(Event.D_RELEASE);
+                    client.Write(encodePerson(player,Event.D_RELEASE.ToString()));
+                    //frameEvents.Add(Event.D_RELEASE);
                     break;
                 case Keys.Space:
-                    frameEvents.Add(Event.SPACE_RELEASE);
+                    client.Write(encodePerson(player,Event.SPACE_RELEASE.ToString()));
 
                     if (player.DefibCharge >= 0.25f)
                     {
@@ -236,7 +237,7 @@ namespace HeartGame
         {
 			SoundManager.PlaySound("defibThud", player.GlobalTransform.Translation);
             particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
-            foreach (PhysicsComponent d in dorfs)
+            foreach (Person d in dorfs)
             {
                 if (d != owner && (d.GlobalTransform.Translation - owner.GlobalTransform.Translation).LengthSquared() < 1 * 1)
                 {
@@ -305,8 +306,6 @@ namespace HeartGame
 
             ComponentManager.Render(gameTime, Camera, SpriteBatch, Game.GraphicsDevice,Shader, false);
             
-            
-
             SpriteBatch.Begin();
             if (player.DefibCharge > 0.0f)
             {
@@ -330,59 +329,85 @@ namespace HeartGame
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Game.GraphicsDevice.BlendState = BlendState.Opaque;
 
-
             base.Render(gameTime);
         }
 
         protected void doActions()
         {
             string move = client.Read();
+            if (move.Length == 0)
+            {
+                return;
+            }
             string[] toks = move.Split(',');
             string command = toks[0];
-            if (command == "position")
+            if (command == "general")
             {
                 bool found = false;
-                uint id = Convert.ToUInt32(toks[1], 10);
+                int id = Convert.ToInt32(toks[1], 10);
                 string action = toks[2];
                 float x = (float)Convert.ToDouble(toks[3]);
                 float y = (float)Convert.ToDouble(toks[4]);
                 float z = (float)Convert.ToDouble(toks[5]);
-                float vx = (float)Convert.ToDouble(toks[6]);
-                float vy = (float)Convert.ToDouble(toks[7]);
-                float vz = (float)Convert.ToDouble(toks[8]);
-                foreach (Person p in dorfs)
+                foreach (Person p in ComponentManager.FilterComponentsWithTag(toks[1], dorfs))
                 {
-                    if (p.GlobalID == id)
-                    {
-                        p.LocalTransform =
-                            Matrix.CreateTranslation(new Vector3(x, y, z));
-                        p.Velocity = new Vector3(vx, vy, vz);
-                        found = true;
-                    }
+                    p.PerformAction((Event)Enum.Parse(typeof(Event), action, true));
+                    p.LocalTransform =
+                        Matrix.CreateTranslation(new Vector3(x, y, z));
+                    found = true;
                 }
                 if (!found)
                 {
-                    string[] sheets = { "oldwalk", "fatwalk", "smokewalk" };
-                    NPC npc = new NPC("person", new Vector3(x, y, z),
-                        ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
-                    npc.velocityController.MaxSpeed = 1;
-                    npc.Target = new Vector3(-1, -2.1f, -11);
-                    npc.Velocity = new Vector3(vx, vy, vz);
-                    npc.HasMoved = true;
-                    npc.IsSleeping = false;
-                    dorfs.Add(npc);
+                    Person p;
+                    if (id < 1000)
+                    {
+                        p = new Player(toks[1], new Vector3(x, y, z),
+                        ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
+                    }
+                    else
+                    {
+                        string[] sheets = { "oldwalk", "fatwalk", "smokewalk" };
+                        p = new NPC("person", new Vector3(x, y, z),
+                            ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
+                        p.velocityController.MaxSpeed = 1;
+                        ((NPC)p).Target = new Vector3(-1, -2.1f, -11);
+                        p.HasMoved = true;
+                        p.IsSleeping = false;
+                    }
+                    p.Velocity = new Vector3(0f, 0f, 0f);
+                    p.HasMoved = true;
+                    dorfs.Add(p);
                 }
             }
+            else if (command == "sendpos")
+            {
+                client.Write(encodePerson(player, Event.NOP.ToString()));
+            }
+        }
+
+        protected string encodePerson(Person p, string action)
+        {
+            string[] info =
+            {"general", 
+                p.tag, 
+                action,
+                p.LocalTransform.Translation.X.ToString(),
+                p.LocalTransform.Translation.Y.ToString(),
+                p.LocalTransform.Translation.Z.ToString()};
+            string msg = String.Join(",", info);
+            return msg;
         }
 
         public override void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-
+            
             SoundManager.Update(gameTime, Camera);
 
             KeyboardState keyboardState = Keyboard.GetState();
+
+            doActions();
 
             InputManager.KeysUpdate(keyboardState);
 
@@ -392,8 +417,6 @@ namespace HeartGame
             }
 
             Vector3 TargetVelocity = Vector3.Zero;
-
-            player.PerformActions(frameEvents);
 
             if (keyboardState.IsKeyDown(Keys.Escape))
             {
@@ -410,13 +433,13 @@ namespace HeartGame
                 collideBox.Add(h.Component.GetBoundingBox());
             }
 
-            foreach (PhysicsComponent d in dorfs)
+            foreach (Person d in dorfs)
             {
                 d.HasMoved = true;
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
 
-            foreach (PhysicsComponent d in dorfs)
+            foreach (Person d in dorfs)
             {
                 if (!(d is Player) && !d.IsDead)
                 {
@@ -439,10 +462,10 @@ namespace HeartGame
             Camera.Position += alpha * (player.GlobalTransform.Translation + new Vector3(10, 10, 0));
             Camera.Target = player.GlobalTransform.Translation;
 
-            frameEvents = new List<Event>();
-
             Camera.Update(gameTime);
             base.Update(gameTime);
         }
+
+        public string name { get; set; }
     }
 }
