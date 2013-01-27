@@ -70,22 +70,22 @@ namespace HeartGame
                         TC.Close();
                         throw new Exception();
                     }
+
+                    SW = new StreamWriter(TC.GetStream());
+                    //request dwarf count from server
+                    //SW.WriteLine("add dwarf");
+                    //SW.Flush();
+                    StreamReader SR = new StreamReader(TC.GetStream());
+                    string name = SR.ReadLine();
+                    t = new Thread(new ParameterizedThreadStart(runListener));
+                    t.Start(CQ);
+                    return name;
                 }
                 catch (Exception e)
                 {
                     this.online = false;
-                    return "error";
                 }
-
-                SW = new StreamWriter(TC.GetStream());
-                //request dwarf count from server
-                //SW.WriteLine("add dwarf");
-                //SW.Flush();
-                StreamReader SR = new StreamReader(TC.GetStream());
-                string name = SR.ReadLine();
-                t = new Thread(new ParameterizedThreadStart(runListener));
-                t.Start(CQ);
-                return name;
+                return "error";
             }
             else
             {
