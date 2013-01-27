@@ -25,102 +25,47 @@ namespace HeartGame
             new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f)
         {
             OrientWithVelocity = true;
-            Texture2D dwarfSprites = content.Load<Texture2D>(spritesheet);
+            Texture2D sprites = content.Load<Texture2D>(spritesheet);
 
-            List<Point> dwarfOffsets = new List<Point>();
-            dwarfOffsets.Add(new Point(0, 0));
+            List<Point> offsets = new List<Point>();
+            offsets.Add(new Point(0, 0));
 
-            Point offset = dwarfOffsets[RandomHelper.random.Next(0, dwarfOffsets.Count)];
-
-
-            List<Point> forwardFrames = new List<Point>();
-            forwardFrames.Add(new Point(0 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(0 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
-            forwardFrames.Add(new Point(3 + offset.X, 0 + offset.Y));
-
-            Animation dwarfWalkForward = new Animation(graphics, dwarfSprites, "dwarf_walk_forward", 32, 32, forwardFrames, true, Color.White, 10.0f, 0.8f, 1, false);
-
+            Point offset = offsets[RandomHelper.random.Next(0, offsets.Count)];
 
             List<Point> rightFrames = new List<Point>();
-            rightFrames.Add(new Point(0 + offset.X, 2 + offset.Y));
-            rightFrames.Add(new Point(1 + offset.X, 2 + offset.Y));
-            rightFrames.Add(new Point(2 + offset.X, 2 + offset.Y));
-            rightFrames.Add(new Point(1 + offset.X, 2 + offset.Y));
-            rightFrames.Add(new Point(0 + offset.X, 2 + offset.Y));
-            rightFrames.Add(new Point(1 + offset.X, 2 + offset.Y));
-            rightFrames.Add(new Point(2 + offset.X, 2 + offset.Y));
-            rightFrames.Add(new Point(3 + offset.X, 2 + offset.Y));
+            rightFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
+            rightFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
+            rightFrames.Add(new Point(3 + offset.X, 0 + offset.Y));
+            rightFrames.Add(new Point(4 + offset.X, 0 + offset.Y));
 
-            Animation dwarfWalkRight = new Animation(graphics, dwarfSprites, "dwarf_walk_right", 32, 32, rightFrames, true, Color.White, 10.0f, 0.8f, 1, true);
+            Animation walkRight = new Animation(graphics, sprites, name+"_walk_right", 32, 32, rightFrames, true, Color.White, 10.0f, 0.8f, 1, true);
 
             List<Point> leftFrames = new List<Point>();
-            leftFrames.Add(new Point(0 + offset.X, 1 + offset.Y));
-            leftFrames.Add(new Point(1 + offset.X, 1 + offset.Y));
-            leftFrames.Add(new Point(2 + offset.X, 1 + offset.Y));
-            leftFrames.Add(new Point(1 + offset.X, 1 + offset.Y));
-            leftFrames.Add(new Point(0 + offset.X, 1 + offset.Y));
-            leftFrames.Add(new Point(1 + offset.X, 1 + offset.Y));
-            leftFrames.Add(new Point(2 + offset.X, 1 + offset.Y));
-            leftFrames.Add(new Point(3 + offset.X, 1 + offset.Y));
+            leftFrames.Add(new Point(1 + offset.X, 0 + offset.Y));
+            leftFrames.Add(new Point(2 + offset.X, 0 + offset.Y));
+            leftFrames.Add(new Point(3 + offset.X, 0 + offset.Y));
+            leftFrames.Add(new Point(4 + offset.X, 0 + offset.Y));
 
-            Animation dwarfWalkLeft = new Animation(graphics, dwarfSprites, "dwarf_walk_left", 32, 32, leftFrames, true, Color.White, 10.0f, 0.8f, 1, false);
-
-            List<Point> backFrames = new List<Point>();
-            backFrames.Add(new Point(0 + offset.X, 3 + offset.Y));
-            backFrames.Add(new Point(1 + offset.X, 3 + offset.Y));
-            backFrames.Add(new Point(2 + offset.X, 3 + offset.Y));
-            backFrames.Add(new Point(1 + offset.X, 3 + offset.Y));
-
-            Animation dwarfWalkBack = new Animation(graphics, dwarfSprites, "dwarf_walk_back", 32, 32, backFrames, true, Color.White, 2.0f, 0.8f, 1, false);
-
-
-
-            List<Point> forwardFramesIdle = new List<Point>();
-            forwardFramesIdle.Add(new Point(1 + offset.X, 0 + offset.Y));
-            forwardFramesIdle.Add(new Point(3 + offset.X, 0 + offset.Y));
-            forwardFramesIdle.Add(new Point(1 + offset.X, 0 + offset.Y));
-
-            Animation dwarfIdleForward = new Animation(graphics, dwarfSprites, "dwarf_idle_forward", 32, 32, forwardFramesIdle, true, Color.White, 2.0f, 0.8f, 1, false);
-
+            Animation walkLeft = new Animation(graphics, sprites, name+"_walk_left", 32, 32, leftFrames, true, Color.White, 10.0f, 0.8f, 1, false);
 
             List<Point> rightFramesIdle = new List<Point>();
-            rightFramesIdle.Add(new Point(2 + offset.X, 2 + offset.Y));
-            rightFramesIdle.Add(new Point(0 + offset.X, 2 + offset.Y));
-            rightFramesIdle.Add(new Point(2 + offset.X, 2 + offset.Y));
+            rightFramesIdle.Add(new Point(0 + offset.X, 0 + offset.Y));
 
-
-            Animation dwarfIdleRight = new Animation(graphics, dwarfSprites, "dwarf_idle_right", 32, 32, rightFramesIdle, true, Color.White, 2.0f, 0.8f, 1, false);
+            Animation idleRight = new Animation(graphics, sprites, name+"_idle_right", 32, 32, rightFramesIdle, true, Color.White, 2.0f, 0.8f, 1, true);
 
             List<Point> leftFramesIdle = new List<Point>();
-            leftFramesIdle.Add(new Point(1 + offset.X, 1 + offset.Y));
-            leftFramesIdle.Add(new Point(3 + offset.X, 1 + offset.Y));
-            leftFramesIdle.Add(new Point(1 + offset.X, 1 + offset.Y));
+            leftFramesIdle.Add(new Point(0 + offset.X, 0 + offset.Y));
 
-            Animation dwarfIdleLeft = new Animation(graphics, dwarfSprites, "dwarf_idle_left", 32, 32, leftFramesIdle, true, Color.White, 2.0f, 0.8f, 1, false);
+            Animation idleLeft = new Animation(graphics, sprites, name+"_idle_left", 32, 32, leftFramesIdle, true, Color.White, 2.0f, 0.8f, 1, false);
 
-            List<Point> backFramesIdle = new List<Point>();
-            backFramesIdle.Add(new Point(1 + offset.X, 3 + offset.Y));
-
-            Animation dwarfIdleBack = new Animation(graphics, dwarfSprites, "dwarf_idle_back", 32, 32, backFramesIdle, true, Color.White, 2.0f, 0.8f, 1, false);
-
-            dwarfWalkForward.Play();
-            dwarfWalkBack.Play();
-            dwarfWalkLeft.Play();
-            dwarfWalkRight.Play();
-            dwarfIdleForward.Play();
-            dwarfIdleBack.Play();
-            dwarfIdleLeft.Play();
-            dwarfIdleRight.Play();
+            walkLeft.Play();
+            walkRight.Play();
+            idleLeft.Play();
+            idleRight.Play();
 
             Matrix spriteMatrix = Matrix.Identity;
            // spriteMatrix.Translation = new Vector3(0, 0.1f, 0);
-            OrientedAnimation testSprite = new OrientedAnimation(componentManager, "testsprite", this, spriteMatrix, dwarfSprites, dwarfWalkRight, dwarfWalkLeft, dwarfWalkForward, dwarfWalkBack,
-                dwarfIdleRight, dwarfIdleLeft, dwarfIdleForward, dwarfIdleBack);
+            OrientedAnimation testSprite = new OrientedAnimation(componentManager, "testsprite", this, spriteMatrix, sprites, walkRight, walkLeft, idleRight, idleLeft);
 
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             //shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);

@@ -12,9 +12,7 @@ namespace HeartGame
         public enum Orientation
         {
             Right,
-            Left,
-            Forward,
-            Backward
+            Left
         }
 
         public Dictionary<Orientation, Animation> OrientationMap { get; set; }
@@ -26,31 +24,22 @@ namespace HeartGame
 
         public OrientedAnimation(ComponentManager manager, string name,
             GameComponent parent, Matrix localTransform, Texture2D spriteSheet,
-            Animation rightAnimation, Animation leftAnimation, Animation forwardAnimation, Animation backwardAnimation,
-            Animation rightAnimationIdle, Animation leftAnimationIdle, Animation forwardAnimationIdle, Animation backwardAnimationIdle) :
+            Animation rightAnimation, Animation leftAnimation,
+            Animation rightAnimationIdle, Animation leftAnimationIdle) :
             base(manager, name, parent, localTransform, spriteSheet, false)
         {
             OrientationMap = new Dictionary<Orientation, Animation>();
             IdleMap = new Dictionary<Orientation, Animation>();
             OrientationMap[Orientation.Right] = rightAnimation;
             OrientationMap[Orientation.Left] = leftAnimation;
-            OrientationMap[Orientation.Forward] = forwardAnimation;
-            OrientationMap[Orientation.Backward] = backwardAnimation;
             IdleMap[Orientation.Right] = rightAnimationIdle;
             IdleMap[Orientation.Left] = leftAnimationIdle;
-            IdleMap[Orientation.Forward] = forwardAnimationIdle;
-            IdleMap[Orientation.Backward] = backwardAnimationIdle;
-
+            
             AddAnimation(rightAnimation);
             AddAnimation(leftAnimation);
-            AddAnimation(forwardAnimation);
-            AddAnimation(backwardAnimation);
-
+            
             AddAnimation(rightAnimationIdle);
             AddAnimation(leftAnimationIdle);
-            AddAnimation(forwardAnimationIdle);
-            AddAnimation(backwardAnimationIdle);
-
 
             foreach (Animation a in Animations.Values)
             {
@@ -85,21 +74,13 @@ namespace HeartGame
 
 
 
-            if (angle > -MathHelper.PiOver4 && angle < MathHelper.PiOver4)
+            if (angle > -MathHelper.PiOver2 && angle < MathHelper.PiOver2)
             {
                 CurrentOrientation = Orientation.Left;
             }
-            else if (angle > MathHelper.PiOver4 && angle < 3.0f * MathHelper.PiOver4)
-            {
-                CurrentOrientation = Orientation.Backward;
-            }
-            else if ((angle > 3.0f * MathHelper.PiOver4 ||  angle < -3.0f * MathHelper.PiOver4))
-            {
-                CurrentOrientation = Orientation.Right;
-            }
             else
             {
-                CurrentOrientation = Orientation.Forward;
+                CurrentOrientation = Orientation.Right;
             }
         }
         

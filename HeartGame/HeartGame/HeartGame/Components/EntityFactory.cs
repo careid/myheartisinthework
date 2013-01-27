@@ -37,6 +37,7 @@ namespace HeartGame
             return boxComponent;
         }
 
+        /*
         public static GameComponent GenerateWalker(Vector3 position,
                                                   ComponentManager componentManager,
                                                   ContentManager content,
@@ -167,6 +168,7 @@ namespace HeartGame
 
             return testDwarf;
         }
+         * */
 
         public static LocatableComponent GenerateBuilding(Vector3 pos, Vector3 size, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, String name)
         {
