@@ -12,7 +12,7 @@ except ImportError:
 import itertools
 
 BUFF = 1024
-HOST = '172.24.8.157'
+HOST = '169.254.67.42'
 PORT = 3000
 
 class ClientConn(threading.Thread):
