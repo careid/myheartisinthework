@@ -77,6 +77,7 @@ namespace HeartGame
         public Player player;
         public Drawer2D drawer2D;
         public List<Event> frameEvents;
+        public SoundManager sounds;
 
         private float rand()
         {
@@ -96,6 +97,7 @@ namespace HeartGame
             InputManager.KeyPressedCallback += pressKey;
             InputManager.KeyReleasedCallback += releaseKey;
 
+            sounds = new SoundManager();
 
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
