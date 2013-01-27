@@ -73,7 +73,8 @@ namespace HeartGame
             frm.Add(new Point(1, 0));
             frm.Add(new Point(0, 1));
             frm.Add(new Point(1, 1));
-            testData.Animation = new Animation(Game.GraphicsDevice, Game.Content.Load<Texture2D>("electricity"), "electricity", 32, 32, frm, true, Color.White, 20f, 1.0f, 1.0f, false);
+            testData.Animation = new Animation(Game.GraphicsDevice, Game.Content.Load<Texture2D>("electricity"),
+                "electricity", 32, 32, frm, true, Color.White, 20f, 1.0f, 1.0f, false);
             testData.ConstantAccel = new Vector3(0, -1, 0);
             testData.LinearDamping = 0.9f;
             testData.AngularDamping = 0.9f;
@@ -107,7 +108,7 @@ namespace HeartGame
 
             if (name == "0")
             {
-                for (int i = 0; i < 20; i++)
+                for (int i = 0; i < 20; i++) // fnord
                 {
                     NPC npc;
                     switch ((int)(rand() * 3))
@@ -191,23 +192,18 @@ namespace HeartGame
             {
                 case Keys.W:
                     client.Write(encodePerson(player,Event.W_PRESS.ToString()));
-                    //frameEvents.Add(Event.W_PRESS);
                     break;
                 case Keys.A:
                     client.Write(encodePerson(player,Event.A_PRESS.ToString()));
-                    //frameEvents.Add(Event.A_PRESS);
                     break;
                 case Keys.S:
                     client.Write(encodePerson(player,Event.S_PRESS.ToString()));
-                    //frameEvents.Add(Event.S_PRESS);
                     break;
                 case Keys.D:
                     client.Write(encodePerson(player,Event.D_PRESS.ToString()));
-                    //frameEvents.Add(Event.D_PRESS);
                     break;
                 case Keys.Space:
                     client.Write(encodePerson(player,Event.SPACE_PRESS.ToString()));
-                    //frameEvents.Add(Event.SPACE_PRESS);
                     break;
                 default:
                     break;
@@ -220,27 +216,18 @@ namespace HeartGame
             {
                 case Keys.W:
                     client.Write(encodePerson(player,Event.W_RELEASE.ToString()));
-                    //frameEvents.Add(Event.W_RELEASE);
                     break;
                 case Keys.A:
                     client.Write(encodePerson(player,Event.A_RELEASE.ToString()));
-                    //frameEvents.Add(Event.A_RELEASE);
                     break;
                 case Keys.S:
                     client.Write(encodePerson(player,Event.S_RELEASE.ToString()));
-                    //frameEvents.Add(Event.S_RELEASE);
                     break;
                 case Keys.D:
                     client.Write(encodePerson(player,Event.D_RELEASE.ToString()));
-                    //frameEvents.Add(Event.D_RELEASE);
                     break;
                 case Keys.Space:
                     client.Write(encodePerson(player,Event.SPACE_RELEASE.ToString()));
-
-                    //if (player.DefibCharge >= 0.25f)
-                    //{
-                    //    defib(player);
-                    //}
                     break;
                 default:
                     break;
@@ -249,7 +236,6 @@ namespace HeartGame
 
         public void defib(Player owner)
         {
-            Console.Out.WriteLine("defib() in playstate");
 			SoundManager.PlaySound("defibThud", owner.GlobalTransform.Translation);
             particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
             foreach (Person d in dorfs)
@@ -257,11 +243,20 @@ namespace HeartGame
                 if (d != owner && (d.GlobalTransform.Translation - owner.GlobalTransform.Translation).LengthSquared() < 1 * 1)
                 {
                     Vector3 offset = d.GlobalTransform.Translation - owner.GlobalTransform.Translation;
-                    offset.Normalize();
-                    offset *= 500;
-                    offset.Y = 500;
+                    offset.Y = 0;
+                    if (offset.X != 0 || offset.Z != 0)
+                    {
+                        offset.Normalize();
+                        offset *= 10;
+                    }
+                    else
+                    {
+                        offset = new Vector3(0);
+                    }
+                    offset.Y = 5;
                     offset *= owner.DefibCharge;
-                    d.ApplyForce(offset, 1 / 60.0f);
+                    d.Velocity = offset;
+                    //d.ApplyForce(offset, 1 / 60.0f);
 
                     if (d is NPC)
                     {
@@ -269,6 +264,8 @@ namespace HeartGame
                         npc.WalkTimer.Reset(owner.DefibCharge * npc.MaxWalkTime);
                         npc.State = NPC.NPCState.Walking;
                     }
+
+                    //client.Write(encodePerson(d, Event.NOP.ToString()));
                 }
             }
         }
@@ -293,13 +290,10 @@ namespace HeartGame
                 Shader.Parameters["xEnableLighting"].SetValue(false);
             }
 
-            // discharge overfull defib
+            // discharge overfull defibrillator
             if (player.DefibCharge >= 1.0f)
             {
                 client.Write(encodePerson(player, Event.SPACE_RELEASE.ToString()));
-                //defib(player);
-                //player.Charging = false;
-                //player.DefibCharge = 0.0f;
             }
 
             Shader.Parameters["xLightPos"].SetValue(player.GlobalTransform.Translation);
