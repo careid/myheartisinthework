@@ -227,9 +227,11 @@ namespace HeartGame
                     client.Write(encodePerson(player,Event.SPACE_PRESS.ToString()));
                     break;
                 case Keys.Escape:
-                    client.t.Abort();
-                    GeometricPrimitive.ExitGame = true;
-                    Game.Exit();
+                    if (client.t != null)
+                        client.t.Abort();
+                    StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+                    //GeometricPrimitive.ExitGame = true;
+                    //Game.Exit();
                     break;
                 default:
                     break;
@@ -501,8 +503,9 @@ namespace HeartGame
             }
             else if (command == "exit")
             {
-                pressKey(Keys.Escape);
-                releaseKey(Keys.Escape);
+                StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+                //pressKey(Keys.Escape);
+                //releaseKey(Keys.Escape);
             }
         }
 
