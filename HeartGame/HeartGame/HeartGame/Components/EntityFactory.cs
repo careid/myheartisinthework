@@ -16,6 +16,14 @@ namespace HeartGame
     {
 
 
+        public static LocatableComponent GenerateInvisibleBox(BoundingBox box, ComponentManager componentManager)
+        {
+            Matrix transform = Matrix.CreateTranslation((box.Max - box.Min) * 0.5f + box.Min);
+            Vector3 extents = box.Max - box.Min;
+            LocatableComponent boxComponent = new LocatableComponent(componentManager, "box", componentManager.RootComponent, transform, extents, Vector3.Zero);
+
+            return boxComponent;
+        }
 
         public static LocatableComponent GenerateBlankBox(BoundingBox box,
                                                          ComponentManager componentManager,

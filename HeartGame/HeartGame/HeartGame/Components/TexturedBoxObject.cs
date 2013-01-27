@@ -25,6 +25,10 @@ namespace HeartGame
 
         public override void Render(GameTime gameTime,  Camera camera, SpriteBatch spriteBatch, GraphicsDevice graphicsDevice, Effect effect)
         {
+            if (!IsVisible)
+            {
+                return;
+            }
 
             base.Render(gameTime, camera, spriteBatch, graphicsDevice, effect);
             Texture2D originalText = effect.Parameters["xTexture"].GetValueTexture2D();
