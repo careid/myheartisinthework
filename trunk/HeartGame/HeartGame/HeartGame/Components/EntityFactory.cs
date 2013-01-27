@@ -17,7 +17,7 @@ namespace HeartGame
 
 
 
-        public static GameComponent GenerateBlankBox(BoundingBox box, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, string texture)
+        public static LocatableComponent GenerateBlankBox(BoundingBox box, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, string texture)
         {
             Matrix transform = Matrix.CreateTranslation((box.Max - box.Min) * 0.5f + box.Min);
             Vector3 extents = box.Max - box.Min;
@@ -166,6 +166,11 @@ namespace HeartGame
 
 
             return testDwarf;
+        }
+
+        public static LocatableComponent GenerateBuilding(Vector3 pos, Vector3 size, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, String name)
+        {
+            return GenerateBlankBox(new BoundingBox(pos, new Vector3(pos.X + size.X, pos.Y + size.Y, pos.Z + size.Z)), componentManager, content, graphics, name);
         }
     }
 }
