@@ -161,6 +161,7 @@ namespace HeartGame
                     Charging = true;
                     break;
                 case Event.SPACE_RELEASE:
+                    isReady = true;
                     Charging = false;
                     Console.Out.WriteLine("defibbing in player performaction");
                     SoundManager.StopSounds("defibCharge");
