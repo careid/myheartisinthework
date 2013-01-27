@@ -58,7 +58,6 @@ namespace HeartGame
         protected string[] wordsArray;
         protected int MapWidth { get; set; }
         protected int MapHeight { get; set; }
-        protected float posTimer;
 
         private float rand()
         {
@@ -84,8 +83,6 @@ namespace HeartGame
 
             notification = null;
             particles = new ParticleManager(ComponentManager);
-
-            posTimer = 0.0f;
 
             EmitterData testData = new EmitterData();
             testData.AngularDamping = 1.0f;
@@ -123,8 +120,9 @@ namespace HeartGame
             sounds = new SoundManager();
 
             wordsDict = new Dictionary<string, string>();
-            wordsDict.Add("SAVING SPREE", "savingspree");
+            wordsDict.Add("MONSTER SAVE", "monstersave");
             wordsDict.Add("DOUBLE SAVE", "doublesave");
+            wordsDict.Add("TRIPLE SAVE", "triplesave");
 
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
@@ -211,7 +209,7 @@ namespace HeartGame
             AmbientMap = Game.Content.Load<Texture2D>("ambientgradient");
             TorchMap = Game.Content.Load<Texture2D>("torchgradient");
 
-
+            AddNotification("Mash Space to Begin");
         }
 
         public void pressKey(Keys key)
@@ -270,10 +268,13 @@ namespace HeartGame
             }
         }
 
-        public void AddNotification(string text, Hospital team, float time = 1.0f)
+        public void AddNotification(string text, Hospital team= null, float time = 1.0f)
         {
             notification = new Notification(text, time);
-            SoundManager.PlaySound(wordsDict[text], team.Component.LocalTransform.Translation);
+            if (wordsDict.ContainsKey(text))
+            {
+                SoundManager.PlaySound(wordsDict[text], team.Component.LocalTransform.Translation);
+            }
         }
 
         public void defib(Player owner)
@@ -632,13 +633,6 @@ namespace HeartGame
                         client.Write(encodePerson(d, Event.SCORE.ToString()));
                     }
                 }
-            }
-
-            posTimer += dt;
-            if (posTimer > 0.1)
-            {
-                posTimer = 0.0f;
-                client.Write(encodePerson(player, Event.NOP.ToString()));
             }
 
             if (notification != null)
