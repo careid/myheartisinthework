@@ -14,14 +14,7 @@ namespace HeartGame
 {
     public class NPC : Person
     {
-        public enum NPCState
-        {
-            Dead,
-            Walking,
-            Idle
-        }
-
-        public NPCState State { get; set; }
+        public String State { get; set; }
         public Timer WalkTimer { get; set; }
         public float MaxWalkTime { get; set; }
         public Vector3 Target { get; set; }
@@ -33,7 +26,6 @@ namespace HeartGame
                   string spritesheet) 
             : base(name, position, componentManager, content, graphics, spritesheet)
         {
-            State = NPCState.Walking;
             MaxWalkTime = 5.0f;
             WalkTimer = new Timer(MaxWalkTime, true);
             Target = Vector3.Zero;
@@ -43,36 +35,36 @@ namespace HeartGame
             List<Point> deadFrame = new List<Point>();
             deadFrame.Add(new Point(0, 1));
             
-            image.AddOrientedAnimation (new Animation(graphics, sprites, name + "_dead_left", 32, 32, deadFrame, true, Color.White, 10.0f, 0.8f, 1, false),
+            OrientedAnimation dead = new OrientedAnimation(new Animation(graphics, sprites, name + "_dead_left", 32, 32, deadFrame, true, Color.White, 10.0f, 0.8f, 1, false),
                         new Animation(graphics, sprites, name + "_dead_right", 32, 32, deadFrame, true, Color.White, 10.0f, 0.8f, 1, true));
+            image.AddOrientedAnimation(dead);
+            AnimationState["dead"] = dead.Name;
+            State = "walk";
+            image.SetCurrentOrientedAnimation(AnimationState[State]);
         }
 
         public override void Update(GameTime gameTime, Camera camera)
         {
-            switch (State)
+            if (State.Equals("dead"))
             {
-                case NPCState.Dead:
-                    velocityController.targetVelocity = Vector3.Zero;
-                    break;
-
-                case NPCState.Walking:
-                    WalkTimer.Update(gameTime);
-
-                    Vector3 normalized = (Target - GlobalTransform.Translation);
-                    normalized.Normalize();
-
-                    velocityController.targetVelocity = velocityController.MaxSpeed * normalized;
-                    velocityController.IsTracking = true;
-
-                    if (WalkTimer.HasTriggered)
-                    {
-                        State = NPCState.Dead;
-                    }
-
-
-                    break;
+                velocityController.targetVelocity = Vector3.Zero;
             }
+            else if (State.Equals("walk"))
+            {
+                WalkTimer.Update(gameTime);
 
+                Vector3 normalized = (Target - GlobalTransform.Translation);
+                normalized.Normalize();
+
+                velocityController.targetVelocity = velocityController.MaxSpeed * normalized;
+                velocityController.IsTracking = true;
+
+                if (WalkTimer.HasTriggered)
+                {
+                    State = "dead";
+                    image.SetCurrentOrientedAnimation(AnimationState[State]);
+                }
+            }
             base.Update(gameTime, camera);
         }
     }
