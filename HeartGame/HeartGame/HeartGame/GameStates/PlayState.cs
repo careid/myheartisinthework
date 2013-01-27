@@ -53,6 +53,9 @@ namespace HeartGame
         public ParticleManager particles;
         protected Client client;
         protected bool online;
+        protected Notification notification;
+        protected Dictionary<string, string> wordsDict;
+        protected string[] wordsArray;
 
         private float rand()
         {
@@ -74,6 +77,7 @@ namespace HeartGame
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
 
+            notification = null;
             particles = new ParticleManager(ComponentManager);
 
             EmitterData testData = new EmitterData();
@@ -111,6 +115,10 @@ namespace HeartGame
 
             sounds = new SoundManager();
 
+            wordsDict = new Dictionary<string, string>();
+            wordsDict.Add("SAVING SPREE", "savingspree");
+            wordsDict.Add("DOUBLE SAVE", "doublesave");
+
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
             client = new Client(online);
@@ -121,13 +129,11 @@ namespace HeartGame
                 name = "0";
                 online = false;
             }
-
             
             Hospital hospital1 = new Hospital(new Vector3(-15, 0, -15), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
             Hospital hospital2 = new Hospital(new Vector3(15, 0, 15), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Blue, new Point(1, 0));
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
-             
 
             Random r = new Random(1);
             for (int i = 0; i < 1; i++) // fnord
@@ -252,6 +258,12 @@ namespace HeartGame
                 default:
                     break;
             }
+        }
+
+        public void AddNotification(string text, Hospital team, float time = 1.0f)
+        {
+            notification = new Notification(text, time);
+            SoundManager.PlaySound(wordsDict[text], team.Component.LocalTransform.Translation);
         }
 
         public void defib(Player owner)
@@ -382,10 +394,13 @@ namespace HeartGame
                 blueX = 5;
             }
 
-
-
             Drawer2D.DrawStrokedText(SpriteBatch, redName + " $" + hospitals[0].Score, Drawer2D.DefaultFont, new Vector2(redX, 5), Color.White, Color.Red);
             Drawer2D.DrawStrokedText(SpriteBatch, blueName + " $" + hospitals[1].Score, Drawer2D.DefaultFont, new Vector2(blueX, 5), Color.White, Color.Blue);
+
+            if (notification != null)
+            {
+                Drawer2D.DrawStrokedText(SpriteBatch, notification.text, Drawer2D.BigFont, new Vector2(300, 300), Color.White, new Color(1.0f, 0, 0, notification.displayLength));
+            }
 
             drawer2D.Render(SpriteBatch, Camera, Game.GraphicsDevice.Viewport);
             
@@ -452,6 +467,8 @@ namespace HeartGame
                         p.team.NumPatients++;
                         SoundManager.PlaySound("kaChing", p.GlobalTransform.Translation);
                         p.Die();
+                        string[] choices = wordsDict.Keys.ToArray();
+                        AddNotification(choices[((int)(rand() * choices.Length))], p.team);
                     }
                     p.PerformAction(e);
                     p.LocalTransform =
@@ -596,6 +613,15 @@ namespace HeartGame
                     {
                         client.Write(encodePerson(d, Event.SCORE.ToString()));
                     }
+                }
+            }
+
+            if (notification != null)
+            {
+                notification.displayLength -= dt;
+                if (notification.displayLength < 0)
+                {
+                    notification = null;
                 }
             }
 

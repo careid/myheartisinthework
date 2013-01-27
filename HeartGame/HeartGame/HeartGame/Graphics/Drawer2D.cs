@@ -124,11 +124,13 @@ namespace HeartGame
         public static ConcurrentQueue<DrawCommand2D> DrawCommands = new ConcurrentQueue<DrawCommand2D>();
         public static ContentManager Content {get; set;}
         public static SpriteFont DefaultFont { get; set;}
+        public static SpriteFont BigFont { get; set; }
         public static Texture2D Pixel { get; set; }
 
         public Drawer2D(ContentManager content, GraphicsDevice graphics)
         {
             Content = content;
+            BigFont = content.Load<SpriteFont>("BigFont");
             DefaultFont = content.Load<SpriteFont>("Default");
             Pixel = new Texture2D(graphics, 1, 1);
             Color[] white = new Color[1];
