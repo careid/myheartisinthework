@@ -7,52 +7,128 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace HeartGame
 {
-    public class AnimationPair
-    {
-        public Animation RightAnimation { get; set; }
-        public Animation LeftAnimation { get; set; }
-
-        public AnimationPair(Animation leftAnimation, Animation rightAnimation)
-        {
-            RightAnimation = rightAnimation;
-            LeftAnimation = leftAnimation;
-        }
-    }
-    public class OrientedAnimation : BillboardSpriteComponent
+    public class OrientedAnimation
     {
         public enum Orientation
         {
             Right,
             Left
         }
-        public Dictionary<Orientation, Animation> OrientationMap { get; set; }
-        public Dictionary<Orientation, Animation> IdleMap { get; set; }
+
+        public Animation RightAnimation { get; set; }
+        public Animation LeftAnimation { get; set; }
+        public String Name;
         public Orientation CurrentOrientation { get; set; }
 
-        public OrientedAnimation(ComponentManager manager, string name,
-            GameComponent parent, Matrix localTransform, Texture2D spriteSheet,
-            Animation rightAnimation, Animation leftAnimation) :
+        public OrientedAnimation(Animation leftAnimation, Animation rightAnimation)
+        {
+            RightAnimation = rightAnimation;
+            LeftAnimation = leftAnimation;
+            CurrentOrientation = Orientation.Left;
+            Name = leftAnimation.Name + "," + rightAnimation.Name;
+        }
+
+        public OrientedAnimation(Animation leftAnimation)
+        {
+            LeftAnimation = leftAnimation;
+            RightAnimation = null;
+            CurrentOrientation = Orientation.Left;
+            Name = leftAnimation.Name;
+        }
+
+        public bool Oriented()
+        {
+            return RightAnimation == null;
+        }
+
+        public Animation GetAnimation()
+        {
+            if (CurrentOrientation == Orientation.Left || RightAnimation == null)
+                return LeftAnimation;
+            else
+                return RightAnimation;
+        }
+
+        public void SetLeft()
+        {
+            CurrentOrientation = Orientation.Left;
+        }
+
+        public void SetRight()
+        {
+            CurrentOrientation = Orientation.Right;
+        }
+
+        public IEnumerator<Animation> GetEnumerator()
+        {
+            List<Animation> anims = new List<Animation>(2);
+            anims.Add(LeftAnimation);
+            if (RightAnimation != null)
+                anims.Add(RightAnimation);
+            return anims.GetEnumerator();
+        }
+    }
+    public class OrientableBillboardSpriteComponent : BillboardSpriteComponent
+    {
+        public Dictionary<string, OrientedAnimation> OrientedAnimations { get; set; }
+        public OrientedAnimation CurrentOrientedAnimation { get; set; }
+
+        public OrientableBillboardSpriteComponent(ComponentManager manager, string name,
+            GameComponent parent, Matrix localTransform, Texture2D spriteSheet) :
             base(manager, name, parent, localTransform, spriteSheet, false)
         {
-            OrientationMap = new Dictionary<Orientation, Animation>();
-            OrientationMap[Orientation.Right] = rightAnimation;
-            OrientationMap[Orientation.Left] = leftAnimation;
+            OrientedAnimations = new Dictionary<string, OrientedAnimation>();
+        }
 
-            AddAnimation(rightAnimation);
-            AddAnimation(leftAnimation);
-
-            foreach (Animation a in Animations.Values)
+        public void AddOrientedAnimation(OrientedAnimation animation)
+        {
+            if (CurrentOrientedAnimation == null)
             {
-                a.Play();
+                CurrentOrientedAnimation = animation;
             }
-            CurrentOrientation = Orientation.Right;
+            foreach (Animation anim in animation)
+            {
+                AddAnimation(anim);
+            }
+            OrientedAnimations[animation.Name] = animation;
+        }
+        public void AddOrientedAnimation(Animation animation)
+        {
+            AddOrientedAnimation(new OrientedAnimation(animation));
+        }
+
+        public void AddOrientedAnimation(Animation leftAnimation, Animation rightAnimation)
+        {
+            AddOrientedAnimation(new OrientedAnimation(leftAnimation, rightAnimation));
+        }
+
+        public OrientedAnimation GetOrientedAnimation(string name)
+        {
+            if (OrientedAnimations.ContainsKey(name))
+            {
+                return OrientedAnimations[name];
+            }
+
+            return null;
+        }
+
+        public void SetCurrentOrientedAnimation(string name)
+        {
+            OrientedAnimation anim = GetOrientedAnimation(name);
+
+            if (anim != null)
+            {
+                CurrentOrientedAnimation = anim;
+            }
         }
 
         public override void Update(GameTime gameTime,  Camera camera)
         {
-            CalculateCurrentOrientation(camera);
-
-            CurrentAnimation = OrientationMap[CurrentOrientation];
+            if (CurrentOrientedAnimation.Oriented())
+            {
+                CalculateCurrentOrientation(camera);
+                CurrentAnimation = CurrentOrientedAnimation.GetAnimation();
+            }
 
             base.Update(gameTime, camera);
         }
@@ -64,36 +140,14 @@ namespace HeartGame
 
             float angle = (float)Math.Atan2(yComponent, xComponent);
 
-
-
             if (angle > -MathHelper.PiOver2 && angle < MathHelper.PiOver2)
             {
-                CurrentOrientation = Orientation.Left;
+                CurrentOrientedAnimation.SetLeft();
             }
             else
             {
-                CurrentOrientation = Orientation.Right;
+                CurrentOrientedAnimation.SetRight();
             }
         }
-
-        public void Transform(AnimationPair animation)
-        {
-            Animation rightAnimation = animation.RightAnimation;
-            Animation leftAnimation = animation.LeftAnimation;
-            OrientationMap = new Dictionary<Orientation, Animation>();
-            OrientationMap[Orientation.Right] = rightAnimation;
-            OrientationMap[Orientation.Left] = leftAnimation;
-
-            Animations = new Dictionary<string, Animation>();
-
-            AddAnimation(rightAnimation);
-            AddAnimation(leftAnimation);
-
-            foreach (Animation a in Animations.Values)
-            {
-                a.Play();
-            }
-        }
-        
     }
 }
