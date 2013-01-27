@@ -116,7 +116,7 @@ namespace HeartGame
             for (int i = 0; i < 4; i++)
             {
                 NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                    ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
+                    ComponentManager, Game.Content, Game.GraphicsDevice, "fatwalk");
                 npc.velocityController.MaxSpeed = 1;
                 npc.Target = new Vector3(-1, -2.1f, -11);
                 npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
@@ -126,7 +126,7 @@ namespace HeartGame
 
             // Player!
             player = new Player("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                ComponentManager, Game.Content, Game.GraphicsDevice, "dorfdorf");
+                ComponentManager, Game.Content, Game.GraphicsDevice, "fatwalk");
             player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
             player.HasMoved = true;
             dorfs.Add(player);

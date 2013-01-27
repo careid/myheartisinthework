@@ -58,7 +58,7 @@ namespace HeartGame
                 {
                     Vector2 pixelCoords = new Vector2(cells[face].X * cellWidth, cells[face].Y * cellHeight);
                     Vector2 normalizedCoords = new Vector2(pixelCoords.X / (float)totalTextureWidth, pixelCoords.Y / (float)totalTextureHeight);
-                    Bounds = new Vector4(normalizedCoords.X + 0.001f, normalizedCoords.Y + 0.001f, normalizedCoords.X + normalizeX - 0.001f, normalizedCoords.Y + normalizeY - 0.001f);
+                    Bounds = new Vector4(normalizedCoords.X, normalizedCoords.Y, normalizedCoords.X + normalizeX, normalizedCoords.Y + normalizeY);
 
                     for (int vert = 0; vert < NUM_VERTICES; vert++)
                     {
