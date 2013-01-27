@@ -57,7 +57,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
-            online = false;
+            online = true;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -360,11 +360,15 @@ namespace HeartGame
                 float x = (float)Convert.ToDouble(toks[3]);
                 float y = (float)Convert.ToDouble(toks[4]);
                 float z = (float)Convert.ToDouble(toks[5]);
+                float vx = (float)Convert.ToDouble(toks[6]);
+                float vy = (float)Convert.ToDouble(toks[7]);
+                float vz = (float)Convert.ToDouble(toks[8]);
                 foreach (Person p in ComponentManager.FilterComponentsWithTag(toks[1], dorfs))
                 {
                     p.PerformAction((Event)Enum.Parse(typeof(Event), action, true));
                     p.LocalTransform =
                         Matrix.CreateTranslation(new Vector3(x, y, z));
+                    p.Velocity = new Vector3(vx, vy, vz);
                     found = true;
                 }
                 if (!found)
@@ -386,7 +390,7 @@ namespace HeartGame
                         ((NPC)p).Target = new Vector3(-1, -2.1f, -11);
                         p.IsSleeping = false;
                     }
-                    p.Velocity = new Vector3(0f, 0f, 0f);
+                    p.Velocity = new Vector3(0, 0, 0);
                     p.HasMoved = true;
                     dorfs.Add(p);
                 }
@@ -405,7 +409,10 @@ namespace HeartGame
                 action,
                 p.LocalTransform.Translation.X.ToString(),
                 p.LocalTransform.Translation.Y.ToString(),
-                p.LocalTransform.Translation.Z.ToString()};
+                p.LocalTransform.Translation.Z.ToString(),
+                p.Velocity.X.ToString(),
+                p.Velocity.Y.ToString(),
+                p.Velocity.Z.ToString()};
             string msg = String.Join(",", info);
             return msg;
         }
