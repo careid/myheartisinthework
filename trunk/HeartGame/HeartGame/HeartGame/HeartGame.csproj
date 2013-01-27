@@ -141,6 +141,7 @@
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>
     </Content>
+    <Content Include="Helpers\mainTrack.mp3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HeartGameContent\HeartGameContent.contentproj">
