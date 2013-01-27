@@ -146,7 +146,7 @@ namespace HeartGame
 
 
             string[] sheets = { "oldwalk", "fatwalk", "smokewalk" };
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < 150; i++)
             {
                 NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                     ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
@@ -160,7 +160,7 @@ namespace HeartGame
 
             // Player!
             player = new Player("dorf", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
-                ComponentManager, Game.Content, Game.GraphicsDevice, "smokewalk");
+                ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
             player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
             player.HasMoved = true;
             dorfs.Add(player);
