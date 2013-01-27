@@ -56,7 +56,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
-            online = true;
+            online = false;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -101,9 +101,16 @@ namespace HeartGame
 
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
-            client = new Client();
-            string name = client.Connect();
-
+            string name;
+            if (online)
+            {
+                client = new Client();
+                name = client.Connect();
+            }
+            else
+            {
+                name = "0";
+            }
 
             if (name == "0")
             {
