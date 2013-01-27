@@ -1,4 +1,4 @@
-from socket import *
+import socket
 import threading
 try:
     # Python 3.x
@@ -15,12 +15,9 @@ BUFF = 1024
 HOST = '172.24.8.157'
 PORT = 3000
 
-def encodePlayer(player, vel):
-    return "position, {}, {}, {}, {}, {}, {}\r\n".format(player.name, player.X(), player.Y(), vel[0], vel[1])
-
 class ClientConn(threading.Thread):
     def __init__(self, name, clientsock):
-        super().__init__(name="Client-{}".format(name))
+        super(self, typeof(self)).__init__(name="Client-{}".format(name))
         self.name = name
         self.sock = clientsock
 
@@ -32,20 +29,24 @@ class ClientConn(threading.Thread):
                 if data:
                     for sock in sockets:
                         sock.send(bytes(data, 'utf8'))
+        except socket.error as e:
+            sockets.remove(self.sock)
+            for sock in sockets:
+                sock.send(b"exit\r\n")
         except Exception as e:
             print(e)
+        finally:
+            self.sock.close()
 
-    def join(self):
-        self.sock.close()
 
 if __name__=='__main__':
     ADDR = (HOST, PORT)
-    serversock = socket(AF_INET, SOCK_STREAM)
-    serversock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    serversock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    serversock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     serversock.bind(ADDR)
     serversock.listen(5)
     
-    global socketss
+    global sockets
     sockets = []
     
     for i in itertools.count():
@@ -53,11 +54,11 @@ if __name__=='__main__':
         clientsock, addr = serversock.accept()
         print('...connected from:', addr)
         client = ClientConn(i, clientsock)
-        clientsock.send(bytes("{}\r\n".format(client.name), 'utf8'))
+        clientsock.send(bytes(str(client.name) + "\r\n", 'utf8'))
         sockets.append(clientsock)
         for sock in sockets:
             sock.send(b"sendpos\r\n")
             
-        client.run()
+        client.start()
 
     serversock.close()
