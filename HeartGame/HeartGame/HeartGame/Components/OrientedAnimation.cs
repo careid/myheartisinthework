@@ -12,7 +12,7 @@ namespace HeartGame
         public Animation RightAnimation { get; set; }
         public Animation LeftAnimation { get; set; }
 
-        public AnimationPair(Animation rightAnimation, Animation leftAnimation)
+        public AnimationPair(Animation leftAnimation, Animation rightAnimation)
         {
             RightAnimation = rightAnimation;
             LeftAnimation = leftAnimation;
