@@ -220,7 +220,6 @@ TPixelToFrame TexturedPS(TVertexToPixel PSIn)
 	Output.Color.rgba *= texColor;
 
 
-
 	if(SelfIllumination)
 		Output.Color.rgba = lerp(Output.Color.rgba, texColor, illumColor.r); 
 	
