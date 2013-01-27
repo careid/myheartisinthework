@@ -36,7 +36,7 @@ namespace HeartGame
             IsPlaying = false;
             Loops = loops;
             Tint = tint;
-            FrameHZ = frameHZ + (float)RandomHelper.random.NextDouble();
+            FrameHZ = frameHZ; //+(float)RandomHelper.random.NextDouble();
             FrameTimer = 0.0f;
             WorldWidth = worldWidth;
             WorldHeight = worldHeight;
@@ -88,6 +88,7 @@ namespace HeartGame
         {
             IsPlaying = false;
             CurrentFrame = 0;
+            FrameTimer = 0.0f;
         }
 
         public void Loop()
