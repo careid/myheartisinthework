@@ -9,12 +9,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Media;
-
-
 namespace HeartGame
 {
     public enum Event
@@ -87,19 +81,6 @@ namespace HeartGame
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
-
-            try
-            {
-                Song s = Game.Content.Load<Song>("mainTrack");
-                MediaPlayer.Play(s);
-                MediaPlayer.IsRepeating = true;
-                MediaPlayer.Volume /= 16.0f;
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Sound's broke. install windows media player");
-            }
-
 
             notification = null;
             particles = new ParticleManager(ComponentManager);
@@ -579,6 +560,7 @@ namespace HeartGame
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+
             doActions();
 
             KeyboardState keyboardState = Keyboard.GetState();
@@ -689,6 +671,7 @@ namespace HeartGame
             {
                 StateManager.SwitchState("WinState");
             }
+
 
             base.Update(gameTime);
         }
