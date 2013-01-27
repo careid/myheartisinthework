@@ -232,29 +232,37 @@ namespace HeartGame
                 case Keys.Space:
                     frameEvents.Add(Event.SPACE_RELEASE);
 
-                    particles.Trigger("shock", player.GlobalTransform.Translation, Color.White, (int)(100 * player.DefibCharge));
-                    foreach (PhysicsComponent d in dorfs)
+                    if (player.DefibCharge >= 0.25f)
                     {
-                        if (d != player && (d.GlobalTransform.Translation - player.GlobalTransform.Translation).LengthSquared() < 1 * 1)
-                        {
-                            Vector3 offset = d.GlobalTransform.Translation - player.GlobalTransform.Translation;
-                            offset.Normalize();
-                            offset *= 500;
-                            offset.Y = 500;
-                            offset *= player.DefibCharge;
-                            d.ApplyForce(offset, 1/60.0f);
-
-                            if (d is NPC)
-                            {
-                                NPC npc = (NPC)d;
-                                npc.WalkTimer.Reset(player.DefibCharge * npc.MaxWalkTime);
-                                npc.State = NPC.NPCState.Walking;
-                            }
-                        }
+                        defib(player);
                     }
                     break;
                 default:
                     break;
+            }
+        }
+
+        public void defib(Player owner)
+        {
+            particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
+            foreach (PhysicsComponent d in dorfs)
+            {
+                if (d != owner && (d.GlobalTransform.Translation - owner.GlobalTransform.Translation).LengthSquared() < 1 * 1)
+                {
+                    Vector3 offset = d.GlobalTransform.Translation - owner.GlobalTransform.Translation;
+                    offset.Normalize();
+                    offset *= 500;
+                    offset.Y = 500;
+                    offset *= owner.DefibCharge;
+                    d.ApplyForce(offset, 1 / 60.0f);
+
+                    if (d is NPC)
+                    {
+                        NPC npc = (NPC)d;
+                        npc.WalkTimer.Reset(owner.DefibCharge * npc.MaxWalkTime);
+                        npc.State = NPC.NPCState.Walking;
+                    }
+                }
             }
         }
 
@@ -288,6 +296,14 @@ namespace HeartGame
             {
                 Shader.Parameters["xEnableLighting"].SetValue(false);
             }
+
+            // discharge overfull defib
+            if (player.DefibCharge >= 1.0f)
+            {
+                defib(player);
+                player.DefibCharge = 0.0f;
+            }
+
             Shader.Parameters["xLightPos"].SetValue(player.GlobalTransform.Translation);
             Shader.Parameters["xLightColor"].SetValue(new Vector4(0.25f * player.DefibCharge, 0.5f * player.DefibCharge,player.DefibCharge, 1.0f));
             Shader.Parameters["xFogColor"].SetValue(new Vector3(0, 0, 0));
@@ -311,7 +327,15 @@ namespace HeartGame
             
 
             SpriteBatch.Begin();
-            Drawer2D.FillRect(SpriteBatch, new Rectangle(0, 0, (int)(500 * player.DefibCharge), 100), new Color(255, 0, 0));
+            if (player.DefibCharge > 0.0f)
+            {
+                Drawer2D.FillRect(SpriteBatch, new Rectangle((int)(0.25 * Game.GraphicsDevice.Viewport.Width), 20,
+                    (int)(0.125 * Game.GraphicsDevice.Viewport.Width), 50), new Color(255, 0, 0, 100));
+                Drawer2D.FillRect(SpriteBatch, new Rectangle((int)((0.25 + 0.125) * Game.GraphicsDevice.Viewport.Width), 20,
+                    (int)((0.5 - 0.125) * Game.GraphicsDevice.Viewport.Width), 50), new Color(0, 0, 0, 100));
+                Drawer2D.FillRect(SpriteBatch, new Rectangle((int)(0.25 * Game.GraphicsDevice.Viewport.Width), 20,
+                    (int)(0.5 * player.DefibCharge * Game.GraphicsDevice.Viewport.Width), 50), new Color(255, 200, 255, 100));
+            }
             Drawer2D.DrawStrokedText(SpriteBatch, "Score: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
             SpriteBatch.End();
 
@@ -357,18 +381,12 @@ namespace HeartGame
             foreach (PhysicsComponent d in dorfs)
             {
                 d.HasMoved = true;
-
-                if (d != player)
-                {
-                    //d.ApplyForce(new Vector3(rand() - 0.5f, 0, rand() - 0.5f) * 10, dt);
-                }
-
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
             }
 
             foreach (PhysicsComponent d in dorfs)
             {
-                if (d != player && !d.IsDead)
+                if (!(d is Player) && !d.IsDead)
                 {
                     foreach (LocatableComponent h in hospitals)
                     {
