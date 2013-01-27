@@ -56,6 +56,8 @@ namespace HeartGame
         protected Notification notification;
         protected Dictionary<string, string> wordsDict;
         protected string[] wordsArray;
+        protected int MapWidth { get; set; }
+        protected int MapHeight { get; set; }
 
         private float rand()
         {
@@ -70,6 +72,8 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
+            MapHeight = 40;
+            MapWidth = 40;
             Player.defib = new Player.defibCallbackType(defib);
             online = false; // DO NOT CHANGE, offline mode is now detected when server connection is refused
             SoundManager.Content = game.Content;
@@ -179,7 +183,7 @@ namespace HeartGame
             velocityController3.IsTracking = true;
 
             Vector3 boundingBoxPos = new Vector3(0, -2, 0);
-            Vector3 boundingBoxExtents = new Vector3(100, 4, 100);
+            Vector3 boundingBoxExtents = new Vector3(MapWidth, 4, MapHeight);
             Vector3 boundingBoxMin = boundingBoxPos - boundingBoxExtents * 0.5f;
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
@@ -589,6 +593,7 @@ namespace HeartGame
             foreach (Hospital h in hospitals)
             {
                 collideBox.Add(h.Component.GetBoundingBox());
+                collideBox.Add(h.InvisibleBox.GetBoundingBox());
             }
 
             foreach (Person d in dorfs)
@@ -605,6 +610,14 @@ namespace HeartGame
 
                 d.HasMoved = true;
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                if (d.GlobalTransform.Translation.X > MapWidth / 2 || d.GlobalTransform.Translation.X < -MapWidth / 2 || d.GlobalTransform.Translation.Z > MapHeight /2 || d.GlobalTransform.Translation.Z < -MapWidth/2)
+                {
+                    float x = Math.Max(Math.Min(d.GlobalTransform.Translation.X, MapWidth / 2), -MapWidth / 2);
+                    float z = Math.Max(Math.Min(d.GlobalTransform.Translation.Z, MapHeight / 2), -MapHeight / 2);
+                    d.LocalTransform 
+                        = Matrix.CreateTranslation(new Vector3(x, d.GlobalTransform.Translation.Y, z));
+                }
             }
 
             foreach (Person d in dorfs)
