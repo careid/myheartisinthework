@@ -95,6 +95,7 @@
     <Compile Include="GameStates\GameState.cs" />
     <Compile Include="GameStates\GameStateManager.cs" />
     <Compile Include="GameStates\PlayState.cs" />
+    <Compile Include="GameStates\WinState.cs" />
     <Compile Include="Graphics\BatchBillboardPrimitive.cs" />
     <Compile Include="Graphics\BillboardPrimitive.cs" />
     <Compile Include="Graphics\BloomComponent.cs" />

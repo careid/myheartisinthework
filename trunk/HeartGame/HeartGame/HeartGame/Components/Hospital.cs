@@ -17,6 +17,7 @@ namespace HeartGame
         public LocatableComponent Component { get; set; }
         public float Score { get; set; }
         public Color Color { get; set; }
+        public int NumPatients { get; set; }
 
         public Hospital(Vector3 position, Vector3 size, ComponentManager componentManager,
                                                   ContentManager content,
@@ -26,6 +27,7 @@ namespace HeartGame
             Color = color;
             Score = 0.0f;
             Component = EntityFactory.GenerateBuilding(position, size, componentManager, content, graphics, name, side);
+            NumPatients = 0;
         }
     }
 }

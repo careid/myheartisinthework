@@ -130,7 +130,7 @@ namespace HeartGame
              
 
             Random r = new Random(1);
-            for (int i = 0; i < 20; i++) // fnord
+            for (int i = 0; i < 1; i++) // fnord
             {
                 NPC npc;
                 switch ((int)(detRand(r) * 3))
@@ -446,6 +446,7 @@ namespace HeartGame
                     if (e == Event.SCORE)
                     {
                         p.team.Score += 100;
+                        p.team.NumPatients++;
                         SoundManager.PlaySound("kaChing", p.GlobalTransform.Translation);
                         p.Die();
                     }
@@ -514,6 +515,19 @@ namespace HeartGame
                 team.ToString()};
             string msg = String.Join(",", info);
             return msg;
+        }
+
+        public bool PatientsExist()
+        {
+            foreach (PhysicsComponent p in dorfs)
+            {
+                if (p is NPC && !p.IsDead)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public override void Update(GameTime gameTime)
@@ -597,6 +611,11 @@ namespace HeartGame
                 Color flash = new Color(1.0f, 1.0f, 1.0f, x);
                 Color back = new Color(0, 0, 0, x);
                 Drawer2D.DrawText("Revive! (Hold Space)", closest.GlobalTransform.Translation, flash, back);
+            }
+
+            if (!PatientsExist())
+            {
+                StateManager.SwitchState("WinState");
             }
 
             base.Update(gameTime);
