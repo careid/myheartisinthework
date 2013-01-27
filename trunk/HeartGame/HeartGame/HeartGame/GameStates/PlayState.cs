@@ -519,7 +519,7 @@ namespace HeartGame
                     if (!p.isReady)
                         return;
                 }
-                if (players.Count() >= 2)
+                if (players.Count() < 2)
                     return;
             }
             
