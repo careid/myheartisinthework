@@ -21,6 +21,7 @@ namespace HeartGame
             HIGH_CHARGE,
             MAX_CHARGE
         }
+        public bool isReady;
         public delegate void defibCallbackType(Player owner);
         public static defibCallbackType defib;
         public const float MAX_DEFIB_CHARGE = 1.0f;
@@ -39,6 +40,8 @@ namespace HeartGame
         {
             DefibCharge = 0;
             DefibChargeRate = 0.5f;
+
+            isReady = false;
 
             Texture2D sprites = content.Load<Texture2D>(spritesheet);
             
@@ -146,6 +149,7 @@ namespace HeartGame
 
         public override void PerformAction(Event e)
         {
+            isReady = true;
             base.PerformAction(e);
             switch (e)
             {

@@ -57,8 +57,16 @@ namespace HeartGame
             if (this.online)
             {
                 // Networking shit
-                TC = new System.Net.Sockets.TcpClient();
-                TC.Connect("172.24.8.157", 3000);
+                try
+                {
+                    TC = new System.Net.Sockets.TcpClient();
+                    TC.Connect("172.24.8.157", 3000);
+                }
+                catch (Exception e)
+                {
+                    this.online = false;
+                    return "error";
+                }
 
                 SW = new StreamWriter(TC.GetStream());
                 //request dwarf count from server
