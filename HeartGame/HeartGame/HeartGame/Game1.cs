@@ -36,6 +36,7 @@ namespace HeartGame
         protected override void Initialize()
         {
             StateManager.States["PlayState"] = new PlayState(this, StateManager);
+            StateManager.States["WinState"] = new WinState(this, StateManager, (PlayState)StateManager.States["PlayState"]);
             StateManager.SwitchState("PlayState");
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
