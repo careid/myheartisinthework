@@ -33,6 +33,7 @@ namespace HeartGame
                 float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
                 Vector3 force = Controller.GetOutput(dt, targetVelocity, Component.Velocity);
                 force.Y = 0;
+                
                 Component.ApplyForce(force, dt);
             }
 
