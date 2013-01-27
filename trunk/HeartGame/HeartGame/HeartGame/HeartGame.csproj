@@ -115,6 +115,7 @@
     <Compile Include="Helpers\Datastructures.cs" />
     <Compile Include="Helpers\Easing.cs" />
     <Compile Include="Helpers\LinearMathHelpers.cs" />
+    <Compile Include="Helpers\Notification.cs" />
     <Compile Include="Helpers\Octree.cs" />
     <Compile Include="Helpers\Perlin.cs" />
     <Compile Include="Helpers\PIDController.cs" />

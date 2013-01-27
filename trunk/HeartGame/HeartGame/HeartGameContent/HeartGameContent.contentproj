@@ -187,33 +187,27 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="manDying1.wav">
-      <Name>manDying1</Name>
+    <Compile Include="BigFont.spritefont">
+      <Name>BigFont</Name>
+      <Importer>FontDescriptionImporter</Importer>
+      <Processor>FontDescriptionProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="youreGonnaBeOk.wav">
+      <Name>youreGonnaBeOk</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="manDying2.wav">
-      <Name>manDying2</Name>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="doublesave.wav">
+      <Name>doublesave</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
-    <Compile Include="manDying3.wav">
-      <Name>manDying3</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="sharpBreath.wav">
-      <Name>sharpBreath</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="womanDying1.wav">
-      <Name>womanDying1</Name>
-      <Importer>WavImporter</Importer>
-      <Processor>SoundEffectProcessor</Processor>
-    </Compile>
-    <Compile Include="womanDying2.wav">
-      <Name>womanDying2</Name>
+    <Compile Include="savingspree.wav">
+      <Name>savingspree</Name>
       <Importer>WavImporter</Importer>
       <Processor>SoundEffectProcessor</Processor>
     </Compile>
