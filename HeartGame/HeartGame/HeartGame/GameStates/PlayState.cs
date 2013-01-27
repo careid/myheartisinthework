@@ -310,12 +310,19 @@ namespace HeartGame
             SpriteBatch.Begin();
             if (player.DefibCharge > 0.0f)
             {
+                int barX = (int)((0.25 + 0.5 * player.DefibCharge) * Game.GraphicsDevice.Viewport.Width);
+                if (player.DefibCharge < 0.25)
+                {
+                    Drawer2D.FillRect(SpriteBatch, new Rectangle(barX, 20,
+                        (int)((0.25 + 0.125) * Game.GraphicsDevice.Viewport.Width - barX), 50), new Color(255, 0, 0, 100));
+                }
+                int shadedX = (int)((0.25 + 0.125) * Game.GraphicsDevice.Viewport.Width);
+                if (shadedX < barX)
+                    shadedX = barX;
+                Drawer2D.FillRect(SpriteBatch, new Rectangle(shadedX, 20,
+                    (int)(0.75 * Game.GraphicsDevice.Viewport.Width - shadedX), 50), new Color(0, 0, 0, 100));
                 Drawer2D.FillRect(SpriteBatch, new Rectangle((int)(0.25 * Game.GraphicsDevice.Viewport.Width), 20,
-                    (int)(0.125 * Game.GraphicsDevice.Viewport.Width), 50), new Color(255, 0, 0, 100));
-                Drawer2D.FillRect(SpriteBatch, new Rectangle((int)((0.25 + 0.125) * Game.GraphicsDevice.Viewport.Width), 20,
-                    (int)((0.5 - 0.125) * Game.GraphicsDevice.Viewport.Width), 50), new Color(0, 0, 0, 100));
-                Drawer2D.FillRect(SpriteBatch, new Rectangle((int)(0.25 * Game.GraphicsDevice.Viewport.Width), 20,
-                    (int)(0.5 * player.DefibCharge * Game.GraphicsDevice.Viewport.Width), 50), new Color(255, 200, 255, 100));
+                    (int)(0.5 * player.DefibCharge * Game.GraphicsDevice.Viewport.Width), 50), new Color((int)(100 + 150 * player.DefibCharge), (int)(100 + 150 * player.DefibCharge), 255, 100));
             }
             Drawer2D.DrawStrokedText(SpriteBatch, "Score: $" + player.Score, Drawer2D.DefaultFont, new Vector2(5, 5), Color.White, Color.Black);
             SpriteBatch.End();
