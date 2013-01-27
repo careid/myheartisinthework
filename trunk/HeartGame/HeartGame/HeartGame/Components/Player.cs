@@ -139,10 +139,8 @@ namespace HeartGame
                 case ChargeState.HIGH_CHARGE:
                 case ChargeState.MAX_CHARGE:
                     State = prefix + "_high";
-                    Console.Out.WriteLine(State);
                     break;
             }
-            Console.Out.WriteLine(State);
             SetAnimation();
         }
 
