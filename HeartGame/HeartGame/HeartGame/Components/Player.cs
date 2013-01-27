@@ -59,10 +59,8 @@ namespace HeartGame
                         Charging = !Charging;
                         break;
                     case Event.SPACE_RELEASE:
-
+                        Charging = false;
                         SoundManager.StopSounds("defibCharge");
-
-                        Charging = !Charging;
                         DefibCharge = 0.0f;
                         break;
                     default: break;
