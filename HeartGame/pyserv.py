@@ -1,9 +1,9 @@
 from socket import *
-import _thread as thread
+import thread
 import threading
 
 BUFF = 1024
-HOST = '172.24.8.157'
+HOST = '172.24.8.194'
 PORT = 3000
 
 class ClientConn:
@@ -14,11 +14,11 @@ class ClientConn:
 
     def write(self, msg):
         self.lock.acquire()
-        self.sock.send(bytes(msg, 'UTF8'))
+        self.sock.send(msg)
         self.lock.release()
 
     def read(self):
-        return self.sock.recv(BUFF).decode('UTF8')
+        return self.sock.recv(BUFF)
 
     def close(self):
         self.sock.close()

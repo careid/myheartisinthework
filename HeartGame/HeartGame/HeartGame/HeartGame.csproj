@@ -107,6 +107,7 @@
     <Compile Include="Components\OrientedAnimation.cs" />
     <Compile Include="Components\ParticleEmitter.cs" />
     <Compile Include="Components\PhysicsComponent.cs" />
+    <Compile Include="Helpers\Client.cs" />
     <Compile Include="Helpers\ColorGradient.cs" />
     <Compile Include="Helpers\Datastructures.cs" />
     <Compile Include="Helpers\Easing.cs" />

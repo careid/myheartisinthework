@@ -88,7 +88,7 @@ class Game():
             if random.randint(0, 100) == 0:
                 self.write((encodePlayer(p, (random.randint(-100,100), random.randint(-100,100)))))
 
-    def networkUpdate(self, elapsed):
+    def networkUpdate(self):
         entries = self.read()
         for e in entries:
             lines = e.split('\n')

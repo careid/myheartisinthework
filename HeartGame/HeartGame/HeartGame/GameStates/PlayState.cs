@@ -28,37 +28,6 @@ namespace HeartGame
         SPACE_RELEASE = 9,
     };
 
-    public class CommandQueue
-    {
-        Queue<string> commands;
-        public CommandQueue()
-        {
-            commands = new Queue<string>();
-        }
-
-        public string Read()
-        {
-            lock (this)
-            {
-                if (commands.Count > 0)
-                {
-                    return commands.Dequeue();
-                }
-                else
-                {
-                    return "";
-                }
-            }
-        }
-        public void Write(string inp)
-        {
-            lock (this)
-            {
-                commands.Enqueue(inp);
-            }
-        }
-    }
-
     public class PlayState : GameState
     {
         public Camera Camera { get; set; }
@@ -68,9 +37,6 @@ namespace HeartGame
         public Texture2D SunMap { get; set; }
         public Texture2D AmbientMap { get; set; }
         public Texture2D TorchMap { get; set; }
-        static System.Net.Sockets.TcpClient TC;
-        protected StreamWriter SW;
-        protected CommandQueue CQ;
         public LocatableComponent ground;
         public List<PhysicsComponent> dorfs = new List<PhysicsComponent>();
         public List<Hospital> hospitals = new List<Hospital>();
@@ -79,6 +45,8 @@ namespace HeartGame
         public List<Event> frameEvents;
         public SoundManager sounds;
         public ParticleManager particles;
+        protected Client client;
+        protected bool online;
 
         private float rand()
         {
@@ -88,6 +56,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
+            online = true;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -132,49 +101,42 @@ namespace HeartGame
 
             drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
 
-            /*
-            // Networking shit
-            TC = new System.Net.Sockets.TcpClient();
-
-            SW = new StreamWriter(TC.GetStream());
-            //request dwarf count from server
-            SW.WriteLine("add dwarf");
-            SW.Flush();
-            CQ = new CommandQueue();
-            Thread t = new Thread(new ParameterizedThreadStart(runListener));
-            t.Start(CQ);
-            */
+            client = new Client();
+            string name = client.Connect();
 
 
-            for (int i = 0; i < 80; i++)
+            if (name == "0")
             {
-                NPC npc;
-                switch ((int)(rand() * 3))
+                for (int i = 0; i < 10; i++)
                 {
-                    case (0):
-                        npc = new Smoker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager, 
-                                      Game.Content, Game.GraphicsDevice);
-                        break;
-                    case (1):
-                        npc = new Fatter(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
-                                      Game.Content, Game.GraphicsDevice);
-                        break;
-                    case (2):
-                        npc = new Older(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
-                                      Game.Content, Game.GraphicsDevice);
-                        break;
-                    default:
-                        /* graphics don't exist yet, never reached */
-                        npc = new Worker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
-                                      Game.Content, Game.GraphicsDevice);
-                        break;
+                    NPC npc;
+                    switch ((int)(rand() * 3))
+                    {
+                        case (0):
+                            npc = new Smoker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
+                                            Game.Content, Game.GraphicsDevice);
+                            break;
+                        case (1):
+                            npc = new Fatter(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
+                                            Game.Content, Game.GraphicsDevice);
+                            break;
+                        case (2):
+                            npc = new Older(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
+                                            Game.Content, Game.GraphicsDevice);
+                            break;
+                        default:
+                            /* graphics don't exist yet, never reached */
+                            npc = new Worker(new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5), ComponentManager,
+                                            Game.Content, Game.GraphicsDevice);
+                            break;
+                    }
+                    npc.velocityController.MaxSpeed = 1;
+                    npc.Target = new Vector3(-1, -2.1f, -11);
+                    npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 2f, rand() * 2f - 1f);
+                    npc.HasMoved = true;
+                    npc.IsSleeping = false;
+                    dorfs.Add(npc);
                 }
-                npc.velocityController.MaxSpeed = 1;
-                npc.Target = new Vector3(-1, -2.1f, -11);
-                npc.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 2f, rand() * 2f - 1f);
-                npc.HasMoved = true;
-                npc.IsSleeping = false;
-                dorfs.Add(npc);
             }
 
             // Player!
@@ -288,17 +250,6 @@ namespace HeartGame
             }
         }
 
-        static void runListener(object Obj)
-        {
-            CommandQueue CQ = (CommandQueue)Obj;
-            StreamReader SR = new StreamReader(TC.GetStream());
-            while (true)
-            {
-                string line = SR.ReadLine();
-                CQ.Write(line);
-            }
-        }
-
         public override void OnEnter()
         {
             IsInitialized = true;
@@ -369,9 +320,51 @@ namespace HeartGame
             base.Render(gameTime);
         }
 
+        protected void doActions()
+        {
+            string move = client.Read();
+            string[] toks = move.Split(',');
+            string command = toks[0];
+            if (command == "position")
+            {
+                bool found = false;
+                uint id = Convert.ToUInt32(toks[1], 10);
+                string action = toks[2];
+                float x = (float)Convert.ToDouble(toks[3]);
+                float y = (float)Convert.ToDouble(toks[4]);
+                float z = (float)Convert.ToDouble(toks[5]);
+                float vx = (float)Convert.ToDouble(toks[6]);
+                float vy = (float)Convert.ToDouble(toks[7]);
+                float vz = (float)Convert.ToDouble(toks[8]);
+                foreach (Person p in dorfs)
+                {
+                    if (p.GlobalID == id)
+                    {
+                        p.LocalTransform =
+                            Matrix.CreateTranslation(new Vector3(x, y, z));
+                        p.Velocity = new Vector3(vx, vy, vz);
+                        found = true;
+                    }
+                }
+                if (!found)
+                {
+                    string[] sheets = { "oldwalk", "fatwalk", "smokewalk" };
+                    NPC npc = new NPC("person", new Vector3(x, y, z),
+                        ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
+                    npc.velocityController.MaxSpeed = 1;
+                    npc.Target = new Vector3(-1, -2.1f, -11);
+                    npc.Velocity = new Vector3(vx, vy, vz);
+                    npc.HasMoved = true;
+                    npc.IsSleeping = false;
+                    dorfs.Add(npc);
+                }
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
 
             SoundManager.Update(gameTime, Camera);
 
