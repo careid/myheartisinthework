@@ -284,6 +284,12 @@ namespace HeartGame
                     {
                         NPC npc = (NPC)d;
                         npc.WalkTimer.Reset(owner.DefibCharge * npc.MaxWalkTime);
+
+                        if (npc.State == "dead")
+                        {
+                            Vector3 oldTranslation = npc.image.LocalTransform.Translation;
+                            npc.image.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y + 0.25f, oldTranslation.Z));
+                        }
                         npc.State = "walk";
                     }
 
