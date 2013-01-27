@@ -49,6 +49,7 @@ namespace HeartGame
         public ParticleManager particles;
         protected Client client;
         protected bool online;
+        protected bool playing;
 
         private float rand()
         {
@@ -64,7 +65,8 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = false;
+            online = true;
+            playing = false;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -484,24 +486,20 @@ namespace HeartGame
 
             doActions();
 
-            int playerCount = 0;
-            foreach (Person d in dorfs)
+            KeyboardState keyboardState = Keyboard.GetState();
+            InputManager.KeysUpdate(keyboardState);
+
+            if (keyboardState.IsKeyDown(Keys.Space))
             {
-                if (d is Player)
-                {
-                    playerCount++;
-                }
+                playing = true;
             }
-            if (online && playerCount < 2)
+
+            if (!playing && online)
             {
                 return;
             }
             
             SoundManager.Update(gameTime, Camera);
-
-            KeyboardState keyboardState = Keyboard.GetState();
-
-            InputManager.KeysUpdate(keyboardState);
 
             if (!Game.IsActive)
             {
