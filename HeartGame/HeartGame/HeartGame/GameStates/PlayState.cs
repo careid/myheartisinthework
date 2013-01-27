@@ -142,7 +142,7 @@ namespace HeartGame
             // Player!
             player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
-            player.Velocity = new Vector3(rand() * 2f - 1f, rand() * 2f - 1f, rand() * 2f - 1f);
+            player.Velocity = new Vector3(0f, 0f, 0f);
             player.HasMoved = true;
             dorfs.Add(player);
             VelocityController velocityController = new VelocityController(player);
@@ -362,7 +362,9 @@ namespace HeartGame
                     if (id < 1000)
                     {
                         p = new Player(toks[1], new Vector3(x, y, z),
-                        ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
+                            ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
+                        VelocityController velocityController = new VelocityController(p);
+                        velocityController.IsTracking = false;
                     }
                     else
                     {
@@ -401,7 +403,10 @@ namespace HeartGame
         public override void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
+            foreach (Person p in ComponentManager.FilterComponentsWithTag("0", dorfs))
+            {
+                Console.Out.WriteLine(p.Velocity);
+            }
             
             SoundManager.Update(gameTime, Camera);
 
