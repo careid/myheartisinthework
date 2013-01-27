@@ -1,6 +1,6 @@
 from socket import *
 import threading
-import thread
+import _thread as thread
 import sys
 
 HOST = '172.24.8.157'
@@ -13,13 +13,13 @@ class Client:
         self.sock.connect((HOST, PORT))
         self.lock = threading.Lock()
         self.buf = []
-        data = self.sock.recv(BUFF)
+        data = self.sock.recv(BUFF).decode('UTF8')
         thread.start_new_thread(self.listen, ())
         return data
 
     def listen(self):
         while True:
-            data = self.sock.recv(BUFF)
+            data = self.sock.recv(BUFF).decode('UTF8')
             self.lock.acquire()
             self.buf.append(data)
             self.lock.release()
@@ -32,7 +32,7 @@ class Client:
         return bufCopy
 
     def write(self, msg):
-        return self.sock.send(msg)
+        return self.sock.send(bytes(msg, 'UTF8'))
 
     def close(self):
         self.sock.close()
