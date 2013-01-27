@@ -187,7 +187,7 @@ namespace HeartGame
             Vector3 boundingBoxMin = boundingBoxPos - boundingBoxExtents * 0.5f;
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
-            ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown", Point.Zero, Point.Zero, 128, 128);
+            ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "newground", Point.Zero, Point.Zero, 128, 128);
 
             /*
             Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
