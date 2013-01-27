@@ -45,7 +45,7 @@ namespace HeartGame
 
         public bool Oriented()
         {
-            return RightAnimation == null;
+            return RightAnimation != null;
         }
 
         public Animation GetAnimation()
