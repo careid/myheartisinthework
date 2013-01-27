@@ -112,8 +112,8 @@ namespace HeartGame
             string name = client.Connect();
 
             
-            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
-            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green, new Point(1, 0));
+            Hospital hospital1 = new Hospital(new Vector3(-15, 0, -15), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
+            Hospital hospital2 = new Hospital(new Vector3(15, 0, 15), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green, new Point(1, 0));
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
              
