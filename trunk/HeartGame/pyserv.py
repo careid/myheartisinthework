@@ -50,6 +50,7 @@ class Communicator:
 
     def broadcast(self, msg):
         self.lock.acquire()
+        print msg
         for c in self.clients:
             c.write(msg)
         self.lock.release()
