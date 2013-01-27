@@ -23,6 +23,7 @@ namespace HeartGame
         public String State { get; set; }
         public OrientableBillboardSpriteComponent image;
         public ShadowComponent teamCircle;
+        public ShadowComponent shadow;
 
         public Person(string _tag, Vector3 position,
                       ComponentManager componentManager,
@@ -90,7 +91,7 @@ namespace HeartGame
             
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             //shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);
-            ShadowComponent shadow = new ShadowComponent(componentManager, "shadow", this, shadowTransform, content.Load<Texture2D>("shadowcircle"));
+            shadow = new ShadowComponent(componentManager, "shadow", this, shadowTransform, content.Load<Texture2D>("shadowcircle"));
             shadow.OrientsToCamera = false;
             List<Point> shP = new List<Point>();
             shP.Add(new Point(0, 0));

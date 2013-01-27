@@ -30,6 +30,7 @@ namespace HeartGame
         public float DefibChargeRate { get; set; }
         public bool Charging { get; set; }
         public ChargeState currentCharge { get; set; }
+        protected Queue<Vector3> pastPos;
 
         public Player(string tag, Vector3 position,
                       ComponentManager componentManager,
@@ -38,6 +39,8 @@ namespace HeartGame
                       string spritesheet) :
             base(tag, position, componentManager, content, graphics, "surgeonwalk")
         {
+
+            pastPos = new Queue<Vector3>();
             DefibCharge = 0;
             DefibChargeRate = 0.5f;
 
@@ -97,7 +100,34 @@ namespace HeartGame
         public override void  Update(GameTime gameTime, Camera camera)
         {
             base.Update(gameTime, camera);
-            
+
+            if (pastPos.Count > 3)
+            {
+                pastPos.Dequeue();
+                pastPos.Enqueue(LocalTransform.Translation);
+
+                Vector3 newPos = new Vector3(0, 0, 0);
+
+                Vector3 tempPos = pastPos.Dequeue();
+                newPos += tempPos * 0.1f;
+                pastPos.Enqueue(tempPos);
+                tempPos = pastPos.Dequeue();
+                newPos += tempPos * 0.3f;
+                pastPos.Enqueue(tempPos);
+                tempPos = pastPos.Dequeue();
+                newPos += tempPos * 0.3f;
+                pastPos.Enqueue(tempPos);
+                tempPos = pastPos.Dequeue();
+                newPos += tempPos * 0.3f;
+                pastPos.Enqueue(tempPos);
+
+                Vector3 offset = newPos - LocalTransform.Translation;
+
+                image.Offset = offset;
+                shadow.Offset = offset;
+                teamCircle.Offset = offset;
+            }
+
             if (team != null)
             { Score = team.Score; }
 

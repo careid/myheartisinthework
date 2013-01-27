@@ -104,7 +104,6 @@ namespace HeartGame
         }
 
 
-
         public void Update(GameTime gameTime)
         {
             if (IsPlaying)
