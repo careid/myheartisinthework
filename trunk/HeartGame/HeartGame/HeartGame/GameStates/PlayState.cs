@@ -28,6 +28,7 @@ namespace HeartGame
         SPACE_RELEASE = 9,
 
         NOP = 10,
+        SCORE = 11,
     };
 
     public class PlayState : GameState
@@ -406,7 +407,14 @@ namespace HeartGame
                 int team = (int)Convert.ToInt32(toks[9]);
                 foreach (Person p in ComponentManager.FilterComponentsWithTag(toks[1], dorfs))
                 {
-                    p.PerformAction((Event)Enum.Parse(typeof(Event), action, true));
+                    Event e = (Event)Enum.Parse(typeof(Event), action, true);
+                    if (e == Event.SCORE)
+                    {
+                        p.team.Score += 100;
+                        SoundManager.PlaySound("kaChing", p.GlobalTransform.Translation);
+                        p.Die();
+                    }
+                    p.PerformAction(e);
                     p.LocalTransform =
                         Matrix.CreateTranslation(new Vector3(x, y, z));
                     p.Velocity = new Vector3(vx, vy, vz);
@@ -537,15 +545,10 @@ namespace HeartGame
             {
                 if (!(d is Player) && !d.IsDead)
                 {
-                    foreach (Hospital h in hospitals)
+                    Hospital h = player.team;
+                    if (d.GetBoundingBox().Intersects(h.Component.GetBoundingBox()) && d.team == h)
                     {
-                        if (d.GetBoundingBox().Intersects(h.Component.GetBoundingBox()))
-                        {
-                                h.Score += 100;
-                                SoundManager.PlaySound("kaChing", d.GlobalTransform.Translation);
-                                d.Die();
-
-                        }  
+                        client.Write(encodePerson(d, Event.SCORE.ToString()));
                     }
                 }
             }
