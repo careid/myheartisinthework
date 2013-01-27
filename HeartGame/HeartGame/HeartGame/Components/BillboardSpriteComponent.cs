@@ -18,6 +18,8 @@ namespace HeartGame
         private static Matrix InvertY =  Matrix.CreateScale(1, -1, 1);
         public bool OrientsToCamera { get; set; }
         public float BillboardRotation { get; set; }
+        public Vector3 Offset { get; set; }
+
 
         private static RasterizerState rasterState = new RasterizerState()
         {
@@ -31,6 +33,7 @@ namespace HeartGame
             Animations = new Dictionary<string, Animation> ();
             OrientsToCamera = true;
             BillboardRotation = 0.0f;
+            Offset = Vector3.Zero;
         }
 
         public void AddAnimation(Animation animation)
@@ -130,13 +133,14 @@ namespace HeartGame
                         noTransBill.Translation = Vector3.Zero;
 
                         Matrix worldRot = Matrix.CreateScale(new Vector3(xscale, yscale, zscale)) * rot * noTransBill;
-                        worldRot.Translation = bill.Translation;
+                        worldRot.Translation = bill.Translation + Offset;
 
                         effect.Parameters["xWorld"].SetValue(worldRot);
                     }
                     else
                     {
-                        effect.Parameters["xWorld"].SetValue(GlobalTransform);
+                        Matrix newMatrix = GlobalTransform * Matrix.CreateTranslation(Offset);
+                        effect.Parameters["xWorld"].SetValue(newMatrix);
                     }
 
                     foreach (EffectPass pass in effect.CurrentTechnique.Passes)
