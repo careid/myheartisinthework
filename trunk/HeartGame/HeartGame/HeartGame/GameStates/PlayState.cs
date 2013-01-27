@@ -149,7 +149,7 @@ namespace HeartGame
                 npc.SetTag((i+1000).ToString());
                 int al = (int)(detRand(r) * 2);
                 npc.Team = hospitals[al];
-                npc.Velocity = new Vector3(0f, 0f, 0f);
+                npc.Velocity = new Vector3(0f, -0.5f, 0f);
                 npc.HasMoved = true;
                 dorfs.Add(npc);
             }
@@ -167,7 +167,7 @@ namespace HeartGame
 
             player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
-            player.Velocity = new Vector3(0f, 0f, 0f);
+            player.Velocity = new Vector3(0f, -0.5f, 0f);
             player.HasMoved = true;
             dorfs.Add(player);
 
@@ -436,7 +436,7 @@ namespace HeartGame
                         { p.team = hospitals[0]; }
                         else
                         { p.team = hospitals[1]; }
-                        p.Velocity = new Vector3(0, 0f, 0);
+                        p.Velocity = new Vector3(0, -0.5f, 0);
                         p.HasMoved = true;
                         dorfs.Add(p);
                     }
