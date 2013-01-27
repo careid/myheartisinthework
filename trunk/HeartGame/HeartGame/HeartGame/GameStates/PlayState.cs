@@ -323,6 +323,7 @@ namespace HeartGame
             if (player.DefibCharge >= 1.0f)
             {
                 defib(player);
+                player.Charging = false;
                 player.DefibCharge = 0.0f;
             }
 
@@ -426,7 +427,7 @@ namespace HeartGame
                 }
             }
 
-            float alpha = 0.05f;
+            float alpha = 0.90f;
             Camera.Position *= 1.0f - alpha;
             Camera.Position += alpha * (player.GlobalTransform.Translation + new Vector3(10, 10, 0));
             Camera.Target = player.GlobalTransform.Translation;
