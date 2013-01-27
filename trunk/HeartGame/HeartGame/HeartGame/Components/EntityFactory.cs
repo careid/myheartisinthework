@@ -170,9 +170,11 @@ namespace HeartGame
         }
          * */
 
+
         public static LocatableComponent GenerateBuilding(Vector3 pos, Vector3 size, ComponentManager componentManager, ContentManager content, GraphicsDevice graphics, String name)
         {
             return GenerateBlankBox(new BoundingBox(pos, new Vector3(pos.X + size.X, pos.Y + size.Y, pos.Z + size.Z)), componentManager, content, graphics, name);
         }
+    
     }
 }

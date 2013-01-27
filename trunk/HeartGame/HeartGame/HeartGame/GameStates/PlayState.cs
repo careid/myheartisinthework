@@ -73,7 +73,7 @@ namespace HeartGame
         protected CommandQueue CQ;
         public LocatableComponent ground;
         public List<PhysicsComponent> dorfs = new List<PhysicsComponent>();
-        public List<LocatableComponent> hospitals = new List<LocatableComponent>();
+        public List<Hospital> hospitals = new List<Hospital>();
         public Player player;
         public Drawer2D drawer2D;
         public List<Event> frameEvents;
@@ -88,6 +88,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
+            SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
@@ -146,7 +147,7 @@ namespace HeartGame
 
 
             string[] sheets = { "oldwalk", "fatwalk", "smokewalk" };
-            for (int i = 0; i < 150; i++)
+            for (int i = 0; i < 80; i++)
             {
                 NPC npc = new NPC("person", new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
                     ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
@@ -174,8 +175,10 @@ namespace HeartGame
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
-            LocatableComponent hospital1 = EntityFactory.GenerateBuilding(new Vector3(-1, 0, -11), new Vector3(4,2,3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
-            LocatableComponent hospital2 = EntityFactory.GenerateBuilding(new Vector3(5, 0, 5), new Vector3(2,7,2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
+
+
+            Hospital hospital1 = new Hospital(player, new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
+            Hospital hospital2 = new Hospital(null, new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
 
@@ -244,6 +247,7 @@ namespace HeartGame
 
         public void defib(Player owner)
         {
+			SoundManager.PlaySound("defibThud", player.GlobalTransform.Translation);
             particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
             foreach (PhysicsComponent d in dorfs)
             {
@@ -350,6 +354,8 @@ namespace HeartGame
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            SoundManager.Update(gameTime, Camera);
+
             KeyboardState keyboardState = Keyboard.GetState();
 
             InputManager.KeysUpdate(keyboardState);
@@ -373,9 +379,9 @@ namespace HeartGame
             List<BoundingBox> collideBox = new List<BoundingBox>();
             collideBox.Add(ground.GetBoundingBox());
 
-            foreach (LocatableComponent h in hospitals)
+            foreach (Hospital h in hospitals)
             {
-                collideBox.Add(h.GetBoundingBox());
+                collideBox.Add(h.Component.GetBoundingBox());
             }
 
             foreach (PhysicsComponent d in dorfs)
@@ -388,12 +394,15 @@ namespace HeartGame
             {
                 if (!(d is Player) && !d.IsDead)
                 {
-                    foreach (LocatableComponent h in hospitals)
+                    foreach (Hospital h in hospitals)
                     {
-                        if (d.GetBoundingBox().Intersects(h.GetBoundingBox()))
+                        if (d.GetBoundingBox().Intersects(h.Component.GetBoundingBox()))
                         {
-                            player.Score += 100;
-                            d.Die();
+                            if (h.Owner != null)
+                            {
+                                h.Owner.Score += 100;
+                                d.Die();
+                            }
                         }  
                     }
                 }
