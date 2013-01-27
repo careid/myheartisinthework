@@ -149,11 +149,11 @@ namespace HeartGame
 
         public override void PerformAction(Event e)
         {
-            isReady = true;
             base.PerformAction(e);
             switch (e)
             {
                 case Event.SPACE_PRESS:
+                    isReady = true;
                     if (!Charging)
                     {
                         SoundManager.PlaySound("defibCharge", GlobalTransform.Translation);
