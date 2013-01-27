@@ -15,11 +15,24 @@ def encodePlayer(player, vel):
 class Person(Movable):
     def __init__(self, name, x=0, y=0):
         self.name = name
+        self.positionHistory = []
         Movable.__init__(self, name, x, y)
 
     def makeImage(self):
         self.image = pygame.Surface((64, 64))
         self.image.fill((0, 100, 0))
+
+    def updatePosition(self, elapsed):
+        Movable.updatePosition(self, elapsed)
+        if len(self.positionHistory) > 3:
+            self.positionHistory = self.positionHistory[1:]
+        self.positionHistory.append(self.position)
+        self.rect.topleft = 0, 0
+        for idx, val in enumerate([0.1, 0.2, 0.3, 0.4]):
+            if idx == len(self.positionHistory):
+                break
+            self.rect.topleft = (self.rect.topleft[0] + self.positionHistory[idx][0] * val,
+                                 self.rect.topleft[1] + self.positionHistory[idx][1] * val)
 
 class Game():
     def run(self):
@@ -37,9 +50,9 @@ class Game():
 
         self.persons = pygame.sprite.Group()
         self.player = Person(name, 100, 100)
-        if name == "0":
-            for i in range(1000,1010):
-                self.persons.add(Person(str(i), random.randint(0, WIDTH), random.randint(0, HEIGHT)))
+        #if name == "0":
+        #    for i in range(1000,1010):
+        #        self.persons.add(Person(str(i), random.randint(0, WIDTH), random.randint(0, HEIGHT)))
         self.persons.add(self.player)
         while self.restart:
             self.restart = False
@@ -67,7 +80,7 @@ class Game():
             pygame.display.flip()
 
     def updateAI(self):
-        if name != "0":
+        if self.player.name != "0":
             return
         for p in self.persons:
             if int(p.name) < 1000:
@@ -75,13 +88,11 @@ class Game():
             if random.randint(0, 100) == 0:
                 self.write((encodePlayer(p, (random.randint(-100,100), random.randint(-100,100)))))
 
-
     def networkUpdate(self, elapsed):
         entries = self.read()
         for e in entries:
             lines = e.split('\n')
             for m in lines:
-                print m
                 m = m.rstrip()
                 toks = m.split(',')
                 command = toks[0]

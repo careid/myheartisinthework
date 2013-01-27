@@ -3,7 +3,7 @@ import threading
 import thread
 import sys
 
-HOST = '172.24.8.194'
+HOST = '172.24.8.157'
 PORT = 3000
 BUFF = 1024
 
