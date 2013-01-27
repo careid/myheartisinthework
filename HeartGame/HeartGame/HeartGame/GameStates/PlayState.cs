@@ -63,7 +63,7 @@ namespace HeartGame
             base(game, "PlayState", GSM)
         {
             Player.defib = new Player.defibCallbackType(defib);
-            online = true;
+            online = false;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
@@ -111,6 +111,11 @@ namespace HeartGame
             client = new Client(online);
             string name = client.Connect();
 
+            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red);
+            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green);
+            hospitals.Add(hospital1);
+            hospitals.Add(hospital2);
+
             Random r = new Random(1);
             for (int i = 0; i < 20; i++) // fnord
             {
@@ -136,8 +141,9 @@ namespace HeartGame
                         break;
                 }
                 npc.velocityController.MaxSpeed = 1;
-                npc.Tags.Add("10" + i.ToString());
-                npc.Target = new Vector3(-1, -2.1f, -11);
+                npc.SetTag((i+1000).ToString());
+                int al = (int)(detRand(r) * 2);
+                npc.Allegiance = hospitals[al];
                 npc.Velocity = new Vector3(0f, 0f, 0f);
                 npc.HasMoved = true;
                 npc.IsSleeping = false;
@@ -170,12 +176,6 @@ namespace HeartGame
             Vector3 boundingBoxMax = boundingBoxPos + boundingBoxExtents * 0.5f;
 
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
-
-
-            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red);
-            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green);
-            hospitals.Add(hospital1);
-            hospitals.Add(hospital2);
 
             if (Convert.ToInt32(name) % 2 == 0)
             { player.allegiance = hospital1; }
@@ -250,7 +250,7 @@ namespace HeartGame
                 {
                     if (d.GetType() != typeof(Player))
                     {
-                        ((NPC)d).Target = owner.allegiance.Component.LocalTransform.Translation;
+                        ((NPC)d).Allegiance = owner.allegiance;
                     }
                     Vector3 offset = d.GlobalTransform.Translation - owner.GlobalTransform.Translation;
                     offset.Y = 0;
@@ -407,20 +407,10 @@ namespace HeartGame
                         { p.allegiance = hospitals[0]; }
                         else
                         { p.allegiance = hospitals[1]; }
-                        
+                        p.Velocity = new Vector3(0, 0, 0);
+                        p.HasMoved = true;
+                        dorfs.Add(p);
                     }
-                    else
-                    {
-                        string[] sheets = { "oldwalk", "fatwalk", "smokewalk" };
-                        p = new NPC("person", new Vector3(x, y, z),
-                            ComponentManager, Game.Content, Game.GraphicsDevice, sheets[(int)(rand() * 3)]);
-                        p.velocityController.MaxSpeed = 1;
-                        ((NPC)p).Target = new Vector3(-1, -2.1f, -11);
-                        p.IsSleeping = false;
-                    }
-                    p.Velocity = new Vector3(0, 0, 0);
-                    p.HasMoved = true;
-                    dorfs.Add(p);
                 }
             }
             else if (command == "sendpos")
@@ -448,6 +438,19 @@ namespace HeartGame
         public override void Update(GameTime gameTime)
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+
+            int playerCount = 0;
+            foreach (Person d in dorfs)
+            {
+                if (d is Player)
+                {
+                    playerCount++;
+                }
+            }
+            if (online && playerCount < 2)
+            {
+                return;
+            }
             
             SoundManager.Update(gameTime, Camera);
 
