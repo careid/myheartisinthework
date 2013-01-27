@@ -21,7 +21,8 @@ namespace HeartGame
             HIGH_CHARGE,
             MAX_CHARGE
         }
-
+        public delegate void defibCallbackType(Player owner);
+        public static defibCallbackType defib;
         public AnimationPair walkLow;
         public AnimationPair walkHigh;
         public AnimationPair idleLow;
@@ -148,7 +149,10 @@ namespace HeartGame
                     break;
                 case Event.SPACE_RELEASE:
                     Charging = false;
+                    Console.Out.WriteLine("defibbing in player performaction");
                     SoundManager.StopSounds("defibCharge");
+                    if (DefibCharge >= 0.25f)
+                        defib(this);
                     DefibCharge = 0.0f;
                     break;
                 default: break;
