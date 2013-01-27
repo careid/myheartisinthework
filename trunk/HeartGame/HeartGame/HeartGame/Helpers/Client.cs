@@ -45,6 +45,7 @@ namespace HeartGame
         protected StreamWriter SW;
         protected CommandQueue CQ;
         public bool online;
+        public Thread t;
 
         public Client(bool online)
         {
@@ -74,7 +75,7 @@ namespace HeartGame
                 //SW.Flush();
                 StreamReader SR = new StreamReader(TC.GetStream());
                 string name = SR.ReadLine();
-                Thread t = new Thread(new ParameterizedThreadStart(runListener));
+                t = new Thread(new ParameterizedThreadStart(runListener));
                 t.Start(CQ);
                 return name;
             }

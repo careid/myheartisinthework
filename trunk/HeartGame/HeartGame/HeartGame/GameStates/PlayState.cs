@@ -29,6 +29,9 @@ namespace HeartGame
 
         NOP = 10,
         SCORE = 11,
+
+        ESC_PRESS = 12,
+        ESC_RELEASE = 13,
     };
 
     public class PlayState : GameState
@@ -184,9 +187,9 @@ namespace HeartGame
              */
 
             if (Convert.ToInt32(name) % 2 == 0)
-            { player.team = hospital1; }
+                player.team = hospital1;
             else
-            { player.team = hospital2; }
+                player.team = hospital2;
 
             SpriteBatch = new SpriteBatch(Game.GraphicsDevice);
             Shader = Game.Content.Load<Effect>("Hargraves");
@@ -216,6 +219,11 @@ namespace HeartGame
                     break;
                 case Keys.Space:
                     client.Write(encodePerson(player,Event.SPACE_PRESS.ToString()));
+                    break;
+                case Keys.Escape:
+                    client.t.Abort();
+                    GeometricPrimitive.ExitGame = true;
+                    Game.Exit();
                     break;
                 default:
                     break;
@@ -470,6 +478,11 @@ namespace HeartGame
             {
                 client.Write(encodePerson(player, Event.NOP.ToString()));
             }
+            else if (command == "exit")
+            {
+                pressKey(Keys.Escape);
+                releaseKey(Keys.Escape);
+            }
         }
 
         protected string encodePerson(Person p, string action)
@@ -531,12 +544,6 @@ namespace HeartGame
             }
 
             Vector3 TargetVelocity = Vector3.Zero;
-
-            if (keyboardState.IsKeyDown(Keys.Escape))
-            {
-                GeometricPrimitive.ExitGame = true;
-                Game.Exit();
-            }
 
             ComponentManager.Update(gameTime, Camera);
             List<BoundingBox> collideBox = new List<BoundingBox>();
