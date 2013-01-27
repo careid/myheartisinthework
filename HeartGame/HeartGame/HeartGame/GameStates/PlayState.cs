@@ -156,6 +156,7 @@ namespace HeartGame
             player.Velocity = new Vector3(0f, 0f, 0f);
             player.HasMoved = true;
             dorfs.Add(player);
+
             VelocityController velocityController3 = new VelocityController(player);
             velocityController3.IsTracking = true;
 
@@ -167,8 +168,8 @@ namespace HeartGame
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "brown");
 
 
-            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
-            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital");
+            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red);
+            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green);
             hospitals.Add(hospital1);
             hospitals.Add(hospital2);
 
@@ -463,6 +464,16 @@ namespace HeartGame
 
             foreach (Person d in dorfs)
             {
+                if (d.allegiance != null)
+                {
+                    d.teamCircle.IsVisible = true;
+                    d.teamCircle.Tint = d.allegiance.Color;
+                }
+                else
+                {
+                    d.teamCircle.IsVisible = false;
+                }
+
                 d.HasMoved = true;
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
             }

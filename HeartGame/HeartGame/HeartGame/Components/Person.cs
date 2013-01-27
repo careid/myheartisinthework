@@ -26,6 +26,8 @@ namespace HeartGame
         public static float maxSpeed = 3.0f;
         public string tag;
         public OrientableBillboardSpriteComponent image;
+        public ShadowComponent teamCircle;
+
         public Person(string _tag, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
@@ -94,6 +96,19 @@ namespace HeartGame
             shadow.AddAnimation(shadowAnimation);
             shadowAnimation.Play();
             shadow.SetCurrentAnimation("sh");
+
+
+            Matrix teamTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
+            //shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);
+            ShadowComponent team = new ShadowComponent(componentManager, "team", this, shadowTransform, content.Load<Texture2D>("circle"));
+            team.OrientsToCamera = false;
+            List<Point> circleP = new List<Point>();
+            circleP.Add(new Point(0, 0));
+            Animation circleAnimation = new Animation(graphics, content.Load<Texture2D>("circle"), "teamcircle", 32, 32, shP, false, Color.Red, 1, 0.9f, 0.9f, false);
+            team.AddAnimation(circleAnimation);
+            circleAnimation.Play();
+            team.SetCurrentAnimation("teamcircle");
+            teamCircle = team;
 
             Tags.Add("Walker");
 
