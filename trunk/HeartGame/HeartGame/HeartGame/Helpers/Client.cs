@@ -58,7 +58,7 @@ namespace HeartGame
             {
                 // Networking shit
                 TC = new System.Net.Sockets.TcpClient();
-                TC.Connect("172.24.8.194", 3000);
+                TC.Connect("172.24.8.157", 3000);
 
                 SW = new StreamWriter(TC.GetStream());
                 //request dwarf count from server
@@ -86,7 +86,7 @@ namespace HeartGame
                 CQ.Write(line);
             }
         }
-
+        
         public string Read()
         {
             return CQ.Read();

@@ -20,10 +20,10 @@ namespace HeartGame
             base(component.Manager, "VelocityController", component)
         {
             Component = component;
-            Controller = new PIDController(3.0f, 0.5f, 0.01f);
+            Controller = new PIDController(20.0f, 0.5f, 0.01f);
             targetVelocity = Vector3.Zero;
             IsTracking = false;
-            MaxSpeed = 15;
+            MaxSpeed = 10;
         }
 
         public override void Update(Microsoft.Xna.Framework.GameTime gameTime, Camera camera)

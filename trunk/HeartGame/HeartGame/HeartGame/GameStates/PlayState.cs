@@ -57,6 +57,7 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
+            Player.defib = new Player.defibCallbackType(defib);
             online = false;
             SoundManager.Content = game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
@@ -235,10 +236,10 @@ namespace HeartGame
                 case Keys.Space:
                     client.Write(encodePerson(player,Event.SPACE_RELEASE.ToString()));
 
-                    if (player.DefibCharge >= 0.25f)
-                    {
-                        defib(player);
-                    }
+                    //if (player.DefibCharge >= 0.25f)
+                    //{
+                    //    defib(player);
+                    //}
                     break;
                 default:
                     break;
@@ -247,7 +248,8 @@ namespace HeartGame
 
         public void defib(Player owner)
         {
-			SoundManager.PlaySound("defibThud", player.GlobalTransform.Translation);
+            Console.Out.WriteLine("defib() in playstate");
+			SoundManager.PlaySound("defibThud", owner.GlobalTransform.Translation);
             particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
             foreach (Person d in dorfs)
             {
@@ -293,9 +295,10 @@ namespace HeartGame
             // discharge overfull defib
             if (player.DefibCharge >= 1.0f)
             {
-                defib(player);
-                player.Charging = false;
-                player.DefibCharge = 0.0f;
+                client.Write(encodePerson(player, Event.SPACE_RELEASE.ToString()));
+                //defib(player);
+                //player.Charging = false;
+                //player.DefibCharge = 0.0f;
             }
 
             Shader.Parameters["xLightPos"].SetValue(player.GlobalTransform.Translation);
@@ -479,10 +482,10 @@ namespace HeartGame
                 }
             }
 
-            float alpha = 0.90f;
+            float alpha = 0.05f;
             Camera.Position *= 1.0f - alpha;
             Camera.Position += alpha * (player.GlobalTransform.Translation + new Vector3(10, 10, 0));
-            Camera.Target = player.GlobalTransform.Translation;
+            Camera.Target = alpha * player.GlobalTransform.Translation + (1.0f - alpha) * Camera.Target; 
 
             Camera.Update(gameTime);
             base.Update(gameTime);
