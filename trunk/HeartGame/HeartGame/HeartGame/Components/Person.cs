@@ -16,7 +16,10 @@ namespace HeartGame
     {
         public VelocityController velocityController;
         public static float maxSpeed = 3.0f;
+        public AnimationPair idle;
         public string tag;
+        public AnimationPair walk;
+        public OrientedAnimation orienter;
         public Person(string _tag, Vector3 position,
                       ComponentManager componentManager,
                       ContentManager content,
@@ -25,11 +28,12 @@ namespace HeartGame
             base(componentManager, "person", componentManager.RootComponent, Matrix.CreateTranslation(position),  new Vector3(0.5f, 1.0f, 0.5f),
             new Vector3(0.0f, -0.3f, 0.0f),  1.0f, 1.0f, 0.999f, 0.999f)
         {
+                        OrientWithVelocity = true;
+            Texture2D sprites = content.Load<Texture2D>(spritesheet);
             tag = _tag;
             Tags.Add(tag);
             string name = "person";
             OrientWithVelocity = true;
-            Texture2D sprites = content.Load<Texture2D>(spritesheet);
 
             List<Point> offsets = new List<Point>();
             offsets.Add(new Point(0, 0));
@@ -52,12 +56,26 @@ namespace HeartGame
 
             Animation walkLeft = new Animation(graphics, sprites, name + "_walk_left", 32, 32, leftFrames, true, Color.White, 10.0f, 0.8f, 1, false);
 
+            List<Point> rightFramesIdle = new List<Point>();
+            rightFramesIdle.Add(new Point(0 + offset.X, 0 + offset.Y));
+
+            Animation idleRight = new Animation(graphics, sprites, name + "_idle_right", 32, 32, rightFramesIdle, true, Color.White, 2.0f, 0.8f, 1, true);
+
+            List<Point> leftFramesIdle = new List<Point>();
+            leftFramesIdle.Add(new Point(0 + offset.X, 0 + offset.Y));
+
+            Animation idleLeft = new Animation(graphics, sprites, name + "_idle_left", 32, 32, leftFramesIdle, true, Color.White, 2.0f, 0.8f, 1, false);
+
             walkLeft.Play();
             walkRight.Play();
+            idleLeft.Play();
+            idleRight.Play();
 
             Matrix spriteMatrix = Matrix.Identity;
-            new OrientedAnimation(componentManager, "testsprite", this, spriteMatrix, sprites, walkRight, walkLeft);
-
+            idle = new AnimationPair(idleRight, idleLeft);
+            walk = new AnimationPair(walkRight, walkLeft);
+            orienter = new OrientedAnimation(componentManager, "idlesprite", this, spriteMatrix, sprites, walkRight, walkLeft);
+            
             Matrix shadowTransform = Matrix.CreateRotationX((float)Math.PI * 0.5f);
             //shadowTransform.Translation = new Vector3(0.0f, -0.31f, 0.0f);
             ShadowComponent shadow = new ShadowComponent(componentManager, "shadow", this, shadowTransform, content.Load<Texture2D>("shadowcircle"));
