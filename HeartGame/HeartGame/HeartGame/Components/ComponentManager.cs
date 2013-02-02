@@ -28,6 +28,7 @@ namespace HeartGame
             m_camera = null;
             AdditionMutex = new Mutex();
             RemovalMutex = new Mutex();
+            GameComponent.ResetGlobalIDs();
         }
 
 

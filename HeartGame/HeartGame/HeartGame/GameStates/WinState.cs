@@ -36,6 +36,11 @@ namespace HeartGame
                 Game.Exit();
             }
 
+            if (keyboardState.IsKeyDown(Keys.Space))
+            {
+                StateManager.SwitchState("PlayState");
+            }
+
             base.Update(gameTime);
         }
 
@@ -55,6 +60,7 @@ namespace HeartGame
             Drawer2D.DrawStrokedText(SpriteBatch, winString, Drawer2D.DefaultFont, new Vector2(300, 200), Color.White, Color.Black);
             Drawer2D.DrawStrokedText(SpriteBatch, "Red Team: $" + Play.hospitals[0].Score + " (" + Play.hospitals[0].NumPatients + " patients )", Drawer2D.DefaultFont, new Vector2(300, 300), Color.White, Color.Red);
             Drawer2D.DrawStrokedText(SpriteBatch, "Blue Team: $" + Play.hospitals[1].Score + " (" + Play.hospitals[1].NumPatients + " patients )", Drawer2D.DefaultFont, new Vector2(300, 330), Color.White, Color.Blue);
+            Drawer2D.DrawStrokedText(SpriteBatch, "Press Space To Play Again!", Drawer2D.DefaultFont, new Vector2(300, 400), Color.White, Color.Black);
 
 
             SpriteBatch.End();

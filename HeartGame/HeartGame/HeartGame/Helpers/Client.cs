@@ -46,6 +46,7 @@ namespace HeartGame
         protected CommandQueue CQ;
         public bool online;
         public Thread t;
+        public static bool shouldExit = false;
 
         public Client(bool online)
         {
@@ -96,7 +97,7 @@ namespace HeartGame
         {
             CommandQueue CQ = (CommandQueue)Obj;
             StreamReader SR = new StreamReader(TC.GetStream());
-            while (true)
+            while (!shouldExit)
             {
                 string line = SR.ReadLine();
                 CQ.Write(line);

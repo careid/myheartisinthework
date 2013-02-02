@@ -88,8 +88,8 @@ namespace BloomPostprocess
             // Look up the resolution and format of our main backbuffer.
             PresentationParameters pp = GraphicsDevice.PresentationParameters;
 
-            int width = pp.BackBufferWidth;
-            int height = pp.BackBufferHeight;
+            int width = GraphicsDevice.Viewport.Width;
+            int height = GraphicsDevice.Viewport.Height;
 
             SurfaceFormat format = pp.BackBufferFormat;
 
@@ -126,6 +126,8 @@ namespace BloomPostprocess
         #region Draw
 
 
+
+
         /// <summary>
         /// This should be called at the very start of the scene rendering. The bloom
         /// component uses it to redirect drawing into its custom rendertarget, so it
@@ -152,6 +154,7 @@ namespace BloomPostprocess
             // shader that extracts only the brightest parts of the image.
             bloomExtractEffect.Parameters["BloomThreshold"].SetValue(
                 Settings.BloomThreshold);
+
 
             DrawFullscreenQuad(sceneRenderTarget, renderTarget1,
                                bloomExtractEffect,

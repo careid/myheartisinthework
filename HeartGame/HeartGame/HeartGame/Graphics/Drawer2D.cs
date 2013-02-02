@@ -107,6 +107,10 @@ namespace HeartGame
             Vector2 extents = Font.MeasureString(Text);
             Vector3 unprojected = viewport.Project(Position, camera.ProjectionMatrix, camera.ViewMatrix, Matrix.Identity);
 
+
+            unprojected.X = Math.Min(Math.Max(extents.X * 0.5f, unprojected.X), viewport.Width - extents.X * 0.5f) ;
+            unprojected.Y = Math.Min(Math.Max(extents.Y * 0.5f, unprojected.Y), viewport.Height - extents.Y * 0.5f);
+
             batch.DrawString(Font, Text, new Vector2(unprojected.X + 1, unprojected.Y) - extents / 2.0f, StrokeColor);
             batch.DrawString(Font, Text, new Vector2(unprojected.X - 1, unprojected.Y) - extents / 2.0f, StrokeColor);
 

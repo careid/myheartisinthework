@@ -17,7 +17,7 @@ namespace HeartGame
         public Hospital team;
         public float Score { get; set; }
         public VelocityController velocityController;
-        public static float maxSpeed = 3.0f;
+        public float maxSpeed = 3.0f;
         public string tag;
         public Dictionary<String, String> AnimationState;
         public String State { get; set; }
@@ -136,6 +136,7 @@ namespace HeartGame
 
         public virtual void PerformAction(Event e)
         {
+          
             switch (e)
             {
                 case Event.W_PRESS:
@@ -162,6 +163,7 @@ namespace HeartGame
                 case Event.D_PRESS:
                     velocityController.targetVelocity.Z += -velocityController.MaxSpeed;
                     break;
+
                 case Event.D_RELEASE:
                     velocityController.targetVelocity.Z -= -velocityController.MaxSpeed;
                     break;

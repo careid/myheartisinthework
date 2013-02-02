@@ -43,7 +43,7 @@ namespace HeartGame
 
             MaxDepth++;
 
-            Console.Out.WriteLine("Expanded! New max depth is: {0}", MaxDepth);
+   
 
             foreach (BoundedObject loc in objectsInTree)
             {
