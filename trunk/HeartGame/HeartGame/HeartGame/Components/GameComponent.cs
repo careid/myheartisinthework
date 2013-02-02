@@ -26,6 +26,11 @@ namespace HeartGame
 
         public List<string> Tags { get; set; }
 
+        public static void ResetGlobalIDs()
+        {
+            m_maxGlobalID = 0;
+        }
+
 
         public ComponentManager Manager { get; set; }
 

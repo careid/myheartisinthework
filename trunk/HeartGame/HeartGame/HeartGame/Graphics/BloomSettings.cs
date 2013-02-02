@@ -18,31 +18,31 @@ namespace BloomPostprocess
 
 
         // Name of a preset bloom setting, for display to the user.
-        public readonly string Name;
+        public  string Name;
 
 
         // Controls how bright a pixel needs to be before it will bloom.
         // Zero makes everything bloom equally, while higher values select
         // only brighter colors. Somewhere between 0.25 and 0.5 is good.
-        public readonly float BloomThreshold;
+        public  float BloomThreshold;
 
 
         // Controls how much blurring is applied to the bloom image.
         // The typical range is from 1 up to 10 or so.
-        public readonly float BlurAmount;
+        public  float BlurAmount;
 
 
         // Controls the amount of the bloom and base images that
         // will be mixed into the final scene. Range 0 to 1.
-        public readonly float BloomIntensity;
-        public readonly float BaseIntensity;
+        public  float BloomIntensity;
+        public  float BaseIntensity;
 
 
         // Independently control the color saturation of the bloom and
         // base images. Zero is totally desaturated, 1.0 leaves saturation
         // unchanged, while higher values increase the saturation level.
-        public readonly float BloomSaturation;
-        public readonly float BaseSaturation;
+        public  float BloomSaturation;
+        public  float BaseSaturation;
 
 
         #endregion
@@ -76,7 +76,7 @@ namespace BloomPostprocess
             new BloomSettings("Desaturated", 0.5f,   8,   2,     1,    0,       1),
             new BloomSettings("Saturated",   0.25f,  4,   2,     1,    2,       0),
             new BloomSettings("Blurry",      0,      2,   1,     0.1f, 1,       1),
-            new BloomSettings("Subtle",      0.6f,   2,   1,    0.99f,  0.8f,   1),
+            new BloomSettings("Subtle",      0.9f,   2,   0.5f,    0.9f,  0.8f,   1),
         };
     }
 }

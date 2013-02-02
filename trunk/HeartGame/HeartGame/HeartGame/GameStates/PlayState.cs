@@ -44,9 +44,10 @@ namespace HeartGame
         public Texture2D AmbientMap { get; set; }
         public Texture2D TorchMap { get; set; }
         public LocatableComponent ground;
-        public List<Person> dorfs = new List<Person>();
-        public List<Player> players = new List<Player>();
-        public List<Hospital> hospitals = new List<Hospital>();
+        public List<Person> dorfs;
+        public List<Player> players;
+        public List<Player> aiPlayers;
+        public List<Hospital> hospitals;
         public Player player;
         public Drawer2D drawer2D;
         public SoundManager sounds;
@@ -58,6 +59,9 @@ namespace HeartGame
         protected string[] wordsArray;
         protected int MapWidth { get; set; }
         protected int MapHeight { get; set; }
+        protected BloomPostprocess.BloomComponent Bloom { get; set; }
+        public float ChargeCooldown { get; set; }
+        public float CurrentChargeCooldown { get; set; }
 
         private float rand()
         {
@@ -72,11 +76,143 @@ namespace HeartGame
         public PlayState(Game1 game, GameStateManager GSM) :
             base(game, "PlayState", GSM)
         {
+ 
+
+        }
+
+        public void pressKey(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.W:
+                    client.Write(encodePerson(player, Event.W_PRESS.ToString()));
+                    break;
+                case Keys.A:
+                    client.Write(encodePerson(player, Event.A_PRESS.ToString()));
+                    break;
+                case Keys.S:
+                    client.Write(encodePerson(player, Event.S_PRESS.ToString()));
+                    break;
+                case Keys.D:
+                    client.Write(encodePerson(player, Event.D_PRESS.ToString()));
+                    break;
+                case Keys.Space:
+                    client.Write(encodePerson(player, Event.SPACE_PRESS.ToString()));
+                    break;
+                case Keys.Escape:
+                    if (client.t != null)
+                        client.t.Abort();
+                    // EXPERIMENTAL RESTART
+                    //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
+                    GeometricPrimitive.ExitGame = true;
+                    Game.Exit();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void releaseKey(Keys key)
+        {
+            switch (key)
+            {
+                case Keys.W:
+                    client.Write(encodePerson(player, Event.W_RELEASE.ToString()));
+                    break;
+                case Keys.A:
+                    client.Write(encodePerson(player, Event.A_RELEASE.ToString()));
+                    break;
+                case Keys.S:
+                    client.Write(encodePerson(player, Event.S_RELEASE.ToString()));
+                    break;
+                case Keys.D:
+                    client.Write(encodePerson(player, Event.D_RELEASE.ToString()));
+                    break;
+                case Keys.Space:
+                    client.Write(encodePerson(player, Event.SPACE_RELEASE.ToString()));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void AddNotification(string text, Hospital team = null, float time = 1.0f)
+        {
+            notification = new Notification(text, time);
+            if (wordsDict.ContainsKey(text))
+            {
+                SoundManager.Play2DSound(wordsDict[text]);
+            }
+        }
+
+        public void defib(Player owner)
+        {
+            SoundManager.PlaySound("defibThud", owner.GlobalTransform.Translation);
+            particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
+
+            if (owner != player && online)
+                return;
+
+            CurrentChargeCooldown = 0.0f;
+
+            foreach (Person d in dorfs)
+            {
+                if (d != owner && (d.GlobalTransform.Translation - owner.GlobalTransform.Translation).LengthSquared() < 1.5f * 1.5f)
+                {
+                    if (!(d is Player))
+                    {
+                        ((NPC)d).Team = owner.team;
+                    }
+                    Vector3 offset = d.GlobalTransform.Translation - owner.GlobalTransform.Translation;
+                    offset.Y = 0;
+                    if (offset.X != 0 || offset.Z != 0)
+                    {
+                        offset.Normalize();
+                        offset *= 10;
+                    }
+                    else
+                    {
+                        offset = new Vector3(0);
+                    }
+
+                    offset.Y = 10;
+                    offset *= 1.2f * owner.DefibCharge;
+                    //d.Velocity = offset;
+
+                    Vector3 oldTranslation = d.LocalTransform.Translation;
+                    d.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y + 0.25f, oldTranslation.Z));
+
+                    if (d is NPC)
+                    {
+                        NPC npc = (NPC)d;
+                        npc.State = "walk";
+                    }
+
+                    if (owner == player || !online)
+                        client.Write(encodePerson(d, Event.NOP.ToString(), offset));
+                }
+            }
+        }
+
+        public override void OnEnter()
+        {
+
+           dorfs = new List<Person>();
+           players = new List<Player>();
+           aiPlayers = new List<Player>();
+           hospitals = new List<Hospital>() ;
+            Bloom = new BloomPostprocess.BloomComponent(Game);
+
+            Bloom.Initialize();
+            Bloom.Settings = BloomPostprocess.BloomSettings.PresetSettings[5];
+            IsInitialized = true;
+
+
             MapHeight = 40;
             MapWidth = 40;
             Player.defib = new Player.defibCallbackType(defib);
-            online = true; // DO NOT CHANGE, offline mode is now detected when server connection is refused
-            SoundManager.Content = game.Content;
+            online = false; // DO NOT CHANGE, offline mode is now detected when server connection is refused
+            SoundManager.Content = Game.Content;
             Camera = new OrbitCamera(Game.GraphicsDevice, 0, 0, 0.001f, new Vector3(0, 15, 0), new Vector3(-10, 10, 0), (float)Math.PI * 0.25f, Game.GraphicsDevice.Viewport.AspectRatio, 0.1f, 1000.0f);
             ComponentManager = new ComponentManager();
             ComponentManager.RootComponent = new LocatableComponent(ComponentManager, "root", null, Matrix.Identity, Vector3.Zero, Vector3.Zero);
@@ -113,6 +249,9 @@ namespace HeartGame
             testData.Texture = Game.Content.Load<Texture2D>("electricity");
             particles.RegisterEffect("shock", testData);
 
+            ChargeCooldown = 1.0f;
+            CurrentChargeCooldown = 1.0f;
+
             InputManager inputManager = new InputManager();
             InputManager.KeyPressedCallback += pressKey;
             InputManager.KeyReleasedCallback += releaseKey;
@@ -124,7 +263,7 @@ namespace HeartGame
             wordsDict.Add("DOUBLE SAVE", "doublesave");
             wordsDict.Add("TRIPLE SAVE", "triplesave");
 
-            drawer2D = new Drawer2D(game.Content, game.GraphicsDevice);
+            drawer2D = new Drawer2D(Game.Content, Game.GraphicsDevice);
 
             client = new Client(online);
             string name = client.Connect();
@@ -134,7 +273,7 @@ namespace HeartGame
                 name = "0";
                 online = false;
             }
-            
+
             Hospital hospital1 = new Hospital(new Vector3(-10, 0, -10), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
             Hospital hospital2 = new Hospital(new Vector3(12, 0, 12), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Blue, new Point(1, 0));
             hospitals.Add(hospital1);
@@ -144,7 +283,7 @@ namespace HeartGame
             for (int i = 0; i < 20; i++) // fnord
             {
                 NPC npc;
-                switch ((int)(detRand(r) * 2))
+                switch ((int)(detRand(r) * 3))
                 {
                     case (0):
                         npc = new Smoker(new Vector3(detRand(r) * 9, 5, detRand(r) * 10), ComponentManager,
@@ -165,7 +304,7 @@ namespace HeartGame
                         break;
                 }
                 npc.velocityController.MaxSpeed = 1;
-                npc.SetTag((i+1000).ToString());
+                npc.SetTag((i + 1000).ToString());
                 int al = (int)(detRand(r) * 2);
                 npc.Team = hospitals[al];
                 npc.Velocity = new Vector3(0f, -0.5f, 0f);
@@ -173,12 +312,31 @@ namespace HeartGame
                 dorfs.Add(npc);
             }
 
-            player = new Player(name, new Vector3(rand() * 10 - 5, 5, rand() * 10 - 5),
+            player = new Player(name, new Vector3(hospital1.Component.LocalTransform.Translation.X + 5,
+                hospital1.Component.LocalTransform.Translation.Y,
+                hospital1.Component.LocalTransform.Translation.Z),
                                 ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
             player.Velocity = new Vector3(0f, -0.5f, 0f);
             player.HasMoved = true;
             dorfs.Add(player);
             players.Add(player);
+
+
+            if (!online)
+            {
+                aiPlayers.Add(new Player("1", new Vector3(hospital2.Component.LocalTransform.Translation.X - 5,
+                    hospital2.Component.LocalTransform.Translation.Y,
+                    hospital2.Component.LocalTransform.Translation.Z), ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk"));
+
+
+                players.Add(aiPlayers.ElementAt(0));
+                dorfs.Add(aiPlayers.ElementAt(0));
+
+                aiPlayers.ElementAt(0).team = hospital2;
+
+                VelocityController velocityController4 = new VelocityController(aiPlayers.ElementAt(0));
+                velocityController4.IsTracking = true;
+            }
 
             VelocityController velocityController3 = new VelocityController(player);
             velocityController3.IsTracking = true;
@@ -190,12 +348,6 @@ namespace HeartGame
 
             ground = (LocatableComponent)EntityFactory.GenerateBlankBox(new BoundingBox(boundingBoxMin, boundingBoxMax), ComponentManager, Game.Content, Game.GraphicsDevice, "newground", Point.Zero, Point.Zero, 128, 128);
 
-            /*
-            Hospital hospital1 = new Hospital(new Vector3(-1, 0, -11), new Vector3(4, 2, 3), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Red, new Point(2, 0));
-            Hospital hospital2 = new Hospital(new Vector3(5, 0, 5), new Vector3(2, 7, 2), ComponentManager, Game.Content, Game.GraphicsDevice, "hospital", Color.Green, new Point(1, 0));
-            hospitals.Add(hospital1);
-            hospitals.Add(hospital2);
-             */
 
             if (Convert.ToInt32(name) % 2 == 0)
                 player.team = hospital1;
@@ -209,131 +361,43 @@ namespace HeartGame
             AmbientMap = Game.Content.Load<Texture2D>("ambientgradient");
             TorchMap = Game.Content.Load<Texture2D>("torchgradient");
 
-            AddNotification("Mash Space to Begin");
-        }
 
-        public void pressKey(Keys key)
-        {
-            switch (key)
+
+
+            if (online)
             {
-                case Keys.W:
-                    client.Write(encodePerson(player,Event.W_PRESS.ToString()));
-                    break;
-                case Keys.A:
-                    client.Write(encodePerson(player,Event.A_PRESS.ToString()));
-                    break;
-                case Keys.S:
-                    client.Write(encodePerson(player,Event.S_PRESS.ToString()));
-                    break;
-                case Keys.D:
-                    client.Write(encodePerson(player,Event.D_PRESS.ToString()));
-                    break;
-                case Keys.Space:
-                    client.Write(encodePerson(player,Event.SPACE_PRESS.ToString()));
-                    break;
-                case Keys.Escape:
-                    if (client.t != null)
-                        client.t.Abort();
-                    // EXPERIMENTAL RESTART
-                    //StateManager.States["PlayState"] = new PlayState(Game, StateManager);
-                    GeometricPrimitive.ExitGame = true;
-                    Game.Exit();
-                    break;
-                default:
-                    break;
+                AddNotification("Mash Space to Begin");
             }
-        }
-
-        public void releaseKey(Keys key)
-        {
-            switch (key)
-            {
-                case Keys.W:
-                    client.Write(encodePerson(player,Event.W_RELEASE.ToString()));
-                    break;
-                case Keys.A:
-                    client.Write(encodePerson(player,Event.A_RELEASE.ToString()));
-                    break;
-                case Keys.S:
-                    client.Write(encodePerson(player,Event.S_RELEASE.ToString()));
-                    break;
-                case Keys.D:
-                    client.Write(encodePerson(player,Event.D_RELEASE.ToString()));
-                    break;
-                case Keys.Space:
-                    client.Write(encodePerson(player,Event.SPACE_RELEASE.ToString()));
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public void AddNotification(string text, Hospital team= null, float time = 1.0f)
-        {
-            notification = new Notification(text, time);
-            if (wordsDict.ContainsKey(text))
-            {
-                SoundManager.Play2DSound(wordsDict[text]);
-            }
-        }
-
-        public void defib(Player owner)
-        {
-			SoundManager.PlaySound("defibThud", owner.GlobalTransform.Translation);
-            particles.Trigger("shock", owner.GlobalTransform.Translation, Color.White, (int)(100 * owner.DefibCharge));
-
-            if (owner != player)
-                return;
-
-            foreach (Person d in dorfs)
-            {
-                if (d != owner && (d.GlobalTransform.Translation - owner.GlobalTransform.Translation).LengthSquared() < 1 * 1)
-                {
-                    if (d.GetType() != typeof(Player))
-                    {
-                        ((NPC)d).Team = owner.team;
-                    }
-                    Vector3 offset = d.GlobalTransform.Translation - owner.GlobalTransform.Translation;
-                    offset.Y = 0;
-                    if (offset.X != 0 || offset.Z != 0)
-                    {
-                        offset.Normalize();
-                        offset *= 10;
-                    }
-                    else
-                    {
-                        offset = new Vector3(0);
-                    }
-
-                    offset.Y = 10;
-                    offset *= 1.2f*owner.DefibCharge;
-                    //d.Velocity = offset;
-
-                    Vector3 oldTranslation = d.LocalTransform.Translation;
-                    d.LocalTransform = Matrix.CreateTranslation(new Vector3(oldTranslation.X, oldTranslation.Y + 0.25f, oldTranslation.Z));
-
-                    if (d is NPC)
-                    {
-                        NPC npc = (NPC)d;
-                        npc.WalkTimer.Reset(owner.DefibCharge * npc.MaxWalkTime);
-
-                        npc.State = "walk";
-                    }
-
-                    if (owner == player)
-                        client.Write(encodePerson(d, Event.NOP.ToString(), offset));
-                }
-            }
-        }
-
-        public override void OnEnter()
-        {
-            IsInitialized = true;
             base.OnEnter();
         }
 
+        float maxIntensity = 0.0f;
+        float maxBlur = 0.0f;
+        float maxThresh = 0.0f;
+
         public override void Render(GameTime gameTime)
         {
+            if (player.DefibCharge > 0.2f)
+            {
+                Bloom.Settings.BloomThreshold = (1.0f - player.DefibCharge);
+                Bloom.Settings.BloomIntensity = player.DefibCharge * 1.0f;
+                Bloom.Settings.BlurAmount = player.DefibCharge * 1.5f;
+
+                maxIntensity =  player.DefibCharge * 3.0f;
+                maxBlur = player.DefibCharge * 3.0f;
+                maxThresh = 1.0f - player.DefibCharge;
+            }
+            else
+            {
+                Bloom.Settings.BloomThreshold = Easing.CubeInOut(CurrentChargeCooldown, maxThresh, 0.9f - maxThresh, ChargeCooldown);
+                Bloom.Settings.BloomIntensity =  Easing.CubeInOut(CurrentChargeCooldown, maxIntensity, 0.5f - maxIntensity, ChargeCooldown);
+                Bloom.Settings.BlurAmount  =  Easing.CubeInOut(CurrentChargeCooldown, maxBlur, 1.0f - maxBlur, ChargeCooldown);
+                Bloom.Settings.BloomSaturation = Easing.CubeInOut(CurrentChargeCooldown, 1.0f, 0.8f, ChargeCooldown);
+                Bloom.Settings.BaseSaturation = Easing.CubeInOut(CurrentChargeCooldown, 0.5f, 1.0f, ChargeCooldown);
+  
+            }
+
+            Bloom.BeginDraw();
             Game.GraphicsDevice.Clear(Color.CornflowerBlue);
             Game.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
@@ -352,8 +416,10 @@ namespace HeartGame
                 client.Write(encodePerson(player, Event.SPACE_RELEASE.ToString()));
             }
 
+
+
             Shader.Parameters["xLightPos"].SetValue(player.GlobalTransform.Translation);
-            Shader.Parameters["xLightColor"].SetValue(new Vector4(0.25f * player.DefibCharge, 0.5f * player.DefibCharge,player.DefibCharge, 1.0f));
+            Shader.Parameters["xLightColor"].SetValue(new Vector4(0.25f * player.DefibCharge, 0.5f * player.DefibCharge, player.DefibCharge, 1.0f));
             Shader.Parameters["xFogColor"].SetValue(new Vector3(0, 0, 0));
             Shader.Parameters["Clipping"].SetValue(false);
             Shader.Parameters["xView"].SetValue(Camera.ViewMatrix);
@@ -370,8 +436,10 @@ namespace HeartGame
 
             Game.GraphicsDevice.BlendState = BlendState.AlphaBlend;
 
-            ComponentManager.Render(gameTime, Camera, SpriteBatch, Game.GraphicsDevice,Shader, false);
-            
+
+            ComponentManager.Render(gameTime, Camera, SpriteBatch, Game.GraphicsDevice, Shader, false);
+
+
             SpriteBatch.Begin();
             if (player.DefibCharge > 0.0f)
             {
@@ -410,13 +478,39 @@ namespace HeartGame
             }
 
             drawer2D.Render(SpriteBatch, Camera, Game.GraphicsDevice.Viewport);
-            
+
             SpriteBatch.End();
+
+            Bloom.Draw(gameTime);
 
             Game.GraphicsDevice.DepthStencilState = DepthStencilState.Default;
             Game.GraphicsDevice.BlendState = BlendState.Opaque;
 
             base.Render(gameTime);
+        }
+
+        public NPC GetClosestNPC(Player player)
+        {
+            float closestDist = 999999;
+            NPC closestNPC = null;
+            foreach (Person p in dorfs)
+            {
+                if (p is NPC && !p.IsDead)
+                {
+                    NPC npc = (NPC)p;
+
+                    float dist = (npc.GlobalTransform.Translation - player.GlobalTransform.Translation).LengthSquared();
+                    if (dist < closestDist)
+                    {
+                        closestNPC = npc;
+                        closestDist = dist;
+                    }
+                    
+                }
+            }
+
+            return closestNPC;
+
         }
 
         public NPC GetClosestDeadNPC(Player player)
@@ -456,7 +550,16 @@ namespace HeartGame
             if (command == "general")
             {
                 bool found = false;
-                int id = Convert.ToInt32(toks[1], 10);
+
+                int id = 0;
+                try
+                {
+                    id = Convert.ToInt32(toks[1], 10);
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine("Failure. id is " + toks[1]);
+                }
                 string action = toks[2];
                 float x = (float)Convert.ToDouble(toks[3]);
                 float y = (float)Convert.ToDouble(toks[4]);
@@ -481,6 +584,11 @@ namespace HeartGame
                     p.LocalTransform =
                         Matrix.CreateTranslation(new Vector3(x, y, z));
                     p.Velocity = new Vector3(vx, vy, vz);
+                    if (p is NPC && vy > 1.0f)
+                    {
+                        NPC npc = (NPC)p;
+                        npc.WalkTimer.Reset(0.75f * npc.MaxWalkTime);
+                    }
                     p.team = hospitals[team];
                     found = true;
                 }
@@ -489,6 +597,7 @@ namespace HeartGame
                     Person p;
                     if (id < 1000)
                     {
+                        
                         p = new Player(toks[1], new Vector3(x, y, z),
                             ComponentManager, Game.Content, Game.GraphicsDevice, "surgeonwalk");
                         VelocityController velocityController = new VelocityController(p);
@@ -499,6 +608,7 @@ namespace HeartGame
                         p.HasMoved = true;
                         dorfs.Add(p);
                         players.Add((Player)p);
+                         
                     }
                 }
             }
@@ -561,8 +671,11 @@ namespace HeartGame
         {
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            CurrentChargeCooldown = Math.Min(CurrentChargeCooldown + dt, ChargeCooldown);
+
 
             doActions();
+            
 
             KeyboardState keyboardState = Keyboard.GetState();
             InputManager.KeysUpdate(keyboardState);
@@ -577,7 +690,7 @@ namespace HeartGame
                 if (players.Count() < 2)
                     return;
             }
-            
+
             SoundManager.Update(gameTime, Camera);
 
             if (!Game.IsActive)
@@ -601,7 +714,7 @@ namespace HeartGame
             {
                 if (d.team != null)
                 {
-                    d.teamCircle.IsVisible = (d is Player)? true : false;
+                    d.teamCircle.IsVisible = (d is Player) ? true : false;
                     d.teamCircle.Tint = d.team.Color;
                 }
                 else
@@ -612,12 +725,12 @@ namespace HeartGame
                 d.HasMoved = true;
                 d.HandleCollisions(collideBox, (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                if (d.GlobalTransform.Translation.X > MapWidth / 2 || d.GlobalTransform.Translation.X < -MapWidth / 2 || d.GlobalTransform.Translation.Z > MapHeight /2 || d.GlobalTransform.Translation.Z < -MapWidth/2 || d.GlobalTransform.Translation.Y < 0)
+                if (d.GlobalTransform.Translation.X > MapWidth / 2 || d.GlobalTransform.Translation.X < -MapWidth / 2 || d.GlobalTransform.Translation.Z > MapHeight / 2 || d.GlobalTransform.Translation.Z < -MapWidth / 2 || d.GlobalTransform.Translation.Y < 0)
                 {
                     float x = Math.Max(Math.Min(d.GlobalTransform.Translation.X, MapWidth / 2), -MapWidth / 2);
                     float z = Math.Max(Math.Min(d.GlobalTransform.Translation.Z, MapHeight / 2), -MapHeight / 2);
                     float y = Math.Max(d.GlobalTransform.Translation.Y, 0);
-                    d.LocalTransform 
+                    d.LocalTransform
                         = Matrix.CreateTranslation(new Vector3(x, d.GlobalTransform.Translation.Y, z));
                     d.Velocity *= -0.1f;
                 }
@@ -627,10 +740,12 @@ namespace HeartGame
             {
                 if (!(d is Player) && !d.IsDead)
                 {
-                    Hospital h = player.team;
-                    if (d.GetBoundingBox().Intersects(h.Component.GetBoundingBox()) && d.team == h)
+                    foreach (Hospital h in hospitals)
                     {
-                        client.Write(encodePerson(d, Event.SCORE.ToString()));
+                        if (d.GetBoundingBox().Intersects(h.Component.GetBoundingBox()) && d.team == h)
+                        {
+                            client.Write(encodePerson(d, Event.SCORE.ToString()));
+                        }
                     }
                 }
             }
@@ -644,10 +759,45 @@ namespace HeartGame
                 }
             }
 
+            foreach (Player p in aiPlayers)
+            {
+                NPC closestEnt = GetClosestNPC(p);
+
+                if (closestEnt != null)
+                {
+                    Vector3 fromHospital = (closestEnt.GlobalTransform.Translation - p.team.Component.GlobalTransform.Translation);
+                    fromHospital.Normalize();
+                    fromHospital *= 0.5f;
+
+
+                    Vector3 diff = (closestEnt.GlobalTransform.Translation - p.GlobalTransform.Translation) + fromHospital; 
+
+                    if (diff.Length() > 0.25f)
+                    {
+                        float mult = diff.Length() * 5.0f;
+                        diff.Normalize();
+                        diff *= Math.Min(p.velocityController.MaxSpeed, mult);
+                        p.velocityController.targetVelocity = diff;
+                    }
+                    else
+                    {
+                        p.velocityController.targetVelocity = Vector3.Zero;
+                        p.Charging = true;
+
+                        if (p.DefibCharge >= 1.0f)
+                        {
+                            defib(p);
+                            p.Charging = false;
+                            p.DefibCharge = 0.0f;
+                        }
+                    }
+                }
+            }
+
             float alpha = 0.05f;
             Camera.Position *= 1.0f - alpha;
             Camera.Position += alpha * (player.GlobalTransform.Translation + new Vector3(10, 10, 0));
-            Camera.Target = alpha * player.GlobalTransform.Translation + (1.0f - alpha) * Camera.Target; 
+            Camera.Target = alpha * player.GlobalTransform.Translation + (1.0f - alpha) * Camera.Target;
 
             Camera.Update(gameTime);
 
@@ -661,9 +811,18 @@ namespace HeartGame
                 Drawer2D.DrawText("Revive! (Hold Space)", closest.GlobalTransform.Translation, flash, back);
             }
 
+            Drawer2D.DrawText("Our Hospital", hospitals[0].Component.GlobalTransform.Translation, Color.White, Color.DarkRed);
+            Drawer2D.DrawText("Their Hospital", hospitals[1].Component.GlobalTransform.Translation, Color.White, Color.DarkBlue);
+
             if (!PatientsExist())
             {
                 StateManager.SwitchState("WinState");
+                if (client.t != null)
+                {
+                    Client.shouldExit = true;
+                    client.t.Join();
+                    Client.shouldExit = false;
+                }
             }
 
 

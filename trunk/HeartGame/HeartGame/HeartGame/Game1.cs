@@ -37,10 +37,11 @@ namespace HeartGame
         {
             StateManager.States["PlayState"] = new PlayState(this, StateManager);
             StateManager.States["WinState"] = new WinState(this, StateManager, (PlayState)StateManager.States["PlayState"]);
-            StateManager.SwitchState("PlayState");
+      
             graphics.PreferredBackBufferWidth = 1366;
             graphics.PreferredBackBufferHeight = 768;
             graphics.PreferMultiSampling = true;
+            //graphics.IsFullScreen = true;
             graphics.ApplyChanges();
             base.Initialize();
         }
@@ -51,7 +52,7 @@ namespace HeartGame
         /// </summary>
         protected override void LoadContent()
         {
-            StateManager.States["PlayState"].OnEnter();
+            StateManager.SwitchState("PlayState");
         }
 
         /// <summary>
